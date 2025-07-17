@@ -26,11 +26,11 @@ const CrearSolicitud = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        axios.get("https://inveq.guandy.com/api/ubicaciones")
+        axios.get("https://localhost:7291/api/ubicaciones")
             .then(res => setUbicaciones(res.data))
             .catch(err => console.error("Error al cargar ubicaciones:", err));
 
-        axios.get("https://inveq.guandy.com/api/equipos", { withCredentials: true })
+        axios.get("https://localhost:7291/api/equipos", { withCredentials: true })
             .then(res => {
                 const disponibles = res.data.filter(e => !e.asignaciones || e.asignaciones.length === 0);
                 setEquiposDisponibles(disponibles);
@@ -40,7 +40,7 @@ const CrearSolicitud = () => {
 
     const buscarEmpleado = async () => {
         try {
-            const res = await axios.get(`https://inveq.guandy.com/api/${empleado.codigo}`);
+            const res = await axios.get(`https://localhost:7291/api/empleados/${empleado.codigo}`);
             const data = res.data;
             setEmpleado({
                 ...empleado,
@@ -93,7 +93,7 @@ const CrearSolicitud = () => {
         };
 
         try {
-            await axios.post("https://inveq.guandy.com/api/solicitudes", solicitud);
+            await axios.post("https://localhost:7291/api/solicitudes", solicitud);
             toast.success("Solicitud creada exitosamente");
             navigate("/solicitudesDashboard");
         } catch (err) {

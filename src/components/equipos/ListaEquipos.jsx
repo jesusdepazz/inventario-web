@@ -23,7 +23,7 @@ const ListaEquipos = () => {
 
     useEffect(() => {
         axios
-            .get("https://inveq.guandy.com/api//Equipos", {
+            .get("https://localhost:7291/api/Equipos", {
                 withCredentials: true,
             })
             .then((res) => setEquipos(res.data))
@@ -145,7 +145,7 @@ const ListaEquipos = () => {
                                     <td className="px-4 py-2 border">
                                         {equipo.imagenRuta ? (
                                             <img
-                                                src={`https://inveq.guandy.com/${equipo.imagenRuta}`}
+                                                src={`https://localhost:7291/${equipo.imagenRuta}`}
                                                 alt="Equipo"
                                                 className="w-20 h-auto rounded"
                                             />

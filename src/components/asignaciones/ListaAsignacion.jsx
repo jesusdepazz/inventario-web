@@ -6,7 +6,7 @@ const ListaAsignaciones = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetch("https://inveq.guandy.com/api/asignaciones", { credentials: "include" })
+        fetch("https://localhost:7291/api/asignaciones", { credentials: "include" })
             .then(res => res.json())
             .then(data => setAsignaciones(data))
             .catch(err => console.error("Error al obtener asignaciones:", err));

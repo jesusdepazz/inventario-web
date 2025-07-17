@@ -15,14 +15,14 @@ const EditarEquipo = () => {
     const buscarEquipoPorId = async () => {
         try {
             const response = await axios.get(
-                `https://inveq.guandy.com/api/Equipos/${id}`,
+                `https://localhost:7291/api/Equipos/${id}`,
                 { withCredentials: true }
             );
 
             if (response.data) {
                 setEquipo(response.data);
                 if (response.data.imagenRuta)
-                    setImagenPreview(`https://inveq.guandy.com/api/Equipos/${response.data.imagenRuta}`);
+                    setImagenPreview(`https://localhost:7291/api/Equipos/${response.data.imagenRuta}`);
                 setModoEdicion(true);
             } else {
                 toast.warn("Equipo no encontrado con ese ID");
@@ -66,7 +66,7 @@ const EditarEquipo = () => {
             if (nuevaImagen) formData.append("Imagen", nuevaImagen);
 
             await axios.put(
-                `https://inveq.guandy.com/api/Equipos/${equipo.id}`,
+                `https://localhost:7291/api/Equipos/${equipo.id}`,
                 formData,
                 {
                     withCredentials: true,

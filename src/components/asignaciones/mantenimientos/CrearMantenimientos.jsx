@@ -23,7 +23,7 @@ const CrearMantenimiento = () => {
 
     const handleBuscarEquipo = async () => {
         try {
-            const res = await axios.get("https://inveq.guandy.com/api/Equipos", {
+            const res = await axios.get("https://localhost:7291/api/Equipos", {
                 withCredentials: true
             });
             const encontrados = res.data.filter((e) => e.codificacion === form.codificacion);
@@ -65,7 +65,7 @@ const CrearMantenimiento = () => {
         }
 
         try {
-            await axios.post("https://inveq.guandy.com/api/Mantenimientos", form, {
+            await axios.post("https://localhost:7291/api/Mantenimientos", form, {
                 withCredentials: true
             });
 
