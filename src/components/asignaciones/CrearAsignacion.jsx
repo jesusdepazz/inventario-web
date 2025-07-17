@@ -83,7 +83,7 @@ export default function CrearAsignacion() {
         };
 
         try {
-            const response = await fetch("https://inveq.guandy.com/api/api/asignaciones", {
+            const response = await fetch("https://inveq.guandy.com/api/asignaciones", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

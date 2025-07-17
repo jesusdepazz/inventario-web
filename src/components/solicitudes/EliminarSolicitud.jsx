@@ -31,7 +31,7 @@ const EliminarSolicitud = () => {
 
   const cargarUbicaciones = async () => {
     try {
-      const res = await axios.get("https://inveq.guandy.com/api/");
+      const res = await axios.get("https://inveq.guandy.com/api/ubicaciones");
       const mapa = {};
       res.data.forEach((u) => {
         mapa[u.id] = u.nombre;

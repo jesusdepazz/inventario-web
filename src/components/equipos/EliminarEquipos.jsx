@@ -22,7 +22,7 @@ const EliminarEquipos = () => {
 
     const cargarEquipo = async () => {
         try {
-            const res = await axios.get("https://inveq.guandy.com/api/api/equipos");
+            const res = await axios.get("https://inveq.guandy.com/api/equipos");
             setEquipo(res.data);
         } catch (err) {
             console.error("Error al cargar equipos", err);

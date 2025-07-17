@@ -40,7 +40,7 @@ const CrearSolicitud = () => {
 
     const buscarEmpleado = async () => {
         try {
-            const res = await axios.get(`https://inveq.guandy.com/api/${empleado.codigo}`);
+            const res = await axios.get(`https://inveq.guandy.com/api/empleados${empleado.codigo}`);
             const data = res.data;
             setEmpleado({
                 ...empleado,

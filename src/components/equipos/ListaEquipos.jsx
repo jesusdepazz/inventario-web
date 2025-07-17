@@ -23,7 +23,7 @@ const ListaEquipos = () => {
 
     useEffect(() => {
         axios
-            .get("https://inveq.guandy.com/api//Equipos", {
+            .get("https://inveq.guandy.com/api/Equipos", {
                 withCredentials: true,
             })
             .then((res) => setEquipos(res.data))
