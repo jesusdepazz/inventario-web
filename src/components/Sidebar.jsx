@@ -20,6 +20,7 @@ export default function Sidebar() {
     const [equiposOpen, setEquiposOpen] = useState(false);
     const [asignacionesOpen, setAsignacionesOpen] = useState(false);
     const [mantenimientosOpen, setMantenimientosOpen] = useState(false);
+    const [formatosOpen, SetFormatosOpen] = useState(false);
 
     const handleLogout = () => {
         localStorage.removeItem("token");
@@ -142,6 +143,25 @@ export default function Sidebar() {
                                 </Link>
                                 <Link to="/solicitudes/eliminar" className="flex items-center gap-3">
                                     <FaTrash /> Eliminar
+                                </Link>
+                            </div>
+                        )}
+                    </div>
+                    <div>
+                        <button
+                            onClick={() => SetFormatosOpen(!formatosOpen)}
+                            className="flex items-center justify-between w-full font-bold text-lg hover:text-blue-300 transition-transform duration-300 ease-in-out"
+                        >
+                            <span className="flex items-center gap-3">
+                                <FaClipboardList />
+                                Formatos
+                            </span>
+                            {formatosOpen ? <FaChevronUp className="text-sm" /> : <FaChevronDown className="text-sm" />}
+                        </button>
+                        {formatosOpen && (
+                            <div className="ml-8 flex flex-col gap-1 text-base font-medium pt-1">
+                                <Link to="/formatos/hojaderesponsabilidad" className="flex items-center gap-3">
+                                    <FaUpload /> Hoja de responsabilidad
                                 </Link>
                             </div>
                         )}

@@ -18,6 +18,7 @@ import EliminarAsignacion from "./components/asignaciones/EliminarAsignacion";
 import CrearSolicitud from "./components/solicitudes/CrearSolicitud";
 import ListaSolicitud from "./components/solicitudes/ListaSolicitud";
 import EliminarSolicitud from "./components/solicitudes/EliminarSolicitud";
+import HojaResponsabilidad from "./components/formatos/HojaResponsabilidad";
 
 function RequireAuth({ children }) {
   const isAuthenticated = useIsAuthenticated();
@@ -69,6 +70,8 @@ function AppRoutes() {
           <Route path="/solicitudes/crear" element={<CrearSolicitud/>} />
           <Route path="/solicitudes/lista" element={<ListaSolicitud/>} />
           <Route path="/solicitudes/eliminar" element={<EliminarSolicitud/>} />
+          {/* FORMATOS */}
+          <Route path="/formatos/hojaderesponsabilidad" element={<HojaResponsabilidad/>} />
          </Route>
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
