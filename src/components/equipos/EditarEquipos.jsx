@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -9,15 +9,15 @@ const EditarEquipo = () => {
     const [imagenPreview, setImagenPreview] = useState(null);
     const [nuevaImagen, setNuevaImagen] = useState(null);
     const [modoEdicion, setModoEdicion] = useState(false);
+    const [ubicaciones, setUbicaciones] = useState([]);
 
     const navigate = useNavigate();
 
     const buscarEquipoPorId = async () => {
         try {
-            const response = await axios.get(
-                `https://localhost:7291/api/Equipos/${id}`,
-                { withCredentials: true }
-            );
+            const response = await axios.get(`https://localhost:7291/api/Equipos/${id}`, {
+                withCredentials: true,
+            });
 
             if (response.data) {
                 setEquipo(response.data);
@@ -31,6 +31,23 @@ const EditarEquipo = () => {
             toast.error("Error al buscar equipo");
         }
     };
+
+    useEffect(() => {
+        const fetchUbicaciones = async () => {
+            try {
+                const response = await axios.get("https://localhost:7291/api/Ubicaciones", {
+                    withCredentials: true,
+                });
+                setUbicaciones(response.data);
+            } catch (error) {
+                toast.error("Error al cargar ubicaciones");
+            }
+        };
+
+        if (modoEdicion) {
+            fetchUbicaciones();
+        }
+    }, [modoEdicion]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -46,6 +63,9 @@ const EditarEquipo = () => {
     const guardarCambios = async () => {
         try {
             const formData = new FormData();
+            formData.append("OrderCompra", equipo.orderCompra || "");
+            formData.append("Factura", equipo.factura || "");
+            formData.append("Proveedor", equipo.proveedor || "");
             formData.append("Tipo", equipo.tipo || "");
             formData.append("Codificacion", equipo.codificacion || "");
             formData.append("Estado", equipo.estado || "");
@@ -58,21 +78,16 @@ const EditarEquipo = () => {
             formData.append("Especificaciones", equipo.especificaciones || "");
             formData.append("Accesorios", equipo.accesorios || "");
             formData.append("Ubicacion", equipo.ubicacion || "");
-            formData.append(
-                "FechaIngreso",
-                equipo.fechaIngreso ? equipo.fechaIngreso.slice(0, 10) : ""
-            );
+            formData.append("FechaIngreso", equipo.fechaIngreso ? equipo.fechaIngreso.slice(0, 10) : "");
 
-            if (nuevaImagen) formData.append("Imagen", nuevaImagen);
+            if (nuevaImagen) {
+                formData.append("Imagen", nuevaImagen);
+            }
 
-            await axios.put(
-                `https://localhost:7291/api/Equipos/${equipo.id}`,
-                formData,
-                {
-                    withCredentials: true,
-                    headers: { "Content-Type": "multipart/form-data" },
-                }
-            );
+            await axios.put(`https://localhost:7291/api/Equipos/${equipo.id}`, formData, {
+                withCredentials: true,
+                headers: { "Content-Type": "multipart/form-data" },
+            });
 
             toast.success("Equipo actualizado correctamente");
         } catch (error) {
@@ -141,7 +156,6 @@ const EditarEquipo = () => {
                                     ["IMEI", "imei"],
                                     ["Especificaciones", "especificaciones"],
                                     ["Accesorios", "accesorios"],
-                                    ["Ubicación", "ubicacion"],
                                     ["Fecha Ingreso", "fechaIngreso"]
                                 ].map(([label, name]) => (
                                     <div className="flex flex-col" key={name}>
@@ -156,12 +170,9 @@ const EditarEquipo = () => {
                                                 className="border px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                             >
                                                 <option value="">Seleccione un tipo</option>
-                                                <option value="Computadora portátil">Computadora portátil</option>
-                                                <option value="Computadora de escritorio">Computadora de escritorio</option>
-                                                <option value="Teléfono móvil">Teléfono móvil</option>
-                                                <option value="Tablet">Tablet</option>
-                                                <option value="Monitor">Monitor</option>
-                                                <option value="Otro">Otro</option>
+                                                <option value="Equipo de escritorio">Equipo de escritorio</option>
+                                                <option value="Comunal">Comunal</option>
+                                                <option value="Equipo móvil">Equipo móvil</option>
                                             </select>
                                         ) : (
                                             <input
@@ -177,10 +188,26 @@ const EditarEquipo = () => {
                                                     }`}
                                             />
                                         )}
-
                                     </div>
                                 ))}
-                                {equipo.tipo === "Teléfono móvil" && (
+                                <div className="flex flex-col">
+                                    <label htmlFor="ubicacion" className="mb-1 font-medium text-gray-700">Ubicación</label>
+                                    <select
+                                        id="ubicacion"
+                                        name="ubicacion"
+                                        value={equipo.ubicacion || ""}
+                                        onChange={handleChange}
+                                        className="border px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    >
+                                        <option value="">Seleccione una ubicación</option>
+                                        {ubicaciones.map((u) => (
+                                            <option key={u.id} value={u.nombre}>
+                                                {u.nombre}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                                {equipo.tipo === "Equipo móvil" && (
                                     <>
                                         <div className="flex flex-col">
                                             <label htmlFor="numeroAsignado" className="mb-1 font-medium text-gray-700">Número asignado</label>
