@@ -27,7 +27,7 @@ const HojaResponsabilidad = () => {
     const handleAgregarEmpleado = async () => {
         if (!codigoEmpleado.trim()) return;
         try {
-            const res = await axios.get(`https://inveq.guandy.com/api/empleados/${codigoEmpleado}`);
+            const res = await axios.get(`https://localhost:7291/api/empleados/${codigoEmpleado}`);
             setEmpleados(prev => [...prev, res.data]);
             setCodigoEmpleado('');
         } catch (error) {
@@ -38,7 +38,7 @@ const HojaResponsabilidad = () => {
     const HandleAgregarEquipo = async () => {
         if (!codEquipo.trim()) return;
         try {
-            const res = await fetch(`https://inveq.guandy.com/api/equipos/por-codificacion/${codEquipo}`);
+            const res = await fetch(`https://localhost:7291/api/equipos/por-codificacion/${codEquipo}`);
             if (!res.ok) throw new Error('Equipo no encontrado');
             const data = await res.json();
             setEquipos((prev) => [...prev, { ...data, codificacion: codEquipo }]);
@@ -385,35 +385,15 @@ const HojaResponsabilidad = () => {
 
         doc.setFontSize(10);
         doc.setFont('helvetica', 'bold');
-        doc.setTextColor(0, 0, 0);
 
         const colWidth = boxWidth / 3;
         const col1X = marginX + colWidth / 2;
         const col2X = marginX + colWidth + colWidth / 2;
         const col3X = marginX + colWidth * 2 + colWidth / 2;
-
-        // 💠 Firma izquierda fija (Kelin)
-        doc.setTextColor(0, 0, 0);
-        doc.text("(F)_________________", col1X - doc.getTextWidth("(F)_________________") / 2, yFirmas);
-        doc.text("Realizado por:", col1X - doc.getTextWidth("Realizado por:") / 2, yFirmas + 6);
-        doc.setTextColor(0, 102, 204); // Azul
-        doc.text("Kelin Stefani Blanco", col1X - doc.getTextWidth("Kelin Stefani Blanco") / 2, yFirmas + 12);
-        doc.setTextColor(0, 0, 0);
-        doc.text("Administración", col1X - doc.getTextWidth("Administración") / 2, yFirmas + 18);
-
-        // 💠 Firma derecha fija (Carlos)
-        doc.setTextColor(0, 0, 0);
-        doc.text("(F):________________", col3X - doc.getTextWidth("(F):________________") / 2, yFirmas);
-        doc.text("Entrega de equipo:", col3X - doc.getTextWidth("Entrega de equipo:") / 2, yFirmas + 6);
-        doc.setTextColor(0, 102, 204);
-        doc.text("Carlos Mazariegos", col3X - doc.getTextWidth("Carlos Mazariegos") / 2, yFirmas + 12);
-        doc.setTextColor(0, 0, 0);
-        doc.text("Gerente de sistemas", col3X - doc.getTextWidth("Gerente de sistemas") / 2, yFirmas + 18);
-
-        // 💠 Firmas dinámicas de empleados
         const columnas = [col1X, col2X, col3X];
-        let firmaY = yFirmas + 40;
-        const alturaFila = 30;
+
+        const alturaFila = 40;
+        let firmaY = yFirmas;
 
         empleados.forEach((empleado, index) => {
             const colIndex = index % 3;
@@ -430,11 +410,34 @@ const HojaResponsabilidad = () => {
             doc.setTextColor(0, 0, 0);
             doc.text((empleado.puesto || ''), x - doc.getTextWidth(empleado.puesto || '') / 2, y + 18);
 
-            // Si ya se llenaron las 3 columnas, baja a siguiente fila
             if (colIndex === 2) {
-                firmaY += alturaFila;
+                firmaY += alturaFila; 
             }
         });
+
+        if (empleados.length % 3 !== 0) {
+            firmaY += alturaFila;
+        }
+
+        const yFinal = firmaY;
+
+        const xKelin = columnas[0]; 
+        doc.setTextColor(0, 0, 0);
+        doc.text("(F)________________", xKelin - doc.getTextWidth("(F)________________") / 2, yFinal);
+        doc.text("Realizado por:", xKelin - doc.getTextWidth("Realizado por:") / 2, yFinal + 6);
+        doc.setTextColor(0, 102, 204);
+        doc.text("Kelin Stefani Blanco", xKelin - doc.getTextWidth("Kelin Stefani Blanco") / 2, yFinal + 12);
+        doc.setTextColor(0, 0, 0);
+        doc.text("Administración", xKelin - doc.getTextWidth("Administración") / 2, yFinal + 18);
+
+        const xCarlos = columnas[2]; 
+        doc.setTextColor(0, 0, 0);
+        doc.text("(F):________________", xCarlos - doc.getTextWidth("(F):________________") / 2, yFinal);
+        doc.text("Entrega de equipo:", xCarlos - doc.getTextWidth("Entrega de equipo:") / 2, yFinal + 6);
+        doc.setTextColor(0, 102, 204);
+        doc.text("Carlos Mazariegos", xCarlos - doc.getTextWidth("Carlos Mazariegos") / 2, yFinal + 12);
+        doc.setTextColor(0, 0, 0);
+        doc.text("Gerente de sistemas", xCarlos - doc.getTextWidth("Gerente de sistemas") / 2, yFinal + 18);
 
         agregarFooter(doc, nuevaPagina);
 
