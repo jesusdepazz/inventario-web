@@ -15,7 +15,11 @@ const EditarEquipo = () => {
 
     const buscarEquipoPorId = async () => {
         try {
+<<<<<<< Updated upstream
             const response = await axios.get(`https://localhost:7291/api/Equipos/${id}`, {
+=======
+            const response = await axios.get(`https://inveq.guandy.com/api/Equipos/${id}`, {
+>>>>>>> Stashed changes
                 withCredentials: true,
             });
 
@@ -35,7 +39,11 @@ const EditarEquipo = () => {
     useEffect(() => {
         const fetchUbicaciones = async () => {
             try {
+<<<<<<< Updated upstream
                 const response = await axios.get("https://localhost:7291/api/Ubicaciones", {
+=======
+                const response = await axios.get("https://inveq.guandy.com/api/Ubicaciones", {
+>>>>>>> Stashed changes
                     withCredentials: true,
                 });
                 setUbicaciones(response.data);
@@ -84,7 +92,11 @@ const EditarEquipo = () => {
                 formData.append("Imagen", nuevaImagen);
             }
 
+<<<<<<< Updated upstream
             await axios.put(`https://localhost:7291/api/Equipos/${equipo.id}`, formData, {
+=======
+            await axios.put(`https://inveq.guandy.com/api/Equipos/${equipo.id}`, formData, {
+>>>>>>> Stashed changes
                 withCredentials: true,
                 headers: { "Content-Type": "multipart/form-data" },
             });

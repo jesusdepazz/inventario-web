@@ -83,6 +83,7 @@ export default function CrearAsignacion() {
         };
 
         try {
+<<<<<<< Updated upstream
             const response = await fetch("https://localhost:7291/api/asignaciones", {
                 method: "POST",
                 headers: {
@@ -93,6 +94,9 @@ export default function CrearAsignacion() {
 
             if (!response.ok) throw new Error("Error al guardar asignación");
 
+=======
+            await crearAsignacion(asignacion);
+>>>>>>> Stashed changes
             alert("Asignación guardada correctamente");
             navigate("/dashboard");
         } catch (error) {
