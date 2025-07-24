@@ -49,7 +49,7 @@ const ListaEquipos = () => {
 
     return (
         <div className="p-6 max-w-7xl mx-auto">
-            <div className="overflow-x-auto bg-white shadow-md rounded-xl p-4">
+            <div className="overflow-x-auto w-full bg-white shadow-md rounded-xl p-4">
                 <div className="flex justify-between items-center mb-6">
                     <input
                         type="text"
@@ -92,7 +92,7 @@ const ListaEquipos = () => {
                         />
                     </div>
                 )}
-                <table className="w-full text-sm text-left border border-gray-200">
+                <table className="min-w-[2000px] w-full text-sm text-left border border-gray-200">
                     <thead className="bg-indigo-100">
                         <tr>
                             <th className="px-4 py-2 border">#</th>
@@ -145,7 +145,7 @@ const ListaEquipos = () => {
                                     <td className="px-4 py-2 border">
                                         {equipo.imagenRuta ? (
                                             <img
-                                                src={`https://inveq.guandy.com/${equipo.imagenRuta}`}
+                                                src={`https://localhost:7291/${equipo.imagenRuta}`}
                                                 alt="Equipo"
                                                 className="w-20 h-auto rounded"
                                             />
