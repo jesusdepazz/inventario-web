@@ -98,6 +98,9 @@ const ListaEquipos = () => {
                             <th className="px-4 py-2 border">#</th>
                             <th className="px-4 py-2 border">ID</th>
                             <th className="px-4 py-2 border">Codificación</th>
+                            <th className="px-4 py-2 border">Orden de compra</th>
+                            <th className="px-4 py-2 border">Factura</th>
+                            <th className="px-4 py-2 border">Proveedor</th>
                             <th className="px-4 py-2 border">Marca</th>
                             <th className="px-4 py-2 border">Modelo</th>
                             <th className="px-4 py-2 border">Serie</th>
@@ -145,7 +148,7 @@ const ListaEquipos = () => {
                                     <td className="px-4 py-2 border">
                                         {equipo.imagenRuta ? (
                                             <img
-                                                src={`https://localhost:7291/${equipo.imagenRuta}`}
+                                                src={`https://inveq.guandy.com/${equipo.imagenRuta}`}
                                                 alt="Equipo"
                                                 className="w-20 h-auto rounded"
                                             />
