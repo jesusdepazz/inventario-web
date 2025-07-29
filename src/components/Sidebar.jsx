@@ -18,6 +18,7 @@ import {
 export default function Sidebar() {
     const navigate = useNavigate();
     const [equiposOpen, setEquiposOpen] = useState(false);
+    const [InventarioOpen, setInventarioOpen] = useState(false);
     const [asignacionesOpen, setAsignacionesOpen] = useState(false);
     const [mantenimientosOpen, setMantenimientosOpen] = useState(false);
     const [formatosOpen, SetFormatosOpen] = useState(false);
@@ -66,6 +67,29 @@ export default function Sidebar() {
                                 <Link to="/equipos/eliminar" className="flex items-center gap-3">
                                     <FaTrash /> Eliminar
                                 </Link>
+                                <div>
+                                    <button
+                                        onClick={() => setInventarioOpen(!InventarioOpen)}
+                                        className="flex items-center justify-between w-full font-bold text-lg hover:text-blue-300 transition-transform duration-300 ease-in-out"
+                                    >
+                                        <span className="flex items-center gap-3">
+                                            <FaClipboardList /> Toma fisica
+                                        </span>
+                                        {InventarioOpen ? (
+                                            <FaChevronUp className="text-xs" />
+                                        ) : (
+                                            <FaChevronDown className="text-xs" />
+                                        )}
+                                    </button>
+                                    {InventarioOpen && (
+                                        <div className="ml-8 mt-1 flex flex-col gap-1 text-base font-medium">
+                                            <Link to="/" className="flex items-center gap-3">
+                                                <FaUpload />
+                                                Corte de firmas
+                                            </Link>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         )}
                     </div>
@@ -162,6 +186,18 @@ export default function Sidebar() {
                             <div className="ml-8 flex flex-col gap-1 text-base font-medium pt-1">
                                 <Link to="/formatos/hojaderesponsabilidad" className="flex items-center gap-3">
                                     <FaUpload /> Hoja de responsabilidad
+                                </Link>
+                                <Link to="/formatos/hojaderesponsabilidad" className="flex items-center gap-3">
+                                    <FaUpload /> Pase de salida con retorno
+                                </Link>
+                                <Link to="/formatos/bajaAtivos" className="flex items-center gap-3">
+                                    <FaUpload /> Bajas
+                                </Link>
+                                <Link to="/formatos/hojaderesponsabilidad" className="flex items-center gap-3">
+                                    <FaUpload /> Solvencias
+                                </Link>
+                                <Link to="/formatos/hojaderesponsabilidad" className="flex items-center gap-3">
+                                    <FaUpload /> Traslado
                                 </Link>
                             </div>
                         )}

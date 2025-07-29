@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FiFilter } from "react-icons/fi";
 
 const ListaEquipos = () => {
-    const navigate = useNavigate();
     const [equipos, setEquipos] = useState([]);
     const [filtros, setFiltros] = useState({
         codificacion: "",
@@ -130,9 +128,9 @@ const ListaEquipos = () => {
                                     <td className="px-4 py-2 border">{equipo.ubicacion}</td>
                                     <td className="px-4 py-2 border">
                                         {equipo.asignaciones && equipo.asignaciones.length > 0 ? (
-                                            equipo.asignaciones.map((nombre, idx) => (
-                                                <div key={idx} className="font-semibold">
-                                                    {idx + 1}. {nombre}
+                                            equipo.asignaciones.map((asignacion, idx) => (
+                                                <div key={idx} className="font-semibold mb-1">
+                                                    {idx + 1}. <span className="text-blue-700">{asignacion.codigoEmpleado}</span> - {asignacion.nombreEmpleado} <span className="text-gray-600 italic">({asignacion.puesto})</span>
                                                 </div>
                                             ))
                                         ) : (
