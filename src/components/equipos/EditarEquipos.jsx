@@ -15,14 +15,14 @@ const EditarEquipo = () => {
 
     const buscarEquipoPorId = async () => {
         try {
-            const response = await axios.get(`https://localhost:7291/api/Equipos/${id}`, {
+            const response = await axios.get(`https://inveq.guandy.com/api/Equipos/${id}`, {
                 withCredentials: true,
             });
 
             if (response.data) {
                 setEquipo(response.data);
                 if (response.data.imagenRuta)
-                    setImagenPreview(`https://localhost:7291/api/Equipos/${response.data.imagenRuta}`);
+                    setImagenPreview(`https://inveq.guandy.com/api/Equipos/${response.data.imagenRuta}`);
                 setModoEdicion(true);
             } else {
                 toast.warn("Equipo no encontrado con ese ID");
@@ -35,7 +35,7 @@ const EditarEquipo = () => {
     useEffect(() => {
         const fetchUbicaciones = async () => {
             try {
-                const response = await axios.get("https://localhost:7291/api/Ubicaciones", {
+                const response = await axios.get("https://inveq.guandy.com/api/Ubicaciones", {
                     withCredentials: true,
                 });
                 setUbicaciones(response.data);
@@ -84,7 +84,7 @@ const EditarEquipo = () => {
                 formData.append("Imagen", nuevaImagen);
             }
 
-            await axios.put(`https://localhost:7291/api/Equipos/${equipo.id}`, formData, {
+            await axios.put(`https://inveq.guandy.com/api/Equipos/${equipo.id}`, formData, {
                 withCredentials: true,
                 headers: { "Content-Type": "multipart/form-data" },
             });

@@ -8,7 +8,7 @@ const ListaSolicitud = () => {
 
     const cargarSolicitudes = async () => {
         try {
-            const res = await axios.get("https://localhost:7291/api/solicitudes");
+            const res = await axios.get("https://inveq.guandy.com/api/solicitudes");
             setSolicitudes(res.data);
         } catch (err) {
             console.error("Error al cargar solicitudes", err);
@@ -18,7 +18,7 @@ const ListaSolicitud = () => {
 
     const actualizarEstado = async (id, nuevoEstado) => {
         try {
-            await axios.put(`https://localhost:7291/api/solicitudes/${id}/estado`, {
+            await axios.put(`https://inveq.guandy.com/api/solicitudes/${id}/estado`, {
                 estado: nuevoEstado,
             });
             toast.success(`Solicitud ${nuevoEstado.toLowerCase()} correctamente`);
@@ -31,7 +31,7 @@ const ListaSolicitud = () => {
 
     const cargarUbicaciones = async () => {
         try {
-            const res = await axios.get("https://localhost:7291/api/ubicaciones");
+            const res = await axios.get("https://inveq.guandy.com/api/ubicaciones");
             const mapa = {};
             res.data.forEach((u) => {
                 mapa[u.id] = u.nombre;

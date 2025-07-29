@@ -8,7 +8,7 @@ const EliminarSolicitud = () => {
 
   const cargarSolicitudes = async () => {
     try {
-      const res = await axios.get("https://localhost:7291/api/solicitudes");
+      const res = await axios.get("https://inveq.guandy.com/api/solicitudes");
       setSolicitudes(res.data);
     } catch (err) {
       console.error("Error al cargar solicitudes", err);
@@ -20,7 +20,7 @@ const EliminarSolicitud = () => {
     if (!window.confirm("¿Estás seguro de eliminar esta solicitud?")) return;
 
     try {
-      await axios.delete(`https://localhost:7291/api/solicitudes/${id}`);
+      await axios.delete(`https://inveq.guandy.com/api/solicitudes/${id}`);
       toast.success("Solicitud eliminada correctamente");
       cargarSolicitudes();
     } catch (err) {
@@ -31,7 +31,7 @@ const EliminarSolicitud = () => {
 
   const cargarUbicaciones = async () => {
     try {
-      const res = await axios.get("https://localhost:7291/api/ubicaciones");
+      const res = await axios.get("https://inveq.guandy.com/api/ubicaciones");
       const mapa = {};
       res.data.forEach((u) => {
         mapa[u.id] = u.nombre;

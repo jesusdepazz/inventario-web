@@ -22,7 +22,7 @@ const EliminarEquipos = () => {
 
     const cargarEquipo = async () => {
         try {
-            const res = await axios.get("https://localhost:7291/api/equipos");
+            const res = await axios.get("https://inveq.guandy.com/api/equipos");
             setEquipo(res.data);
         } catch (err) {
             console.error("Error al cargar equipos", err);
@@ -34,7 +34,7 @@ const EliminarEquipos = () => {
         if (!window.confirm("¿Estás seguro de eliminar este equipo?")) return;
 
         try {
-            await axios.delete(`https://localhost:7291/api/equipos/${id}`);
+            await axios.delete(`https://inveq.guandy.com/api/equipos/${id}`);
             toast.success("Equipo eliminada correctamente");
             cargarEquipo();
         } catch (err) {
@@ -145,7 +145,7 @@ const EliminarEquipos = () => {
                                     <td className="px-4 py-2 border">
                                         {equipo.imagenRuta ? (
                                             <img
-                                                src={`https://localhost:7291/${equipo.imagenRuta}`}
+                                                src={`https://inveq.guandy.com/${equipo.imagenRuta}`}
                                                 alt="Equipo"
                                                 className="w-20 h-auto rounded"
                                             />

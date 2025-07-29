@@ -30,7 +30,7 @@ const CrearEquipo = () => {
     useEffect(() => {
         const cargarUbicaciones = async () => {
             try {
-                const res = await axios.get("https://localhost:7291/api/Ubicaciones");
+                const res = await axios.get("https://inveq.guandy.com/api/Ubicaciones");
                 setUbicaciones(res.data.map((u) => u.nombre));
             } catch (error) {
                 console.error("Error al cargar ubicaciones:", error);
@@ -75,7 +75,7 @@ const CrearEquipo = () => {
         }
 
         try {
-            await axios.post("https://localhost:7291/api/Equipos", formData, {
+            await axios.post("https://inveq.guandy.com/api/Equipos", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },

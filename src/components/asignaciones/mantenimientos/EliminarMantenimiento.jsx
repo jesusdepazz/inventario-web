@@ -7,7 +7,7 @@ const EliminarMantenimientos = () => {
 
     const CargarMantenimiento = async () => {
         try {
-            const res = await axios.get("https://localhost:7291/api/Mantenimientos", {
+            const res = await axios.get("https://inveq.guandy.com/api/Mantenimientos", {
                 withCredentials: true,
             });
             setMantenimientos(res.data);
@@ -21,7 +21,7 @@ const EliminarMantenimientos = () => {
     if (!window.confirm("¿Estás seguro de eliminar esta solicitud?")) return;
 
     try {
-      await axios.delete(`https://localhost:7291/api/Mantenimientos/${id}`);
+      await axios.delete(`https://inveq.guandy.com/api/Mantenimientos/${id}`);
       toast.success("Mantenimiento eliminado correctamente");
       CargarMantenimiento();
     } catch (err) {
