@@ -7,7 +7,7 @@ export default function EliminarAsignacion() {
 
     const obtenerAsignaciones = async () => {
         try {
-            const res = await axios.get("https://inveq.guandy.com/api/asignaciones", {
+            const res = await axios.get("https://localhost:7291/api/asignaciones", {
                 withCredentials: true,
             });
             setAsignaciones(res.data);
@@ -26,9 +26,9 @@ export default function EliminarAsignacion() {
         if (!window.confirm("¿Estás seguro de eliminar esta asignacion?")) return;
 
         try {
-            await axios.delete(`https://inveq.guandy.com/api/Asignaciones/${id}`);
+            await axios.delete(`https://localhost:7291/api/Asignaciones/${id}`);
             toast.success("Asignacion eliminado correctamente");
-            obtenerAsignaciones();
+            CargarMantenimiento();
         } catch (err) {
             console.error("Error al eliminar asignacion", err);
             toast.error("No se pudo eliminar la asignacion");

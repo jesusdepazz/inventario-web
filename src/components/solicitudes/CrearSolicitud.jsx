@@ -14,6 +14,7 @@ const CrearSolicitud = () => {
     const [ubicaciones, setUbicaciones] = useState([]);
     const [ubicacion, setUbicacion] = useState("");
     const [jefeInmediato, setJefeInmediato] = useState("");
+    const [tipoSolicitud, setTipoSolicitud] = useState("");
 
     const [equiposDisponibles, setEquiposDisponibles] = useState([]);
     const [equipoSeleccionado, setEquipoSeleccionado] = useState({
@@ -26,11 +27,11 @@ const CrearSolicitud = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        axios.get("https://inveq.guandy.com/api/ubicaciones")
+        axios.get("https://localhost:7291/api/ubicaciones")
             .then(res => setUbicaciones(res.data))
             .catch(err => console.error("Error al cargar ubicaciones:", err));
 
-        axios.get("https://inveq.guandy.com/api/equipos", { withCredentials: true })
+        axios.get("https://localhost:7291/api/equipos", { withCredentials: true })
             .then(res => {
                 const disponibles = res.data.filter(e => !e.asignaciones || e.asignaciones.length === 0);
                 setEquiposDisponibles(disponibles);
@@ -40,7 +41,7 @@ const CrearSolicitud = () => {
 
     const buscarEmpleado = async () => {
         try {
-            const res = await axios.get(`https://inveq.guandy.com/api/empleados/${empleado.codigo}`);
+            const res = await axios.get(`https://localhost:7291/api/empleados/${empleado.codigo}`);
             const data = res.data;
             setEmpleado({
                 ...empleado,
@@ -73,41 +74,49 @@ const CrearSolicitud = () => {
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (!empleado.nombre || !ubicacion || !equipoSeleccionado.codificacion) {
-            toast.warn("Por favor completa todos los campos requeridos");
-            return;
-        }
+    e.preventDefault();
+    if (!empleado.nombre || !ubicacion || !equipoSeleccionado.codificacion) {
+        toast.warn("Por favor completa todos los campos requeridos");
+        return;
+    }
 
-        const solicitud = {
-            codigoEmpleado: empleado.codigo,
-            nombreEmpleado: empleado.nombre,
-            puesto: empleado.puesto,
-            departamento: empleado.departamento,
-            ubicacion,
-            jefeInmediato,
-            codificacionEquipo: equipoSeleccionado.codificacion,
-            marca: equipoSeleccionado.marca,
-            modelo: equipoSeleccionado.modelo,
-            serie: equipoSeleccionado.serie
-        };
-
-        try {
-            await axios.post("https://inveq.guandy.com/api/solicitudes", solicitud);
-            toast.success("Solicitud creada exitosamente");
-            navigate("/solicitudesDashboard");
-        } catch (err) {
-            console.error(err);
-            toast.error("Error al crear la solicitud");
-        }
+    const solicitud = {
+        codigoEmpleado: empleado.codigo,
+        nombreEmpleado: empleado.nombre,
+        puesto: empleado.puesto,
+        departamento: empleado.departamento,
+        ubicacion,
+        jefeInmediato,
+        codificacionEquipo: equipoSeleccionado.codificacion,
+        marca: equipoSeleccionado.marca,
+        modelo: equipoSeleccionado.modelo,
+        serie: equipoSeleccionado.serie,
+        tipoSolicitud
     };
+
+    try {
+        const res = await axios.post("https://localhost:7291/api/solicitudes", solicitud);
+        toast.success(`Solicitud creada exitosamente con correlativo ${res.data.correlativo}`);
+        navigate("/solicitudesDashboard");
+    } catch (err) {
+    console.error("Error backend:", err.response?.data || err.message);
+    if (err.response?.data?.errors) {
+        Object.values(err.response.data.errors).forEach(msgs => {
+            msgs.forEach(msg => toast.error(msg));
+        });
+    } else {
+        toast.error("Error al crear la solicitud");
+    }
+}
+};
+
 
     return (
         <div className="flex justify-center px-4 py-10 overflow-y-auto">
             <div className="bg-white p-6 rounded-xl shadow-md w-full max-w-6xl">
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <section>
-                        <h3 className="text-xl font-semibold mb-4 border-b border-indigo-300 pb-2">Datos del Empleado</h3>
+                        <h3 className="text-xl font-semibold mb-4 border-b border-indigo-300 pb-2">Empleado</h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div>
                                 <label htmlFor="codigo" className="mb-1 font-medium text-gray-700">Código de empleado</label>
@@ -197,6 +206,27 @@ const CrearSolicitud = () => {
                                 <label className="mb-1 font-medium text-gray-700">Serie</label>
                                 <div className="info-box">{equipoSeleccionado.serie || "—"}</div>
                             </div>
+                        </div>
+                    </section>
+                    <section>
+                        <h3 className="text-xl font-semibold mb-4 border-b border-indigo-300 pb-2">Detalles de solicitud</h3>
+                        <div className="mb-4">
+                            <label className="mb-1 block font-medium text-gray-700">Tipo de solicitud</label>
+                            <select
+                                name="tipoSolicitud"
+                                value={tipoSolicitud}
+                                onChange={(e) => setTipoSolicitud(e.target.value)}
+                                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                                <option value="">Seleccione una opción</option>
+                                <option value="Solicitud de pase">Solicitud de pase</option>
+                                <option value="Solicitud de traslado">Solicitud de traslado</option>
+                                <option value="Solicitud de baja">Solicitud de baja</option>
+                                <option value="Solicitud de ingreso a inventario">Solicitud de ingreso a inventario</option>
+                                <option value="Solicitud de solvencia">Solicitud de solvencia</option>
+                                <option value="Bajas">Bajas</option>
+                                <option value="Solicitud de actualizacion de hoja de vida">Solicitud de actualizacion de hoja de vida</option>
+                            </select>
                         </div>
                     </section>
 

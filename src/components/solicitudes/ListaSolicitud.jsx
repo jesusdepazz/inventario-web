@@ -8,7 +8,7 @@ const ListaSolicitud = () => {
 
     const cargarSolicitudes = async () => {
         try {
-            const res = await axios.get("https://inveq.guandy.com/api/solicitudes");
+            const res = await axios.get("https://localhost:7291/api/solicitudes");
             setSolicitudes(res.data);
         } catch (err) {
             console.error("Error al cargar solicitudes", err);
@@ -18,7 +18,7 @@ const ListaSolicitud = () => {
 
     const actualizarEstado = async (id, nuevoEstado) => {
         try {
-            await axios.put(`https://inveq.guandy.com/api/solicitudes/${id}/estado`, {
+            await axios.put(`https://localhost:7291/api/solicitudes/${id}/estado`, {
                 estado: nuevoEstado,
             });
             toast.success(`Solicitud ${nuevoEstado.toLowerCase()} correctamente`);
@@ -31,7 +31,7 @@ const ListaSolicitud = () => {
 
     const cargarUbicaciones = async () => {
         try {
-            const res = await axios.get("https://inveq.guandy.com/api/ubicaciones");
+            const res = await axios.get("https://localhost:7291/api/ubicaciones");
             const mapa = {};
             res.data.forEach((u) => {
                 mapa[u.id] = u.nombre;
@@ -54,6 +54,8 @@ const ListaSolicitud = () => {
                 <table className="w-full text-sm text-left border border-gray-200">
                     <thead className="bg-indigo-100">
                         <tr>
+                            <th className="px-4 py-2 border">Correlativo</th>
+                            <th className="px-4 py-2 border">Tipo de solicitud</th>
                             <th className="px-4 py-2 border">Código</th>
                             <th className="px-4 py-2 border">Nombre</th>
                             <th className="px-4 py-2 border">Equipo</th>
@@ -66,6 +68,8 @@ const ListaSolicitud = () => {
                     <tbody>
                         {solicitudes.map((s) => (
                             <tr key={s.id} className="border-t">
+                                <td className="px-4 py-2 border">{s.correlativo || "—"}</td>
+                                <td className="px-4 py-2 border">{s.tipoSolicitud}</td>
                                 <td className="px-4 py-2 border">{s.codigoEmpleado}</td>
                                 <td className="px-4 py-2 border">{s.nombreEmpleado}</td>
                                 <td className="px-4 py-2 border">{s.codificacionEquipo}</td>
@@ -110,7 +114,7 @@ const ListaSolicitud = () => {
                         ))}
                         {solicitudes.length === 0 && (
                             <tr>
-                                <td colSpan="7" className="text-center text-gray-500 py-6">
+                                <td colSpan="9" className="text-center text-gray-500 py-6">
                                     No hay solicitudes registradas
                                 </td>
                             </tr>

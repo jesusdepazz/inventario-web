@@ -8,7 +8,7 @@ const ListaMantenimientos = () => {
 
     useEffect(() => {
         axios
-            .get("https://inveq.guandy.com/api/Mantenimientos", {
+            .get("https://localhost:7291/api/Mantenimientos", {
                 withCredentials: true,
             })
             .then((res) => setMantenimientos(res.data))

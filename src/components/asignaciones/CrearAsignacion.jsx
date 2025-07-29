@@ -27,7 +27,7 @@ export default function CrearAsignacion() {
         }
 
         try {
-            const response = await fetch(`https://inveq.guandy.com/api/empleados/${empleado.codigo}`);
+            const response = await fetch(`https://localhost:7291/api/empleados/${empleado.codigo}`);
 
             if (!response.ok) {
                 throw new Error("Empleado no encontrado");
@@ -49,7 +49,7 @@ export default function CrearAsignacion() {
 
     const buscarEquipo = async () => {
         try {
-            const response = await fetch(`https://inveq.guandy.com/api/equipos/por-codificacion/${codificacion}`);
+            const response = await fetch(`https://localhost:7291/api/equipos/por-codificacion/${codificacion}`);
             if (!response.ok) throw new Error("Equipo no encontrado");
             const data = await response.json();
             setEquipo(data);
@@ -83,7 +83,7 @@ export default function CrearAsignacion() {
         };
 
         try {
-            const response = await fetch("https://inveq.guandy.com/api/asignaciones", {
+            const response = await fetch("https://localhost:7291/api/asignaciones", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
