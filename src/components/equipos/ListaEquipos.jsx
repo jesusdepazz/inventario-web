@@ -120,6 +120,9 @@ const ListaEquipos = () => {
                                     <td className="px-4 py-2 border">{index + 1}</td>
                                     <td className="px-4 py-2 border">{equipo.id}</td>
                                     <td className="px-4 py-2 border">{equipo.codificacion}</td>
+                                    <td className="px-4 py-2 border">{equipo.orderCompra}</td>
+                                    <td className="px-4 py-2 border">{equipo.factura}</td>
+                                    <td className="px-4 py-2 border">{equipo.proveedor}</td>
                                     <td className="px-4 py-2 border">{equipo.marca}</td>
                                     <td className="px-4 py-2 border">{equipo.modelo}</td>
                                     <td className="px-4 py-2 border">{equipo.serie}</td>

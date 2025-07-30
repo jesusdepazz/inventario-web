@@ -7,6 +7,6 @@ export const msalConfig = {
 };
 
 export const loginRequest = {
-  scopes: ["api://20b922c0-1643-4066-b594-f711a70e05a0/access_as_user"], 
+  scopes: ["api://20b922c0-1643-4066-b594-f711a70e05a0/access_as_user"],
+  prompt: "select_account",
 };
-

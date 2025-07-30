@@ -28,7 +28,6 @@ export default function EliminarAsignacion() {
         try {
             await axios.delete(`https://inveq.guandy.com/api/Asignaciones/${id}`);
             toast.success("Asignacion eliminado correctamente");
-            CargarMantenimiento();
         } catch (err) {
             console.error("Error al eliminar asignacion", err);
             toast.error("No se pudo eliminar la asignacion");
