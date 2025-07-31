@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import MantenimientosService from "../services/MantenimientosService";
+import MantenimientosService from "../../../services/MantenimientosServices";
 
 const CrearMantenimiento = () => {
   const [form, setForm] = useState({
