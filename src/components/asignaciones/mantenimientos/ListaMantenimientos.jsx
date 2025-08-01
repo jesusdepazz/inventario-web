@@ -1,18 +1,22 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import MantenimientosService from "../../../services/MantenimientosServices";
 
 const ListaMantenimientos = () => {
     const [mantenimientos, setMantenimientos] = useState([]);
     const navigate = useNavigate();
 
+    const cargarMantenimientos = async () => {
+        try {
+            const res = await MantenimientosService.obtenerTodos();
+            setMantenimientos(res.data);
+        } catch (error) {
+            console.error("Error al obtener mantenimientos:", error);
+        }
+    };
+
     useEffect(() => {
-        axios
-            .get("https://localhost:7291/api/Mantenimientos", {
-                withCredentials: true,
-            })
-            .then((res) => setMantenimientos(res.data))
-            .catch((err) => console.error("Error al obtener mantenimientos:", err));
+        cargarMantenimientos();
     }, []);
 
     return (

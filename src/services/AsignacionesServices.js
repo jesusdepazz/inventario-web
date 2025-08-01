@@ -1,4 +1,4 @@
-import apiClient from "./ApiClientpiClient";
+import apiClient from "./ApiClient";
 
 const AsignacionesService = {
   crear: (asignacion) => apiClient.post("/asignaciones", asignacion),

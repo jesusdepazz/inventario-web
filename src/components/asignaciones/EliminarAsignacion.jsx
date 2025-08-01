@@ -7,9 +7,7 @@ export default function EliminarAsignacion() {
 
     const obtenerAsignaciones = async () => {
         try {
-            const res = await axios.get("https://localhost:7291/api/asignaciones", {
-                withCredentials: true,
-            });
+            const res = await AsignacionesService.obtenerTodas();
             setAsignaciones(res.data);
         } catch (error) {
             console.error("Error al obtener asignaciones:", error);
@@ -17,23 +15,22 @@ export default function EliminarAsignacion() {
         }
     };
 
+    const EliminarAsignacion = async (id) => {
+        if (!window.confirm("¿Estás seguro de eliminar esta asignación?")) return;
+
+        try {
+            await AsignacionesService.eliminar(id);
+            toast.success("Asignación eliminada correctamente");
+            await obtenerAsignaciones();
+        } catch (err) {
+            console.error("Error al eliminar asignación", err);
+            toast.error("No se pudo eliminar la asignación");
+        }
+    };
+
     useEffect(() => {
         obtenerAsignaciones();
     }, []);
-
-
-    const EliminarAsignacion = async (id) => {
-        if (!window.confirm("¿Estás seguro de eliminar esta asignacion?")) return;
-
-        try {
-            await axios.delete(`https://localhost:7291/api/Asignaciones/${id}`);
-            toast.success("Asignacion eliminado correctamente");
-            CargarMantenimiento();
-        } catch (err) {
-            console.error("Error al eliminar asignacion", err);
-            toast.error("No se pudo eliminar la asignacion");
-        }
-    };
 
     return (
         <div className="p-6 max-w-7xl mx-auto">

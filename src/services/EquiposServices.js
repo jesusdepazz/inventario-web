@@ -1,7 +1,7 @@
 import apiClient from "./ApiClient";
 
 const EquiposService = {
-  obtenerTodos: () => apiClient.get("/equipos"),
+  obtenerEquipos: () => apiClient.get("/equipos"),
 
   obtenerPorId: (id) => apiClient.get(`/equipos/${id}`),
 

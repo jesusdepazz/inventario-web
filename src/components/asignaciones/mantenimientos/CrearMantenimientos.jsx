@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import MantenimientosService from "../../../services/MantenimientosServices";
+import EquiposService from "../../../services/EquiposServices";
 
 const CrearMantenimiento = () => {
   const [form, setForm] = useState({
@@ -23,7 +24,7 @@ const CrearMantenimiento = () => {
 
   const handleBuscarEquipo = async () => {
     try {
-      const res = await MantenimientosService.obtenerEquipos();
+      const res = await EquiposService.obtenerEquipos();
       const encontrados = res.data.filter((e) => e.codificacion === form.codificacion);
 
       if (encontrados.length > 0) {
@@ -57,7 +58,7 @@ const CrearMantenimiento = () => {
     }
 
     try {
-      await MantenimientosService.crearMantenimiento(form);
+      await MantenimientosService.crear(form);
       toast.success("✅ Mantenimiento registrado correctamente");
       navigate("/mantenimientosDashboard");
     } catch (error) {

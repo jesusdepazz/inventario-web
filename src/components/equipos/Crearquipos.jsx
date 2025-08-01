@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import UbicacionesService from "../../services/UbicaionesServices";
+import EquiposService from "../../services/EquiposServices";
 
 const CrearEquipo = () => {
     const [form, setForm] = useState({
@@ -30,7 +31,7 @@ const CrearEquipo = () => {
     useEffect(() => {
         const cargarUbicaciones = async () => {
             try {
-                const res = await axios.get("https://localhost:7291/api/Ubicaciones");
+                const res = await UbicacionesService.obtenerTodas();
                 setUbicaciones(res.data.map((u) => u.nombre));
             } catch (error) {
                 console.error("Error al cargar ubicaciones:", error);
@@ -69,17 +70,12 @@ const CrearEquipo = () => {
         }
 
         const formData = new FormData();
-
         for (const key in form) {
             formData.append(key, form[key] ?? "");
         }
 
         try {
-            await axios.post("https://localhost:7291/api/Equipos", formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            });
+            await EquiposService.crear(formData);
 
             toast.success("Equipo creado exitosamente");
             navigate("/dashboard");

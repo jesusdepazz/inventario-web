@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import EmpleadosService from "../../services/EmpleadosServices";
+import EquiposService from "../../services/EquiposServices";
+import AsignacionesService from "../../services/AsignacionesServices";
 
 export default function CrearAsignacion() {
     const navigate = useNavigate();
@@ -27,19 +30,14 @@ export default function CrearAsignacion() {
         }
 
         try {
-            const response = await fetch(`https://localhost:7291/api/empleados/${empleado.codigo}`);
-
-            if (!response.ok) {
-                throw new Error("Empleado no encontrado");
-            }
-
-            const data = await response.json();
+            const response = await EmpleadosService.obtenerPorCodigo(empleado.codigo);
+            const data = response.data;
 
             setEmpleado((prev) => ({
                 ...prev,
                 nombre: data.nombre,
                 puesto: data.puesto,
-                departamento: data.departamento
+                departamento: data.departamento,
             }));
         } catch (error) {
             console.error("Error al buscar empleado:", error.message);
@@ -49,9 +47,8 @@ export default function CrearAsignacion() {
 
     const buscarEquipo = async () => {
         try {
-            const response = await fetch(`https://localhost:7291/api/equipos/por-codificacion/${codificacion}`);
-            if (!response.ok) throw new Error("Equipo no encontrado");
-            const data = await response.json();
+            const response = await EquiposService.obtenerPorCodificacion(codificacion);
+            const data = response.data;
             setEquipo(data);
         } catch (error) {
             console.error("Error al buscar equipo:", error.message);
@@ -83,20 +80,11 @@ export default function CrearAsignacion() {
         };
 
         try {
-            const response = await fetch("https://localhost:7291/api/asignaciones", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(asignacion)
-            });
-
-            if (!response.ok) throw new Error("Error al guardar asignación");
-
+            await AsignacionesService.crear(asignacion);
             alert("Asignación guardada correctamente");
             navigate("/dashboard");
         } catch (error) {
-            console.error(error);
+            console.error("Error al guardar asignación:", error.message);
             alert("Hubo un error al guardar la asignación");
         }
     };
