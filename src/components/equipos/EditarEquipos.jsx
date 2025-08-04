@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import EquiposServices from "../../services/EquiposServices";
+import UbicacionesService from "../../services/UbicaionesServices";
 
 const EditarEquipo = () => {
     const [id, setId] = useState("");
@@ -15,14 +17,12 @@ const EditarEquipo = () => {
 
     const buscarEquipoPorId = async () => {
         try {
-            const response = await axios.get(`https://localhost:7291/api/Equipos/${id}`, {
-                withCredentials: true,
-            });
+            const response = await EquiposServices.obtenerPorId(id);
 
             if (response.data) {
                 setEquipo(response.data);
                 if (response.data.imagenRuta)
-                    setImagenPreview(`https://localhost:7291/api/Equipos/${response.data.imagenRuta}`);
+                    setImagenPreview(`${import.meta.env.VITE_API_URL}/equipos/${response.data.imagenRuta}`);
                 setModoEdicion(true);
             } else {
                 toast.warn("Equipo no encontrado con ese ID");
@@ -35,9 +35,7 @@ const EditarEquipo = () => {
     useEffect(() => {
         const fetchUbicaciones = async () => {
             try {
-                const response = await axios.get("https://localhost:7291/api/Ubicaciones", {
-                    withCredentials: true,
-                });
+                const response = await UbicacionesService.obtenerTodas();
                 setUbicaciones(response.data);
             } catch (error) {
                 toast.error("Error al cargar ubicaciones");
@@ -81,13 +79,16 @@ const EditarEquipo = () => {
             formData.append("FechaIngreso", equipo.fechaIngreso ? equipo.fechaIngreso.slice(0, 10) : "");
 
             if (nuevaImagen) {
-                formData.append("Imagen", nuevaImagen);
-            }
+    formData.append("Imagen", nuevaImagen);
+}
 
-            await axios.put(`https://localhost:7291/api/Equipos/${equipo.id}`, formData, {
-                withCredentials: true,
-                headers: { "Content-Type": "multipart/form-data" },
-            });
+try {
+    await EquiposService.actualizarConImagen(equipo.id, formData);
+    toast.success("Equipo actualizado correctamente");
+} catch (err) {
+    console.error("Error al actualizar equipo", err);
+    toast.error("No se pudo actualizar el equipo");
+}
 
             toast.success("Equipo actualizado correctamente");
         } catch (error) {

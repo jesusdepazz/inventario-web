@@ -2,6 +2,10 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import UbicacionesService from "../../services/UbicaionesServices";
+import EquiposService from "../../services/EquiposServices";
+import EmpleadosService from "../../services/EmpleadosServices";
+import SolicitudesService from "../../services/SolicitudesServices";
 
 const CrearSolicitud = () => {
     const [empleado, setEmpleado] = useState({
@@ -27,22 +31,27 @@ const CrearSolicitud = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        axios.get("https://localhost:7291/api/ubicaciones")
-            .then(res => setUbicaciones(res.data))
-            .catch(err => console.error("Error al cargar ubicaciones:", err));
+        const cargarDatos = async () => {
+            try {
+                const resUbicaciones = await UbicacionesService.obtenerTodas();
+                setUbicaciones(resUbicaciones.data);
 
-        axios.get("https://localhost:7291/api/equipos", { withCredentials: true })
-            .then(res => {
-                const disponibles = res.data.filter(e => !e.asignaciones || e.asignaciones.length === 0);
+                const resEquipos = await EquiposService.obtenerEquipos();
+                const disponibles = resEquipos.data.filter(e => !e.asignaciones || e.asignaciones.length === 0);
                 setEquiposDisponibles(disponibles);
-            })
-            .catch(err => console.error("Error al cargar equipos:", err));
+            } catch (err) {
+                console.error("Error al cargar datos:", err);
+            }
+        };
+
+        cargarDatos();
     }, []);
 
     const buscarEmpleado = async () => {
         try {
-            const res = await axios.get(`https://localhost:7291/api/empleados/${empleado.codigo}`);
+            const res = await EmpleadosService.obtenerPorCodigo(empleado.codigo);
             const data = res.data;
+
             setEmpleado({
                 ...empleado,
                 nombre: data.nombre,
@@ -74,42 +83,42 @@ const CrearSolicitud = () => {
     };
 
     const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!empleado.nombre || !ubicacion || !equipoSeleccionado.codificacion) {
-        toast.warn("Por favor completa todos los campos requeridos");
-        return;
-    }
+        e.preventDefault();
 
-    const solicitud = {
-        codigoEmpleado: empleado.codigo,
-        nombreEmpleado: empleado.nombre,
-        puesto: empleado.puesto,
-        departamento: empleado.departamento,
-        ubicacion,
-        jefeInmediato,
-        codificacionEquipo: equipoSeleccionado.codificacion,
-        marca: equipoSeleccionado.marca,
-        modelo: equipoSeleccionado.modelo,
-        serie: equipoSeleccionado.serie,
-        tipoSolicitud
+        if (!empleado.nombre || !ubicacion || !equipoSeleccionado.codificacion) {
+            toast.warn("Por favor completa todos los campos requeridos");
+            return;
+        }
+
+        const solicitud = {
+            codigoEmpleado: empleado.codigo,
+            nombreEmpleado: empleado.nombre,
+            puesto: empleado.puesto,
+            departamento: empleado.departamento,
+            ubicacion,
+            jefeInmediato,
+            codificacionEquipo: equipoSeleccionado.codificacion,
+            marca: equipoSeleccionado.marca,
+            modelo: equipoSeleccionado.modelo,
+            serie: equipoSeleccionado.serie,
+            tipoSolicitud
+        };
+
+        try {
+            const res = await SolicitudesService.crear(solicitud);
+            toast.success(`Solicitud creada exitosamente con correlativo ${res.data.correlativo}`);
+            navigate("/solicitudesDashboard");
+        } catch (err) {
+            console.error("Error backend:", err.response?.data || err.message);
+            if (err.response?.data?.errors) {
+                Object.values(err.response.data.errors).forEach((msgs) => {
+                    msgs.forEach((msg) => toast.error(msg));
+                });
+            } else {
+                toast.error("Error al crear la solicitud");
+            }
+        }
     };
-
-    try {
-        const res = await axios.post("https://localhost:7291/api/solicitudes", solicitud);
-        toast.success(`Solicitud creada exitosamente con correlativo ${res.data.correlativo}`);
-        navigate("/solicitudesDashboard");
-    } catch (err) {
-    console.error("Error backend:", err.response?.data || err.message);
-    if (err.response?.data?.errors) {
-        Object.values(err.response.data.errors).forEach(msgs => {
-            msgs.forEach(msg => toast.error(msg));
-        });
-    } else {
-        toast.error("Error al crear la solicitud");
-    }
-}
-};
-
 
     return (
         <div className="flex justify-center px-4 py-10 overflow-y-auto">

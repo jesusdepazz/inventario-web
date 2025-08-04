@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { FiFilter } from "react-icons/fi";
+import EquiposService from "../../services/EquiposServices";
 
 const ListaEquipos = () => {
     const [equipos, setEquipos] = useState([]);
@@ -20,13 +20,17 @@ const ListaEquipos = () => {
     };
 
     useEffect(() => {
-        axios
-            .get("https://localhost:7291/api/Equipos", {
-                withCredentials: true,
-            })
-            .then((res) => setEquipos(res.data))
-            .catch((err) => console.error("Error al obtener equipos:", err));
-    }, []);
+    const cargarEquipos = async () => {
+        try {
+            const res = await EquiposService.obtenerEquipos();
+            setEquipos(res.data);
+        } catch (err) {
+            console.error("Error al obtener equipos:", err);
+        }
+    };
+
+    cargarEquipos();
+}, []);
 
     const handleFiltroChange = (e) => {
         const { name, value } = e.target;

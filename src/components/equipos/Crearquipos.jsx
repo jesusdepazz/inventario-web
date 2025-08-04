@@ -360,7 +360,6 @@ const CrearEquipo = () => {
                                     className="input-field"
                                 />
                             </div>
-
                             <div className="flex flex-col">
                                 <label htmlFor="ubicacion" className="mb-1 font-medium text-gray-700">
                                     Ubicación <span className="text-red-500">*</span>
@@ -381,7 +380,6 @@ const CrearEquipo = () => {
                                     ))}
                                 </datalist>
                             </div>
-
                             <div className="flex flex-col">
                                 <label
                                     htmlFor="fechaIngreso"
