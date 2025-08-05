@@ -26,7 +26,7 @@ export default function Login() {
       localStorage.setItem("email", account.username);
       localStorage.setItem("name", account.name);
 
-      const apiResponse = await fetch("https://inveq.guandy.com/api/auth/token", {
+      const apiResponse = await fetch("https://inveq.guandy.com/api/Auth/token", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${accessToken}`,
