@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { FiFilter } from "react-icons/fi";
 import { toast } from "react-toastify";
 import EquiposService from "../../services/EquiposServices";
@@ -146,7 +145,7 @@ const EliminarEquipos = () => {
                                     <td className="px-4 py-2 border">
                                         {equipo.imagenRuta ? (
                                             <img
-                                                src={`inventory-test.guandy.com${equipo.imagenRuta}`}
+                                                src={`https://inventory-test.guandy/${equipo.imagenRuta}`}
                                                 alt="Equipo"
                                                 className="w-20 h-auto rounded"
                                             />
