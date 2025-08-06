@@ -19,7 +19,7 @@ const HojaBajaActivo = () => {
     const handleAgregarEquipo = async () => {
         if (!codEquipo.trim()) return;
         try {
-            const res = await axios.get(`https://localhost:7291/api/equipos/por-codificacion/${codEquipo}`);
+            const res = await axios.get(`https://inventory-test.guandy.com/api/equipos/por-codificacion/${codEquipo}`);
             setEquipos(prev => [...prev, { ...res.data, codificacion: codEquipo }]);
             setCodEquipo('');
         } catch (error) {

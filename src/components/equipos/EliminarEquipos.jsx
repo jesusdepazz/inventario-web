@@ -146,7 +146,7 @@ const EliminarEquipos = () => {
                                     <td className="px-4 py-2 border">
                                         {equipo.imagenRuta ? (
                                             <img
-                                                src={`https://localhost:7291/${equipo.imagenRuta}`}
+                                                src={`inventory-test.guandy.com${equipo.imagenRuta}`}
                                                 alt="Equipo"
                                                 className="w-20 h-auto rounded"
                                             />
