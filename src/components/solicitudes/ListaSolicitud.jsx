@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { toast } from "react-toastify";
+import SolicitudesService from "../../services/SolicitudesServices";
+import UbicacionesService from "../../services/UbicaionesServices";
 
 const ListaSolicitud = () => {
     const [solicitudes, setSolicitudes] = useState([]);
@@ -8,7 +9,11 @@ const ListaSolicitud = () => {
 
     const cargarSolicitudes = async () => {
         try {
+<<<<<<< HEAD
             const res = await axios.get("https://inveq.guandy.com/api/solicitudes");
+=======
+            const res = await SolicitudesService.obtenerTodas();
+>>>>>>> jesusdepazz
             setSolicitudes(res.data);
         } catch (err) {
             console.error("Error al cargar solicitudes", err);
@@ -18,9 +23,13 @@ const ListaSolicitud = () => {
 
     const actualizarEstado = async (id, nuevoEstado) => {
         try {
+<<<<<<< HEAD
             await axios.put(`https://inveq.guandy.com/api/solicitudes/${id}/estado`, {
                 estado: nuevoEstado,
             });
+=======
+            await SolicitudesService.actualizarEstado(id, nuevoEstado);
+>>>>>>> jesusdepazz
             toast.success(`Solicitud ${nuevoEstado.toLowerCase()} correctamente`);
             cargarSolicitudes();
         } catch (err) {
@@ -31,7 +40,11 @@ const ListaSolicitud = () => {
 
     const cargarUbicaciones = async () => {
         try {
+<<<<<<< HEAD
             const res = await axios.get("https://inveq.guandy.com/api/ubicaciones");
+=======
+            const res = await UbicacionesService.obtenerTodas();
+>>>>>>> jesusdepazz
             const mapa = {};
             res.data.forEach((u) => {
                 mapa[u.id] = u.nombre;

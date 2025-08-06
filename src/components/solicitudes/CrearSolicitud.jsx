@@ -2,6 +2,10 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import UbicacionesService from "../../services/UbicaionesServices";
+import EquiposService from "../../services/EquiposServices";
+import EmpleadosService from "../../services/EmpleadosServices";
+import SolicitudesService from "../../services/SolicitudesServices";
 
 const CrearSolicitud = () => {
     const [empleado, setEmpleado] = useState({
@@ -27,6 +31,7 @@ const CrearSolicitud = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
+<<<<<<< HEAD
         axios.get("https://inveq.guandy.com/api/ubicaciones")
             .then(res => setUbicaciones(res.data))
             .catch(err => console.error("Error al cargar ubicaciones:", err));
@@ -34,15 +39,33 @@ const CrearSolicitud = () => {
         axios.get("https://inveq.guandy.com/api/equipos", { withCredentials: true })
             .then(res => {
                 const disponibles = res.data.filter(e => !e.asignaciones || e.asignaciones.length === 0);
+=======
+        const cargarDatos = async () => {
+            try {
+                const resUbicaciones = await UbicacionesService.obtenerTodas();
+                setUbicaciones(resUbicaciones.data);
+
+                const resEquipos = await EquiposService.obtenerEquipos();
+                const disponibles = resEquipos.data.filter(e => !e.asignaciones || e.asignaciones.length === 0);
+>>>>>>> jesusdepazz
                 setEquiposDisponibles(disponibles);
-            })
-            .catch(err => console.error("Error al cargar equipos:", err));
+            } catch (err) {
+                console.error("Error al cargar datos:", err);
+            }
+        };
+
+        cargarDatos();
     }, []);
 
     const buscarEmpleado = async () => {
         try {
+<<<<<<< HEAD
             const res = await axios.get(`https://inveq.guandy.com/api/empleados/${empleado.codigo}`);
+=======
+            const res = await EmpleadosService.obtenerPorCodigo(empleado.codigo);
+>>>>>>> jesusdepazz
             const data = res.data;
+
             setEmpleado({
                 ...empleado,
                 nombre: data.nombre,
@@ -74,26 +97,44 @@ const CrearSolicitud = () => {
     };
 
     const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!empleado.nombre || !ubicacion || !equipoSeleccionado.codificacion) {
-        toast.warn("Por favor completa todos los campos requeridos");
-        return;
-    }
+        e.preventDefault();
 
-    const solicitud = {
-        codigoEmpleado: empleado.codigo,
-        nombreEmpleado: empleado.nombre,
-        puesto: empleado.puesto,
-        departamento: empleado.departamento,
-        ubicacion,
-        jefeInmediato,
-        codificacionEquipo: equipoSeleccionado.codificacion,
-        marca: equipoSeleccionado.marca,
-        modelo: equipoSeleccionado.modelo,
-        serie: equipoSeleccionado.serie,
-        tipoSolicitud
+        if (!empleado.nombre || !ubicacion || !equipoSeleccionado.codificacion) {
+            toast.warn("Por favor completa todos los campos requeridos");
+            return;
+        }
+
+        const solicitud = {
+            codigoEmpleado: empleado.codigo,
+            nombreEmpleado: empleado.nombre,
+            puesto: empleado.puesto,
+            departamento: empleado.departamento,
+            ubicacion,
+            jefeInmediato,
+            codificacionEquipo: equipoSeleccionado.codificacion,
+            marca: equipoSeleccionado.marca,
+            modelo: equipoSeleccionado.modelo,
+            serie: equipoSeleccionado.serie,
+            tipoSolicitud
+        };
+
+        try {
+            const res = await SolicitudesService.crear(solicitud);
+            toast.success(`Solicitud creada exitosamente con correlativo ${res.data.correlativo}`);
+            navigate("/solicitudesDashboard");
+        } catch (err) {
+            console.error("Error backend:", err.response?.data || err.message);
+            if (err.response?.data?.errors) {
+                Object.values(err.response.data.errors).forEach((msgs) => {
+                    msgs.forEach((msg) => toast.error(msg));
+                });
+            } else {
+                toast.error("Error al crear la solicitud");
+            }
+        }
     };
 
+<<<<<<< HEAD
     try {
         const res = await axios.post("https://inveq.guandy.com/api/solicitudes", solicitud);
         toast.success(`Solicitud creada exitosamente con correlativo ${res.data.correlativo}`);
@@ -111,6 +152,8 @@ const CrearSolicitud = () => {
 };
 
 
+=======
+>>>>>>> jesusdepazz
     return (
         <div className="flex justify-center px-4 py-10 overflow-y-auto">
             <div className="bg-white p-6 rounded-xl shadow-md w-full max-w-6xl">

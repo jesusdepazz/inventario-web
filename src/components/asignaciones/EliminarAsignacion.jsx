@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { toast } from "react-toastify";
+import AsignacionesService from "../../services/AsignacionesServices";
 
 export default function EliminarAsignacion() {
     const [asignaciones, setAsignaciones] = useState([]);
 
     const obtenerAsignaciones = async () => {
         try {
+<<<<<<< HEAD
             const res = await axios.get("https://inveq.guandy.com/api/asignaciones", {
                 withCredentials: true,
             });
+=======
+            const res = await AsignacionesService.obtenerTodas();
+>>>>>>> jesusdepazz
             setAsignaciones(res.data);
         } catch (error) {
             console.error("Error al obtener asignaciones:", error);
@@ -17,10 +21,24 @@ export default function EliminarAsignacion() {
         }
     };
 
+    const EliminarAsignacion = async (id) => {
+        if (!window.confirm("¿Estás seguro de eliminar esta asignación?")) return;
+
+        try {
+            await AsignacionesService.eliminar(id);
+            toast.success("Asignación eliminada correctamente");
+            await obtenerAsignaciones();
+        } catch (err) {
+            console.error("Error al eliminar asignación", err);
+            toast.error("No se pudo eliminar la asignación");
+        }
+    };
+
     useEffect(() => {
         obtenerAsignaciones();
     }, []);
 
+<<<<<<< HEAD
 
     const EliminarAsignacion = async (id) => {
         if (!window.confirm("¿Estás seguro de eliminar esta asignacion?")) return;
@@ -34,6 +52,8 @@ export default function EliminarAsignacion() {
         }
     };
 
+=======
+>>>>>>> jesusdepazz
     return (
         <div className="p-6 max-w-7xl mx-auto">
             <div className="overflow-x-auto bg-white shadow-md rounded-xl p-4">

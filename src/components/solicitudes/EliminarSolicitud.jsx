@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { toast } from "react-toastify";
+import SolicitudesService from "../../services/SolicitudesServices";
+import UbicacionesService from "../../services/UbicaionesServices";
 
 const EliminarSolicitud = () => {
   const [solicitudes, setSolicitudes] = useState([]);
@@ -8,7 +9,11 @@ const EliminarSolicitud = () => {
 
   const cargarSolicitudes = async () => {
     try {
+<<<<<<< HEAD
       const res = await axios.get("https://inveq.guandy.com/api/solicitudes");
+=======
+      const res = await SolicitudesService.obtenerTodas();
+>>>>>>> jesusdepazz
       setSolicitudes(res.data);
     } catch (err) {
       console.error("Error al cargar solicitudes", err);
@@ -20,7 +25,11 @@ const EliminarSolicitud = () => {
     if (!window.confirm("¿Estás seguro de eliminar esta solicitud?")) return;
 
     try {
+<<<<<<< HEAD
       await axios.delete(`https://inveq.guandy.com/api/solicitudes/${id}`);
+=======
+      await SolicitudesService.eliminar(id);
+>>>>>>> jesusdepazz
       toast.success("Solicitud eliminada correctamente");
       cargarSolicitudes();
     } catch (err) {
@@ -31,7 +40,11 @@ const EliminarSolicitud = () => {
 
   const cargarUbicaciones = async () => {
     try {
+<<<<<<< HEAD
       const res = await axios.get("https://inveq.guandy.com/api/ubicaciones");
+=======
+      const res = await UbicacionesService.obtenerTodas();
+>>>>>>> jesusdepazz
       const mapa = {};
       res.data.forEach((u) => {
         mapa[u.id] = u.nombre;
@@ -77,10 +90,10 @@ const EliminarSolicitud = () => {
                   <td className="px-4 py-2 border font-medium">
                     <span
                       className={`px-2 py-1 rounded text-white text-xs ${s.estado === "Aprobada"
-                          ? "bg-green-600"
-                          : s.estado === "Denegada"
-                            ? "bg-red-500"
-                            : "bg-yellow-500"
+                        ? "bg-green-600"
+                        : s.estado === "Denegada"
+                          ? "bg-red-500"
+                          : "bg-yellow-500"
                         }`}
                     >
                       {s.estado}

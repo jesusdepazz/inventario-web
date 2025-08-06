@@ -1,16 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import AsignacionesService from "../../services/AsignacionesServices";
 
 const ListaAsignaciones = () => {
     const [asignaciones, setAsignaciones] = useState([]);
-    const navigate = useNavigate();
 
     useEffect(() => {
+<<<<<<< HEAD
         fetch("https://inveq.guandy.com/api/asignaciones", { credentials: "include" })
             .then(res => res.json())
             .then(data => setAsignaciones(data))
             .catch(err => console.error("Error al obtener asignaciones:", err));
     }, []);
+=======
+    AsignacionesService.obtenerTodas()
+      .then(res => setAsignaciones(res.data))
+      .catch(err => console.error("Error al obtener asignaciones:", err));
+  }, []);
+>>>>>>> jesusdepazz
 
     return (
         <div className="p-6 max-w-7xl mx-auto">

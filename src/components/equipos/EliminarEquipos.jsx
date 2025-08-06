@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { FiFilter } from "react-icons/fi";
 import { toast } from "react-toastify";
+import EquiposService from "../../services/EquiposServices";
 
 const EliminarEquipos = () => {
     const [equipos, setEquipo] = useState([]);
@@ -22,7 +22,7 @@ const EliminarEquipos = () => {
 
     const cargarEquipo = async () => {
         try {
-            const res = await axios.get("https://inveq.guandy.com/api/equipos");
+            const res = await EquiposService.obtenerEquipos();
             setEquipo(res.data);
         } catch (err) {
             console.error("Error al cargar equipos", err);
@@ -34,12 +34,12 @@ const EliminarEquipos = () => {
         if (!window.confirm("¿Estás seguro de eliminar este equipo?")) return;
 
         try {
-            await axios.delete(`https://inveq.guandy.com/api/equipos/${id}`);
-            toast.success("Equipo eliminada correctamente");
+            await EquiposService.eliminar(id);
+            toast.success("Equipo eliminado correctamente");
             cargarEquipo();
         } catch (err) {
             console.error("Error al eliminar equipo", err);
-            toast.error("No se pudo eliminar la equipo");
+            toast.error("No se pudo eliminar el equipo");
         }
     };
 
@@ -151,7 +151,7 @@ const EliminarEquipos = () => {
                                             />
                                         ) : (
                                             "Sin imagen"
-                                        )} 
+                                        )}
                                     </td>
                                     <td className="px-4 py-2 border">
                                         {new Date(equipo.fechaIngreso).toLocaleDateString()}
