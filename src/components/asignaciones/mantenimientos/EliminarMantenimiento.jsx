@@ -3,43 +3,15 @@ import { toast } from "react-toastify";
 import MantenimientosService from "../../../services/MantenimientosServices";
 
 const EliminarMantenimientos = () => {
-<<<<<<< HEAD
-    const [mantenimientos, setMantenimientos] = useState([]);
-
-    const CargarMantenimiento = async () => {
-        try {
-            const res = await axios.get("https://inveq.guandy.com/api/Mantenimientos", {
-                withCredentials: true,
-            });
-            setMantenimientos(res.data);
-        } catch (error) {
-            console.error("Error al obtener mantenimientos:", error);
-            toast.error("❌ Error al cargar mantenimientos");
-        }
-    };
-
-    const EliminarMantenimiento = async (id) => {
-    if (!window.confirm("¿Estás seguro de eliminar esta solicitud?")) return;
-=======
   const [mantenimientos, setMantenimientos] = useState([]);
->>>>>>> jesusdepazz
 
   const cargarMantenimientos = async () => {
     try {
-<<<<<<< HEAD
-      await axios.delete(`https://inveq.guandy.com/api/Mantenimientos/${id}`);
-      toast.success("Mantenimiento eliminado correctamente");
-      CargarMantenimiento();
-    } catch (err) {
-      console.error("Error al eliminar mantenimiento", err);
-      toast.error("No se pudo eliminar el mantenimiento");
-=======
       const res = await MantenimientosService.obtenerTodos();
       setMantenimientos(res.data);
     } catch (error) {
       console.error("Error al obtener mantenimientos:", error);
       toast.error("❌ Error al cargar mantenimientos");
->>>>>>> jesusdepazz
     }
   };
 

@@ -22,19 +22,10 @@ const CrearMantenimiento = () => {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-<<<<<<< HEAD
-    const handleBuscarEquipo = async () => {
-        try {
-            const res = await axios.get("https://inveq.guandy.com/api/Equipos", {
-                withCredentials: true
-            });
-            const encontrados = res.data.filter((e) => e.codificacion === form.codificacion);
-=======
   const handleBuscarEquipo = async () => {
     try {
       const res = await EquiposService.obtenerEquipos();
       const encontrados = res.data.filter((e) => e.codificacion === form.codificacion);
->>>>>>> jesusdepazz
 
       if (encontrados.length > 0) {
         const modelosUnicos = [...new Set(encontrados.map((e) => e.modelo))];
@@ -66,12 +57,6 @@ const CrearMantenimiento = () => {
       return;
     }
 
-<<<<<<< HEAD
-        try {
-            await axios.post("https://inveq.guandy.com/api/Mantenimientos", form, {
-                withCredentials: true
-            });
-=======
     try {
       await MantenimientosService.crear(form);
       toast.success("✅ Mantenimiento registrado correctamente");
@@ -81,7 +66,6 @@ const CrearMantenimiento = () => {
       toast.error("❌ Error al crear mantenimiento");
     }
   };
->>>>>>> jesusdepazz
 
   return (
     <div className="flex justify-center px-4 py-10 overflow-y-auto">

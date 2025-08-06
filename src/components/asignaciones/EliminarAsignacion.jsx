@@ -7,13 +7,7 @@ export default function EliminarAsignacion() {
 
     const obtenerAsignaciones = async () => {
         try {
-<<<<<<< HEAD
-            const res = await axios.get("https://inveq.guandy.com/api/asignaciones", {
-                withCredentials: true,
-            });
-=======
             const res = await AsignacionesService.obtenerTodas();
->>>>>>> jesusdepazz
             setAsignaciones(res.data);
         } catch (error) {
             console.error("Error al obtener asignaciones:", error);
@@ -38,22 +32,6 @@ export default function EliminarAsignacion() {
         obtenerAsignaciones();
     }, []);
 
-<<<<<<< HEAD
-
-    const EliminarAsignacion = async (id) => {
-        if (!window.confirm("¿Estás seguro de eliminar esta asignacion?")) return;
-
-        try {
-            await axios.delete(`https://inveq.guandy.com/api/Asignaciones/${id}`);
-            toast.success("Asignacion eliminado correctamente");
-        } catch (err) {
-            console.error("Error al eliminar asignacion", err);
-            toast.error("No se pudo eliminar la asignacion");
-        }
-    };
-
-=======
->>>>>>> jesusdepazz
     return (
         <div className="p-6 max-w-7xl mx-auto">
             <div className="overflow-x-auto bg-white shadow-md rounded-xl p-4">

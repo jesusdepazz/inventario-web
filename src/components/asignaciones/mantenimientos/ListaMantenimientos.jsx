@@ -16,16 +16,7 @@ const ListaMantenimientos = () => {
     };
 
     useEffect(() => {
-<<<<<<< HEAD
-        axios
-            .get("https://inveq.guandy.com/api/Mantenimientos", {
-                withCredentials: true,
-            })
-            .then((res) => setMantenimientos(res.data))
-            .catch((err) => console.error("Error al obtener mantenimientos:", err));
-=======
         cargarMantenimientos();
->>>>>>> jesusdepazz
     }, []);
 
     return (

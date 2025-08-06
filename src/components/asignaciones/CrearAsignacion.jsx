@@ -30,18 +30,8 @@ export default function CrearAsignacion() {
         }
 
         try {
-<<<<<<< HEAD
-            const response = await fetch(`https://inveq.guandy.com/api/empleados/${empleado.codigo}`);
-
-            if (!response.ok) {
-                throw new Error("Empleado no encontrado");
-            }
-
-            const data = await response.json();
-=======
             const response = await EmpleadosService.obtenerPorCodigo(empleado.codigo);
             const data = response.data;
->>>>>>> jesusdepazz
 
             setEmpleado((prev) => ({
                 ...prev,
@@ -57,14 +47,8 @@ export default function CrearAsignacion() {
 
     const buscarEquipo = async () => {
         try {
-<<<<<<< HEAD
-            const response = await fetch(`https://inveq.guandy.com/api/equipos/por-codificacion/${codificacion}`);
-            if (!response.ok) throw new Error("Equipo no encontrado");
-            const data = await response.json();
-=======
             const response = await EquiposService.obtenerPorCodificacion(codificacion);
             const data = response.data;
->>>>>>> jesusdepazz
             setEquipo(data);
         } catch (error) {
             console.error("Error al buscar equipo:", error.message);
@@ -96,20 +80,7 @@ export default function CrearAsignacion() {
         };
 
         try {
-<<<<<<< HEAD
-            const response = await fetch("https://inveq.guandy.com/api/asignaciones", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(asignacion)
-            });
-
-            if (!response.ok) throw new Error("Error al guardar asignación");
-
-=======
             await AsignacionesService.crear(asignacion);
->>>>>>> jesusdepazz
             alert("Asignación guardada correctamente");
             navigate("/dashboard");
         } catch (error) {

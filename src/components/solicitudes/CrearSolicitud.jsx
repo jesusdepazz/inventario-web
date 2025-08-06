@@ -31,15 +31,6 @@ const CrearSolicitud = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-<<<<<<< HEAD
-        axios.get("https://inveq.guandy.com/api/ubicaciones")
-            .then(res => setUbicaciones(res.data))
-            .catch(err => console.error("Error al cargar ubicaciones:", err));
-
-        axios.get("https://inveq.guandy.com/api/equipos", { withCredentials: true })
-            .then(res => {
-                const disponibles = res.data.filter(e => !e.asignaciones || e.asignaciones.length === 0);
-=======
         const cargarDatos = async () => {
             try {
                 const resUbicaciones = await UbicacionesService.obtenerTodas();
@@ -47,7 +38,6 @@ const CrearSolicitud = () => {
 
                 const resEquipos = await EquiposService.obtenerEquipos();
                 const disponibles = resEquipos.data.filter(e => !e.asignaciones || e.asignaciones.length === 0);
->>>>>>> jesusdepazz
                 setEquiposDisponibles(disponibles);
             } catch (err) {
                 console.error("Error al cargar datos:", err);
@@ -59,11 +49,7 @@ const CrearSolicitud = () => {
 
     const buscarEmpleado = async () => {
         try {
-<<<<<<< HEAD
-            const res = await axios.get(`https://inveq.guandy.com/api/empleados/${empleado.codigo}`);
-=======
             const res = await EmpleadosService.obtenerPorCodigo(empleado.codigo);
->>>>>>> jesusdepazz
             const data = res.data;
 
             setEmpleado({
@@ -134,26 +120,6 @@ const CrearSolicitud = () => {
         }
     };
 
-<<<<<<< HEAD
-    try {
-        const res = await axios.post("https://inveq.guandy.com/api/solicitudes", solicitud);
-        toast.success(`Solicitud creada exitosamente con correlativo ${res.data.correlativo}`);
-        navigate("/solicitudesDashboard");
-    } catch (err) {
-    console.error("Error backend:", err.response?.data || err.message);
-    if (err.response?.data?.errors) {
-        Object.values(err.response.data.errors).forEach(msgs => {
-            msgs.forEach(msg => toast.error(msg));
-        });
-    } else {
-        toast.error("Error al crear la solicitud");
-    }
-}
-};
-
-
-=======
->>>>>>> jesusdepazz
     return (
         <div className="flex justify-center px-4 py-10 overflow-y-auto">
             <div className="bg-white p-6 rounded-xl shadow-md w-full max-w-6xl">
