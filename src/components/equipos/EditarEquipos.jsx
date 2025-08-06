@@ -83,7 +83,7 @@ const EditarEquipo = () => {
 }
 
 try {
-    await EquiposService.actualizarConImagen(equipo.id, formData);
+    await EquiposServices.editar(equipo.id, formData);
     toast.success("Equipo actualizado correctamente");
 } catch (err) {
     console.error("Error al actualizar equipo", err);

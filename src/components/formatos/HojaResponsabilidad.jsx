@@ -27,7 +27,7 @@ const HojaResponsabilidad = () => {
     const handleAgregarEmpleado = async () => {
         if (!codigoEmpleado.trim()) return;
         try {
-            const res = await axios.get(`https://inventory-test.guandy.com/api/empleados/${codigoEmpleado}`);
+            const res = await axios.get(`https://localhost:7291/api/empleados/${codigoEmpleado}`);
             setEmpleados(prev => [...prev, res.data]);
             setCodigoEmpleado('');
         } catch (error) {
@@ -38,7 +38,7 @@ const HojaResponsabilidad = () => {
     const HandleAgregarEquipo = async () => {
         if (!codEquipo.trim()) return;
         try {
-            const res = await fetch(`https://inventory-test.guandy.com/api/equipos/por-codificacion/${codEquipo}`);
+            const res = await fetch(`https://localhost:7291/api/equipos/por-codificacion/${codEquipo}`);
             if (!res.ok) throw new Error('Equipo no encontrado');
             const data = await res.json();
             setEquipos((prev) => [...prev, { ...data, codificacion: codEquipo }]);
