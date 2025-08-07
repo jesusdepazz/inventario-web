@@ -94,9 +94,9 @@ const ListaEquipos = () => {
                         />
                     </div>
                 )}
-                <table className="min-w-[2000px] w-full text-sm text-left border border-gray-200">
+                <table className="min-w-[4000px] w-full text-sm text-left border border-gray-200">
                     <thead className="bg-indigo-100">
-                        <tr>
+                        <tr className="text-center">
                             <th className="px-4 py-2 border">#</th>
                             <th className="px-4 py-2 border">No. de Registro Deprect</th>
                             <th className="px-4 py-2 border">Orden de Compra</th>
@@ -116,7 +116,13 @@ const ListaEquipos = () => {
                             <th className="px-4 py-2 border">Imagen</th>
                             <th className="px-4 py-2 border">Número asignado</th>
                             <th className="px-4 py-2 border">Extensión</th>
-                            <th className="px-4 py-2 border">Ubicación</th>
+                            <th className="px-4 py-2 border">Ubicacion</th>
+                            <th className="px-4 py-2 border">Revisado de toma fisica</th>
+                            <th className="px-4 py-2 border">Fecha de toma</th>
+                            <th className="px-4 py-2 border">Estado de Sticker</th>
+                            <th className="px-4 py-2 border">Asignado a Hoja de responsabilidad</th>
+                            <th className="px-4 py-2 border">Comentarios</th>
+                            <th className="px-4 py-2 border">Observaciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -193,8 +199,17 @@ const ListaEquipos = () => {
                                                 <td className="px-4 py-2 border">-</td>
                                             </>
                                         )}
-
                                         <td className="px-4 py-2 border">{equipo.ubicacion}</td>
+                                        <td className="px-4 py-2 border">{equipo.revisadoTomaFisica}</td>
+                                        <td className="px-4 py-2 border">
+                                            {equipo.fechaToma
+                                                ? new Date(equipo.fechaToma).toLocaleDateString("es-ES")
+                                                : "Sin fecha"}
+                                        </td>
+                                        <td className="px-4 py-2 border">{equipo.estadoSticker}</td>
+                                        <td className="px-4 py-2 border">{equipo.asignadoHojaResponsabilidad}</td>
+                                        <td className="px-4 py-2 border">{equipo.comentarios}</td>
+                                        <td className="px-4 py-2 border">{equipo.observaciones}</td>
                                     </tr>
                                 );
                             })
