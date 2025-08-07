@@ -6,22 +6,26 @@ import EquiposService from "../../services/EquiposServices";
 
 const CrearEquipo = () => {
     const [form, setForm] = useState({
+        registroDeprec: "",
         orderCompra: "",
         factura: "",
         proveedor: "",
-        tipo: "",
+        fechaIngreso: "",
+        hojaNo: "",
+        fechaActualizacion:"",
         codificacion: "",
-        estado: "",
+        tipoEquipo: "",
         marca: "",
         modelo: "",
         serie: "",
         imei: "",
         numeroAsignado: "",
         extension: "",
+        tipo: "",
+        estado: "",
         especificaciones: "",
         accesorios: "",
         ubicacion: "",
-        fechaIngreso: "",
         imagen: null,
     });
 
@@ -108,9 +112,26 @@ const CrearEquipo = () => {
                 <form onSubmit={handleSubmit} encType="multipart/form-data" className="space-y-4">
                     <section>
                         <h3 className="text-xl font-semibold mb-4 border-b border-indigo-300 pb-2">
-                            Datos de compra
+                            DATOS DE COMPRA
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div className="flex flex-col">
+                                <label
+                                    htmlFor="registroDeprec"
+                                    className="mb-1 font-medium text-gray-700"
+                                >
+                                    No. de Registro en Deprec
+                                </label>
+                                <input
+                                    type="text"
+                                    id="registroDeprec"
+                                    name="registroDeprec"
+                                    value={form.registroDeprec}
+                                    onChange={handleChange}
+                                    className="input-field"
+                                    placeholder="No. de Registro en Deprec"
+                                />
+                            </div>
                             <div className="flex flex-col">
                                 <label
                                     htmlFor="orderCompra"
@@ -162,32 +183,71 @@ const CrearEquipo = () => {
                                     placeholder="Proveedor"
                                 />
                             </div>
+                            <div className="flex flex-col">
+                                <label
+                                    htmlFor="fechaIngreso"
+                                    className="mb-1 font-medium text-gray-700"
+                                >
+                                    Fecha Ingreso <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="date"
+                                    id="fechaIngreso"
+                                    name="fechaIngreso"
+                                    value={form.fechaIngreso}
+                                    onChange={handleChange}
+                                    required
+                                    className="input-field"
+                                />
+                            </div>
                         </div>
                     </section>
                     <section>
                         <h3 className="text-xl font-semibold mb-4 border-b border-indigo-300 pb-2">
-                            Datos de equipo
+                            DATOS DE USUARIO
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div className="flex flex-col">
-                                <label htmlFor="tipo" className="mb-1 font-medium text-gray-700">
-                                    Tipo <span className="text-red-500">*</span>
+                                <label
+                                    htmlFor="hojaNo"
+                                    className="mb-1 font-medium text-gray-700"
+                                >
+                                    Hoja No.
                                 </label>
-                                <select
-                                    id="tipo"
-                                    name="tipo"
-                                    value={form.tipo}
+                                <input
+                                    type="text"
+                                    id="hojaNo"
+                                    name="hojaNo"
+                                    value={form.hojaNo}
+                                    onChange={handleChange}
+                                    className="input-field"
+                                    placeholder="Hoja No."
+                                />
+                            </div>
+                            <div className="flex flex-col">
+                                <label
+                                    htmlFor="fechaActualizacion"
+                                    className="mb-1 font-medium text-gray-700"
+                                >
+                                    Fecha Actualización <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="date"
+                                    id="fechaActualizacion"
+                                    name="fechaActualizacion"
+                                    value={form.fechaActualizacion}
                                     onChange={handleChange}
                                     required
                                     className="input-field"
-                                >
-                                    <option value="">-- Seleccione tipo --</option>
-                                    <option value="Equipo móvil">Equipo móvil</option>
-                                    <option value="Equipo de escritorio">Equipo de escritorio</option>
-                                    <option value="Equipo comunal">Equipo comunal</option>
-                                </select>
+                                />
                             </div>
-
+                        </div>
+                    </section>
+                    <section>
+                        <h3 className="text-xl font-semibold mb-4 border-b border-indigo-300 pb-2">
+                            DATOS DE EQUIPO
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div className="flex flex-col">
                                 <label
                                     htmlFor="codificacion"
@@ -209,24 +269,20 @@ const CrearEquipo = () => {
 
                             <div className="flex flex-col">
                                 <label
-                                    htmlFor="estado"
+                                    htmlFor="tipoEquipo"
                                     className="mb-1 font-medium text-gray-700"
                                 >
-                                    Estado <span className="text-red-500">*</span>
+                                    Equipo
                                 </label>
-                                <select
-                                    id="estado"
-                                    name="estado"
-                                    value={form.estado}
+                                <input
+                                    type="text"
+                                    id="tipoEquipo"
+                                    name="tipoEquipo"
+                                    value={form.tipoEquipo}
                                     onChange={handleChange}
-                                    required
+                                    placeholder="Equipo"
                                     className="input-field"
-                                >
-                                    <option value="">-- Seleccione estado --</option>
-                                    <option value="Buen estado">Buen estado</option>
-                                    <option value="Inactivo">Inactivo</option>
-                                    <option value="Obsoleto">Obsoleto</option>
-                                </select>
+                                />
                             </div>
 
                             <div className="flex flex-col">
@@ -327,6 +383,47 @@ const CrearEquipo = () => {
                                     </div>
                                 </>
                             )}
+                            
+                            <div className="flex flex-col">
+                                <label
+                                    htmlFor="estado"
+                                    className="mb-1 font-medium text-gray-700"
+                                >
+                                    Estado <span className="text-red-500">*</span>
+                                </label>
+                                <select
+                                    id="estado"
+                                    name="estado"
+                                    value={form.estado}
+                                    onChange={handleChange}
+                                    required
+                                    className="input-field"
+                                >
+                                    <option value="">-- Seleccione estado --</option>
+                                    <option value="Buen estado">Buen estado</option>
+                                    <option value="Inactivo">Inactivo</option>
+                                    <option value="Obsoleto">Obsoleto</option>
+                                </select>
+                            </div>
+
+                            <div className="flex flex-col">
+                                <label htmlFor="tipo" className="mb-1 font-medium text-gray-700">
+                                    Tipo <span className="text-red-500">*</span>
+                                </label>
+                                <select
+                                    id="tipo"
+                                    name="tipo"
+                                    value={form.tipo}
+                                    onChange={handleChange}
+                                    required
+                                    className="input-field"
+                                >
+                                    <option value="">-- Seleccione tipo --</option>
+                                    <option value="Equipo móvil">Equipo móvil</option>
+                                    <option value="Equipo de escritorio">Equipo de escritorio</option>
+                                    <option value="Equipo comunal">Equipo comunal</option>
+                                </select>
+                            </div>
 
                             <div className="flex flex-col">
                                 <label
@@ -379,23 +476,6 @@ const CrearEquipo = () => {
                                         <option key={i} value={u} />
                                     ))}
                                 </datalist>
-                            </div>
-                            <div className="flex flex-col">
-                                <label
-                                    htmlFor="fechaIngreso"
-                                    className="mb-1 font-medium text-gray-700"
-                                >
-                                    Fecha Ingreso <span className="text-red-500">*</span>
-                                </label>
-                                <input
-                                    type="date"
-                                    id="fechaIngreso"
-                                    name="fechaIngreso"
-                                    value={form.fechaIngreso}
-                                    onChange={handleChange}
-                                    required
-                                    className="input-field"
-                                />
                             </div>
 
                             <div className="flex flex-col md:col-span-3">
