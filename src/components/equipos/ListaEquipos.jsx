@@ -3,6 +3,9 @@ import EquiposService from "../../services/EquiposServices";
 
 const ListaEquipos = () => {
     const [equipos, setEquipos] = useState([]);
+    const [campoBusqueda, setCampoBusqueda] = useState("");
+    const [valorBusqueda, setValorBusqueda] = useState("");
+    const [resultadosFiltrados, setResultadosFiltrados] = useState([]);
 
     const colorEstado = {
         "Buen estado": "text-green-600 font-bold",
@@ -11,27 +14,74 @@ const ListaEquipos = () => {
     };
 
     useEffect(() => {
-        const cargarEquipos = async () => {
-            try {
-                const res = await EquiposService.obtenerEquipos();
-                setEquipos(res.data);
-            } catch (err) {
-                console.error("Error al obtener equipos:", err);
-            }
-        };
+  const cargarEquipos = async () => {
+    try {
+      const res = await EquiposService.obtenerEquipos();
+      console.log("Primer equipo recibido:", res.data[0]);
+      setEquipos(res.data);
+    } catch (err) {
+      console.error("Error al obtener equipos:", err);
+    }
+  };
 
-        cargarEquipos();
-    }, []);
+  cargarEquipos();
+}, []);
+
+
+    const handleBuscar = () => {
+        if (!campoBusqueda || !valorBusqueda) return;
+
+        const filtrados = equipos.filter((equipo) => {
+            const valorCampo = equipo[campoBusqueda];
+            return valorCampo && valorCampo.toString().toLowerCase().includes(valorBusqueda.toLowerCase());
+        });
+
+        setResultadosFiltrados(filtrados);
+    };
+
+    const handleLimpiar = () => {
+        setCampoBusqueda("");
+        setValorBusqueda("");
+        setResultadosFiltrados([]);
+    };
 
     return (
         <div className="p-6 max-w-7xl mx-auto">
             <div className="overflow-x-auto w-full bg-white shadow-md rounded-xl p-6">
+                <div className="mb-4 flex items-center gap-4">
+                    <input
+                        type="text"
+                        placeholder="Campo"
+                        value={campoBusqueda}
+                        onChange={(e) => setCampoBusqueda(e.target.value)}
+                        className="border px-4 py-2 rounded shadow"
+                    />
+                    <input
+                        type="text"
+                        placeholder="Valor"
+                        value={valorBusqueda}
+                        onChange={(e) => setValorBusqueda(e.target.value)}
+                        className="border px-4 py-2 rounded shadow"
+                    />
+                    <button
+                        onClick={handleBuscar}
+                        className="bg-blue-900 text-white px-4 py-2 rounded hover:bg-blue-800"
+                    >
+                        Buscar
+                    </button>
+                    <button
+                        onClick={handleLimpiar}
+                        className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
+                    >
+                        Limpiar
+                    </button>
+                </div>
                 <table className="min-w-[4000px] w-full text-sm text-left border border-gray-200">
                     <thead className="bg-blue-900">
                         <tr className="text-center font-bold bg-blue-900 text-white">
                             <th className="px-4 py-2 border" colSpan="6">DATOS GENERALES</th>
                             <th className="px-4 py-2 border" colSpan="3">DATOS DE USUARIO</th>
-                            <th className="px-4 py-2 border" colSpan="10">DATOS DE USUARIO</th>
+                            <th className="px-4 py-2 border" colSpan="9">DATOS DEL EQUIPO</th>
                             <th className="px-4 py-2 border" colSpan="1">UBICACION DEL EQUIPO</th>
                             <th className="px-4 py-2 border" colSpan="6">INFORMACION DE TOMA DE INVENTARIO</th>
                         </tr>
@@ -52,7 +102,6 @@ const ListaEquipos = () => {
                             <th className="px-4 py-2 border">IMEI</th>
                             <th className="px-4 py-2 border">Estado</th>
                             <th className="px-4 py-2 border">Tipo</th>
-                            <th className="px-4 py-2 border">Imagen</th>
                             <th className="px-4 py-2 border">Número asignado</th>
                             <th className="px-4 py-2 border">Extensión</th>
                             <th className="px-4 py-2 border">Ubicacion</th>
@@ -66,7 +115,7 @@ const ListaEquipos = () => {
                     </thead>
                     <tbody>
                         {equipos.length > 0 ? (
-                            equipos.map((equipo, index) => (
+                            (resultadosFiltrados.length > 0 ? resultadosFiltrados : equipos).map((equipo, index) => (
                                 <tr key={equipo.id} className="text-center">
                                     <td className="px-4 py-2 border">{index + 1}</td>
                                     <td className="px-4 py-2 border">{equipo.registroDeprec || "Sin registro"}</td>
@@ -94,17 +143,6 @@ const ListaEquipos = () => {
                                     <td className="px-4 py-2 border">{equipo.imei}</td>
                                     <td className={`px-4 py-2 border ${colorEstado[equipo.estado] || ""}`}>{equipo.estado}</td>
                                     <td className="px-4 py-2 border">{equipo.tipo}</td>
-                                    <td className="px-4 py-2 border">
-                                        {equipo.imagenRuta ? (
-                                            <img
-                                                src={`https://localhost:7291/${equipo.imagenRuta}`}
-                                                alt="Equipo"
-                                                className="w-20 h-auto rounded"
-                                            />
-                                        ) : (
-                                            "Sin imagen"
-                                        )}
-                                    </td>
                                     {equipo.tipo === "Teléfono móvil" ? (
                                         <>
                                             <td className="px-4 py-2 border">{equipo.numeroAsignado}</td>
