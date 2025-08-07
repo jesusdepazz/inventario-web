@@ -1,17 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { FiFilter } from "react-icons/fi";
 import EquiposService from "../../services/EquiposServices";
 
 const ListaEquipos = () => {
     const [equipos, setEquipos] = useState([]);
-    const [filtros, setFiltros] = useState({
-        codificacion: "",
-        marca: "",
-        modelo: "",
-        tipo: "",
-        fechaExacta: "",
-    });
-    const [mostrarFiltros, setMostrarFiltros] = useState(false);
 
     const colorEstado = {
         "Buen estado": "text-green-600 font-bold",
@@ -32,71 +23,19 @@ const ListaEquipos = () => {
         cargarEquipos();
     }, []);
 
-    const handleFiltroChange = (e) => {
-        const { name, value } = e.target;
-        setFiltros((prev) => ({ ...prev, [name]: value }));
-    };
-
-    const equiposFiltrados = equipos.filter((equipo) => {
-        return (
-            (equipo.codificacion?.toLowerCase() || "").includes(filtros.codificacion.toLowerCase()) &&
-            (equipo.marca?.toLowerCase() || "").includes(filtros.marca.toLowerCase()) &&
-            (equipo.modelo?.toLowerCase() || "").includes(filtros.modelo.toLowerCase()) &&
-            (equipo.tipo?.toLowerCase() || "").includes(filtros.tipo.toLowerCase()) &&
-            (!filtros.fechaExacta ||
-                (equipo.fechaIngreso &&
-                    new Date(equipo.fechaIngreso).toISOString().split("T")[0] === filtros.fechaExacta))
-        );
-    });
-
     return (
         <div className="p-6 max-w-7xl mx-auto">
-            <div className="overflow-x-auto w-full bg-white shadow-md rounded-xl p-4">
-                <div className="flex justify-between items-center mb-6">
-                    <input
-                        type="text"
-                        name="codificacion"
-                        placeholder="Buscar por codificación"
-                        value={filtros.codificacion}
-                        onChange={handleFiltroChange}
-                        className="border border-gray-300 rounded-md px-4 py-2 w-64"
-                    />
-                    <div className="flex gap-2">
-                        <button
-                            onClick={() => setMostrarFiltros(!mostrarFiltros)}
-                            className="text-indigo-600 hover:text-indigo-800"
-                            title="Mostrar filtros"
-                        >
-                            <FiFilter size={24} />
-                        </button>
-                    </div>
-                </div>
-
-                {mostrarFiltros && (
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                        {["marca", "modelo", "tipo"].map((campo) => (
-                            <input
-                                key={campo}
-                                type="text"
-                                name={campo}
-                                placeholder={`Filtrar por ${campo}`}
-                                value={filtros[campo]}
-                                onChange={handleFiltroChange}
-                                className="border border-gray-300 rounded-md px-4 py-2"
-                            />
-                        ))}
-                        <input
-                            type="date"
-                            name="fechaExacta"
-                            value={filtros.fechaExacta}
-                            onChange={handleFiltroChange}
-                            className="border border-gray-300 rounded-md px-4 py-2"
-                        />
-                    </div>
-                )}
+            <div className="overflow-x-auto w-full bg-white shadow-md rounded-xl p-6">
                 <table className="min-w-[4000px] w-full text-sm text-left border border-gray-200">
-                    <thead className="bg-indigo-100">
-                        <tr className="text-center">
+                    <thead className="bg-blue-900">
+                        <tr className="text-center font-bold bg-blue-900 text-white">
+                            <th className="px-4 py-2 border" colSpan="6">DATOS GENERALES</th>
+                            <th className="px-4 py-2 border" colSpan="3">DATOS DE USUARIO</th>
+                            <th className="px-4 py-2 border" colSpan="10">DATOS DE USUARIO</th>
+                            <th className="px-4 py-2 border" colSpan="1">UBICACION DEL EQUIPO</th>
+                            <th className="px-4 py-2 border" colSpan="6">INFORMACION DE TOMA DE INVENTARIO</th>
+                        </tr>
+                        <tr className="text-center bg-blue-900 text-white">
                             <th className="px-4 py-2 border">#</th>
                             <th className="px-4 py-2 border">No. de Registro Deprect</th>
                             <th className="px-4 py-2 border">Orden de Compra</th>
@@ -126,96 +65,69 @@ const ListaEquipos = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {equiposFiltrados.length > 0 ? (
-                            equiposFiltrados.map((equipo, index) => {
-                                console.log("EQUIPO:", equipo);
-
-                                return (
-                                    <tr key={equipo.id} className="text-center">
-                                        <td className="px-4 py-2 border">{index + 1}</td>
-
-                                        <td className="px-4 py-2 border">
-                                            {equipo.registroDeprec || "Sin registro"}
-                                        </td>
-
-                                        <td className="px-4 py-2 border">{equipo.orderCompra}</td>
-                                        <td className="px-4 py-2 border">{equipo.factura}</td>
-                                        <td className="px-4 py-2 border">{equipo.proveedor}</td>
-                                        <td className="px-4 py-2 border">
-                                            {equipo.fechaIngreso
-                                                ? new Date(equipo.fechaIngreso).toLocaleDateString("es-ES")
-                                                : "Sin fecha"}
-                                        </td>
-                                        <td className="px-4 py-2 border">{equipo.hojaNo}</td>
-                                        <td className="px-4 py-2 border">
-                                            {equipo.fechaActualizacion
-                                                ? new Date(equipo.fechaActualizacion).toLocaleDateString("es-ES")
-                                                : "Sin fecha"}
-                                        </td>
-                                        <td className="px-4 py-2 border">
-                                            {equipo.asignaciones && equipo.asignaciones.length > 0 ? (
-                                                equipo.asignaciones.map((asignacion, idx) => (
-                                                    <div key={idx} className="font-semibold mb-1">
-                                                        {idx + 1}.{" "}
-                                                        <span className="text-blue-700">{asignacion.codigoEmpleado}</span>{" "}
-                                                        - {asignacion.nombreEmpleado}{" "}
-                                                        <span className="text-gray-600 italic">({asignacion.puesto})</span>
-                                                    </div>
-                                                ))
-                                            ) : (
-                                                <span className="text-gray-500 italic">Sin asignaciones</span>
-                                            )}
-                                        </td>
-                                        <td className="px-4 py-2 border">{equipo.codificacion}</td>
-                                        <td className="px-4 py-2 border">{equipo.marca}</td>
-                                        <td className="px-4 py-2 border">{equipo.modelo}</td>
-                                        <td className="px-4 py-2 border">{equipo.serie}</td>
-                                        <td className="px-4 py-2 border">{equipo.imei}</td>
-                                        <td className={`px-4 py-2 border ${colorEstado[equipo.estado] || ""}`}>
-                                            {equipo.estado}
-                                        </td>
-                                        <td className="px-4 py-2 border">{equipo.tipo}</td>
-
-                                        <td className="px-4 py-2 border">
-                                            {equipo.imagenRuta ? (
-                                                <img
-                                                    src={`https://localhost:7291/${equipo.imagenRuta}`}
-                                                    alt="Equipo"
-                                                    className="w-20 h-auto rounded"
-                                                />
-                                            ) : (
-                                                "Sin imagen"
-                                            )}
-                                        </td>
-
-                                        {equipo.tipo === "Teléfono móvil" ? (
-                                            <>
-                                                <td className="px-4 py-2 border">{equipo.numeroAsignado}</td>
-                                                <td className="px-4 py-2 border">{equipo.extension}</td>
-                                            </>
+                        {equipos.length > 0 ? (
+                            equipos.map((equipo, index) => (
+                                <tr key={equipo.id} className="text-center">
+                                    <td className="px-4 py-2 border">{index + 1}</td>
+                                    <td className="px-4 py-2 border">{equipo.registroDeprec || "Sin registro"}</td>
+                                    <td className="px-4 py-2 border">{equipo.orderCompra}</td>
+                                    <td className="px-4 py-2 border">{equipo.factura}</td>
+                                    <td className="px-4 py-2 border">{equipo.proveedor}</td>
+                                    <td className="px-4 py-2 border">{equipo.fechaIngreso ? new Date(equipo.fechaIngreso).toLocaleDateString("es-ES") : "Sin fecha"}</td>
+                                    <td className="px-4 py-2 border">{equipo.hojaNo}</td>
+                                    <td className="px-4 py-2 border">{equipo.fechaActualizacion ? new Date(equipo.fechaActualizacion).toLocaleDateString("es-ES") : "Sin fecha"}</td>
+                                    <td className="px-4 py-2 border">
+                                        {equipo.asignaciones && equipo.asignaciones.length > 0 ? (
+                                            equipo.asignaciones.map((asignacion, idx) => (
+                                                <div key={idx} className="font-semibold mb-1">
+                                                    {idx + 1}. <span className="text-blue-700">{asignacion.codigoEmpleado}</span> - {asignacion.nombreEmpleado} <span className="text-gray-600 italic">({asignacion.puesto})</span>
+                                                </div>
+                                            ))
                                         ) : (
-                                            <>
-                                                <td className="px-4 py-2 border">-</td>
-                                                <td className="px-4 py-2 border">-</td>
-                                            </>
+                                            <span className="text-gray-500 italic">Sin asignaciones</span>
                                         )}
-                                        <td className="px-4 py-2 border">{equipo.ubicacion}</td>
-                                        <td className="px-4 py-2 border">{equipo.revisadoTomaFisica}</td>
-                                        <td className="px-4 py-2 border">
-                                            {equipo.fechaToma
-                                                ? new Date(equipo.fechaToma).toLocaleDateString("es-ES")
-                                                : "Sin fecha"}
-                                        </td>
-                                        <td className="px-4 py-2 border">{equipo.estadoSticker}</td>
-                                        <td className="px-4 py-2 border">{equipo.asignadoHojaResponsabilidad}</td>
-                                        <td className="px-4 py-2 border">{equipo.comentarios}</td>
-                                        <td className="px-4 py-2 border">{equipo.observaciones}</td>
-                                    </tr>
-                                );
-                            })
+                                    </td>
+                                    <td className="px-4 py-2 border">{equipo.codificacion}</td>
+                                    <td className="px-4 py-2 border">{equipo.marca}</td>
+                                    <td className="px-4 py-2 border">{equipo.modelo}</td>
+                                    <td className="px-4 py-2 border">{equipo.serie}</td>
+                                    <td className="px-4 py-2 border">{equipo.imei}</td>
+                                    <td className={`px-4 py-2 border ${colorEstado[equipo.estado] || ""}`}>{equipo.estado}</td>
+                                    <td className="px-4 py-2 border">{equipo.tipo}</td>
+                                    <td className="px-4 py-2 border">
+                                        {equipo.imagenRuta ? (
+                                            <img
+                                                src={`https://localhost:7291/${equipo.imagenRuta}`}
+                                                alt="Equipo"
+                                                className="w-20 h-auto rounded"
+                                            />
+                                        ) : (
+                                            "Sin imagen"
+                                        )}
+                                    </td>
+                                    {equipo.tipo === "Teléfono móvil" ? (
+                                        <>
+                                            <td className="px-4 py-2 border">{equipo.numeroAsignado}</td>
+                                            <td className="px-4 py-2 border">{equipo.extension}</td>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <td className="px-4 py-2 border">-</td>
+                                            <td className="px-4 py-2 border">-</td>
+                                        </>
+                                    )}
+                                    <td className="px-4 py-2 border">{equipo.ubicacion}</td>
+                                    <td className="px-4 py-2 border">{equipo.revisadoTomaFisica}</td>
+                                    <td className="px-4 py-2 border">{equipo.fechaToma ? new Date(equipo.fechaToma).toLocaleDateString("es-ES") : "Sin fecha"}</td>
+                                    <td className="px-4 py-2 border">{equipo.estadoSticker}</td>
+                                    <td className="px-4 py-2 border">{equipo.asignadoHojaResponsabilidad}</td>
+                                    <td className="px-4 py-2 border">{equipo.comentarios}</td>
+                                    <td className="px-4 py-2 border">{equipo.observaciones}</td>
+                                </tr>
+                            ))
                         ) : (
                             <tr>
-                                <td colSpan="20" className="text-center p-4 text-gray-600">
+                                <td colSpan="26" className="text-center p-4 text-gray-600">
                                     No se encontraron equipos.
                                 </td>
                             </tr>
