@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import EquiposService from "../../services/EquiposServices";
-import { exportarExcel } from "../../services/ExoirtExcel";
+import { exportarExcel } from "../../services/ExportExcel";
 
 const camposFiltro = [
     { label: "Codificación", value: "codificacion", tipo: "texto" },
@@ -10,7 +10,25 @@ const camposFiltro = [
     { label: "Modelo", value: "modelo", tipo: "texto" },
     { label: "Estado", value: "estado", tipo: "select", opciones: ["Buen estado", "Inactivo", "Obsoleto"] },
     { label: "Ubicación", value: "ubicacion", tipo: "texto" },
-    { label: "Asignado a", value: "asignaciones", tipo: "texto" },
+    { label: "Asignado a", value: "asignadoA", tipo: "texto" },
+    { label: "No. de Registro Deprect", value: "noRegistroDeprect", tipo: "texto" },
+    { label: "Orden de Compra", value: "ordenCompra", tipo: "texto" },
+    { label: "Fecha Ingreso", value: "fechaIngreso", tipo: "fecha" },
+    { label: "Hoja No.", value: "hojaNo", tipo: "texto" },
+    { label: "Fecha Actualizacion", value: "fechaActualizacion", tipo: "fecha" },
+    { label: "Equipo", value: "equipo", tipo: "texto" },
+    { label: "Serie", value: "serie", tipo: "texto" },
+    { label: "IMEI", value: "imei", tipo: "texto" },
+    { label: "Tipo", value: "tipo", tipo: "texto" },
+    { label: "Responsable Anterior", value: "responsableAnterior", tipo: "texto" },
+    { label: "Número asignado", value: "numeroAsignado", tipo: "texto" },
+    { label: "Extensión", value: "extension", tipo: "texto" },
+    { label: "Revisado de toma fisica", value: "revisadoTomaFisica", tipo: "texto" },
+    { label: "Fecha de toma", value: "fechaToma", tipo: "fecha" },
+    { label: "Estado de Sticker", value: "estadoSticker", tipo: "select", opciones: ["Buen estado", "Cambio"] },
+    { label: "Asignado a Hoja de responsabilidad", value: "asignadoHojaResponsabilidad", tipo: "texto" },
+    { label: "Comentarios", value: "comentarios", tipo: "texto" },
+    { label: "Observaciones", value: "observaciones", tipo: "texto" },
 ];
 
 const ListaEquipos = () => {
@@ -364,12 +382,8 @@ const ListaEquipos = () => {
                     </table>
                 </div>
                 <div className="m-4 flex justify-center">
-                    <button
-                        onClick={() => exportarExcel(resultadosFiltrados)}
-                        className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-                    >
-                        Exportar a Excel
-                    </button>
+                    <button onClick={() => exportarExcel(resultadosFiltrados)} className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700" >
+                        Exportar a Excel </button>
                 </div>
             </div>
         </div>
