@@ -12,7 +12,7 @@ const CrearEquipo = () => {
         proveedor: "",
         fechaIngreso: "",
         hojaNo: "",
-        fechaActualizacion:"",
+        fechaActualizacion: "",
         codificacion: "",
         tipoEquipo: "",
         marca: "",
@@ -22,7 +22,7 @@ const CrearEquipo = () => {
         numeroAsignado: "",
         extension: "",
         tipo: "",
-        responsableAnterior:"",
+        responsableAnterior: "",
         estado: "",
         especificaciones: "",
         accesorios: "",
@@ -389,7 +389,7 @@ const CrearEquipo = () => {
                                     </div>
                                 </>
                             )}
-                            
+
                             <div className="flex flex-col">
                                 <label
                                     htmlFor="estado"
@@ -406,9 +406,9 @@ const CrearEquipo = () => {
                                     className="input-field"
                                 >
                                     <option value="">-- Seleccione estado --</option>
-                                    <option value="Buen estado">Buen estado</option>
-                                    <option value="Inactivo">Inactivo</option>
-                                    <option value="Obsoleto">Obsoleto</option>
+                                    <option value="Buen estado" className="text-green-500">Buen estado</option>
+                                    <option value="Inactivo" className="text-red-500">Inactivo</option>
+                                    <option value="Obsoleto" className="text-orange-500">Obsoleto</option>
                                 </select>
                             </div>
 
@@ -425,7 +425,7 @@ const CrearEquipo = () => {
                                     className="input-field"
                                 >
                                     <option value="">-- Seleccione tipo --</option>
-                                    <option value="Equipo móvil">Equipo móvil</option>
+                                    <option value="Equipo móvil" >Equipo móvil</option>
                                     <option value="Equipo de escritorio">Equipo de escritorio</option>
                                     <option value="Equipo comunal">Equipo comunal</option>
                                 </select>
@@ -515,27 +515,36 @@ const CrearEquipo = () => {
                         </div>
                     </section>
                     <section>
-                         <h3 className="text-xl font-semibold mb-4 border-b border-indigo-300 pb-2">
+                        <h3 className="text-xl font-semibold mb-4 border-b border-indigo-300 pb-2">
                             INFORMACION DE TOMA DE INVENTARIO
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div className="flex flex-col">
-                                <label
-                                    htmlFor="revisadoTomaFisica"
-                                    className="mb-1 font-medium text-gray-700"
-                                >
-                                    Revisado de Toma Fisica
+                                <label className="mb-1 font-medium text-gray-700">
+                                    Revisado de Toma Física
                                 </label>
-                                <input
-                                    type="text"
-                                    id="revisadoTomaFisica"
-                                    name="revisadoTomaFisica"
-                                    value={form.revisadoTomaFisica}
-                                    onChange={handleChange}
-                                    placeholder="Revisado de Toma Fisica"
-                                    required
-                                    className="input-field"
-                                />
+                                <div className="flex gap-4">
+                                    <label className="flex items-center gap-1">
+                                        <input
+                                            type="radio"
+                                            name="revisadoTomaFisica"
+                                            value="✅"
+                                            checked={form.revisadoTomaFisica === "✅"}
+                                            onChange={handleChange}
+                                        />
+                                        ✅
+                                    </label>
+                                    <label className="flex items-center gap-1">
+                                        <input
+                                            type="radio"
+                                            name="revisadoTomaFisica"
+                                            value="❌"
+                                            checked={form.revisadoTomaFisica === "❌"}
+                                            onChange={handleChange}
+                                        />
+                                        ❌
+                                    </label>
+                                </div>
                             </div>
                             <div className="flex flex-col">
                                 <label
@@ -556,39 +565,54 @@ const CrearEquipo = () => {
                             </div>
                             <div className="flex flex-col">
                                 <label
-                                    htmlFor="estadoSti          cker"
+                                    htmlFor="estadoSticker"
                                     className="mb-1 font-medium text-gray-700"
                                 >
                                     Estado de Sticker
                                 </label>
-                                <input
-                                    type="text"
+                                <select
                                     id="estadoSticker"
                                     name="estadoSticker"
                                     value={form.estadoSticker}
                                     onChange={handleChange}
-                                    placeholder="Estado de Sticker"
                                     required
                                     className="input-field"
-                                />
+                                >
+                                    <option value="">-- Seleccione un estado --</option>
+                                    <option value="buen" className="text-green-600">
+                                        Buen estado
+                                    </option>
+                                    <option value="cambio" className="text-orange-500">
+                                        Cambio
+                                    </option>
+                                </select>
                             </div>
                             <div className="flex flex-col">
-                                <label
-                                    htmlFor="asignadoHojaResponsabilidad"
-                                    className="mb-1 font-medium text-gray-700"
-                                >
+                                <label className="mb-1 font-medium text-gray-700">
                                     Asignado a Hoja responsabilidad
                                 </label>
-                                <input
-                                    type="text"
-                                    id="asignadoHojaResponsabilidad"
-                                    name="asignadoHojaResponsabilidad"
-                                    value={form.asignadoHojaResponsabilidad}
-                                    onChange={handleChange}
-                                    placeholder="Asignado a Hoja responsabilidad"
-                                    required
-                                    className="input-field"
-                                />
+                                <div className="flex gap-4">
+                                    <label className="flex items-center gap-1">
+                                        <input
+                                            type="radio"
+                                            name="asignadoHojaResponsabilidad"
+                                            value="✅"
+                                            checked={form.asignadoHojaResponsabilidad === "✅"}
+                                            onChange={handleChange}
+                                        />
+                                        ✅
+                                    </label>
+                                    <label className="flex items-center gap-1">
+                                        <input
+                                            type="radio"
+                                            name="asignadoHojaResponsabilidad"
+                                            value="❌"
+                                            checked={form.asignadoHojaResponsabilidad === "❌"}
+                                            onChange={handleChange}
+                                        />
+                                        ❌
+                                    </label>
+                                </div>
                             </div>
                             <div className="flex flex-col">
                                 <label
