@@ -22,10 +22,17 @@ const CrearEquipo = () => {
         numeroAsignado: "",
         extension: "",
         tipo: "",
+        responsableAnterior:"",
         estado: "",
         especificaciones: "",
         accesorios: "",
         ubicacion: "",
+        revisadoTomaFisica: "",
+        fechaToma: "",
+        estadoSticker: "",
+        asignadoHojaResponsabilidad: "",
+        comentarios: "",
+        obsevacion: "",
         imagen: null,
     });
 
@@ -62,7 +69,6 @@ const CrearEquipo = () => {
             "marca",
             "modelo",
             "ubicacion",
-            "fechaIngreso",
             "codificacion",
         ];
 
@@ -426,6 +432,21 @@ const CrearEquipo = () => {
                             </div>
 
                             <div className="flex flex-col">
+                                <label htmlFor="responsableAnterior" className="mb-1 font-medium text-gray-700">
+                                    Responsable Anterior
+                                </label>
+                                <input
+                                    type="text"
+                                    id="responsableAnterior"
+                                    name="responsableAnterior"
+                                    value={form.responsableAnterior}
+                                    onChange={handleChange}
+                                    placeholder="Responsable Anterior"
+                                    className="input-field"
+                                />
+                            </div>
+
+                            <div className="flex flex-col">
                                 <label
                                     htmlFor="especificaciones"
                                     className="mb-1 font-medium text-gray-700"
@@ -478,7 +499,7 @@ const CrearEquipo = () => {
                                 </datalist>
                             </div>
 
-                            <div className="flex flex-col md:col-span-3">
+                            <div className="flex flex-col">
                                 <label htmlFor="imagen" className="mb-1 font-medium text-gray-700">
                                     Imagen
                                 </label>
@@ -489,6 +510,120 @@ const CrearEquipo = () => {
                                     accept="image/*"
                                     onChange={handleChange}
                                     className="file-input"
+                                />
+                            </div>
+                        </div>
+                    </section>
+                    <section>
+                         <h3 className="text-xl font-semibold mb-4 border-b border-indigo-300 pb-2">
+                            INFORMACION DE TOMA DE INVENTARIO
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div className="flex flex-col">
+                                <label
+                                    htmlFor="revisadoTomaFisica"
+                                    className="mb-1 font-medium text-gray-700"
+                                >
+                                    Revisado de Toma Fisica
+                                </label>
+                                <input
+                                    type="text"
+                                    id="revisadoTomaFisica"
+                                    name="revisadoTomaFisica"
+                                    value={form.revisadoTomaFisica}
+                                    onChange={handleChange}
+                                    placeholder="Revisado de Toma Fisica"
+                                    required
+                                    className="input-field"
+                                />
+                            </div>
+                            <div className="flex flex-col">
+                                <label
+                                    htmlFor="fechaToma"
+                                    className="mb-1 font-medium text-gray-700"
+                                >
+                                    Fecha de Toma <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="date"
+                                    id="fechaToma"
+                                    name="fechaToma"
+                                    value={form.fechaToma}
+                                    onChange={handleChange}
+                                    required
+                                    className="input-field"
+                                />
+                            </div>
+                            <div className="flex flex-col">
+                                <label
+                                    htmlFor="estadoSti          cker"
+                                    className="mb-1 font-medium text-gray-700"
+                                >
+                                    Estado de Sticker
+                                </label>
+                                <input
+                                    type="text"
+                                    id="estadoSticker"
+                                    name="estadoSticker"
+                                    value={form.estadoSticker}
+                                    onChange={handleChange}
+                                    placeholder="Estado de Sticker"
+                                    required
+                                    className="input-field"
+                                />
+                            </div>
+                            <div className="flex flex-col">
+                                <label
+                                    htmlFor="asignadoHojaResponsabilidad"
+                                    className="mb-1 font-medium text-gray-700"
+                                >
+                                    Asignado a Hoja responsabilidad
+                                </label>
+                                <input
+                                    type="text"
+                                    id="asignadoHojaResponsabilidad"
+                                    name="asignadoHojaResponsabilidad"
+                                    value={form.asignadoHojaResponsabilidad}
+                                    onChange={handleChange}
+                                    placeholder="Asignado a Hoja responsabilidad"
+                                    required
+                                    className="input-field"
+                                />
+                            </div>
+                            <div className="flex flex-col">
+                                <label
+                                    htmlFor="comentarios"
+                                    className="mb-1 font-medium text-gray-700"
+                                >
+                                    Comentarios
+                                </label>
+                                <input
+                                    type="text"
+                                    id="comentarios"
+                                    name="comentarios"
+                                    value={form.comentarios}
+                                    onChange={handleChange}
+                                    placeholder="Comentarios"
+                                    required
+                                    className="input-field"
+                                />
+                            </div>
+                            <div className="flex flex-col">
+                                <label
+                                    htmlFor="observaciones"
+                                    className="mb-1 font-medium text-gray-700"
+                                >
+                                    Observaciones
+                                </label>
+                                <input
+                                    type="text"
+                                    id="observaciones"
+                                    name="observaciones"
+                                    value={form.observaciones}
+                                    onChange={handleChange}
+                                    placeholder="Observaciones"
+                                    required
+                                    className="input-field"
                                 />
                             </div>
                         </div>
