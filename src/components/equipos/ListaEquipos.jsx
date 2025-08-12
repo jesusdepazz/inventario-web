@@ -171,7 +171,7 @@ const ListaEquipos = () => {
                 <th colSpan="3" className="px-2 py-1 border whitespace-nowrap">
                   DATOS DE USUARIO
                 </th>
-                <th colSpan="9" className="px-2 py-1 border whitespace-nowrap">
+                <th colSpan="11" className="px-2 py-1 border whitespace-nowrap">
                   DATOS DEL EQUIPO
                 </th>
                 <th colSpan="1" className="px-2 py-1 border whitespace-nowrap">
@@ -192,12 +192,14 @@ const ListaEquipos = () => {
                 <th className="px-2 py-1 border whitespace-nowrap">Fecha Actualizacion</th>
                 <th className="px-2 py-1 border whitespace-nowrap">Asignado a</th>
                 <th className="px-2 py-1 border whitespace-nowrap">Codificación</th>
+                <th className="px-2 py-1 border whitespace-nowrap">Equipo</th>
                 <th className="px-2 py-1 border whitespace-nowrap">Marca</th>
                 <th className="px-2 py-1 border whitespace-nowrap">Modelo</th>
                 <th className="px-2 py-1 border whitespace-nowrap">Serie</th>
                 <th className="px-2 py-1 border whitespace-nowrap">IMEI</th>
                 <th className="px-2 py-1 border whitespace-nowrap">Estado</th>
                 <th className="px-2 py-1 border whitespace-nowrap">Tipo</th>
+                <th className="px-2 py-1 border whitespace-nowrap">Responsable Anterior</th>
                 <th className="px-2 py-1 border whitespace-nowrap">Número asignado</th>
                 <th className="px-2 py-1 border whitespace-nowrap">Extensión</th>
                 <th className="px-2 py-1 border whitespace-nowrap">Ubicacion</th>
@@ -233,12 +235,14 @@ const ListaEquipos = () => {
                       )}
                     </td>
                     <td className="px-2 py-1 border whitespace-nowrap">{equipo.codificacion}</td>
+                    <td className="px-2 py-1 border whitespace-nowrap">{equipo.tipoEquipo}</td>
                     <td className="px-2 py-1 border whitespace-nowrap">{equipo.marca}</td>
                     <td className="px-2 py-1 border whitespace-nowrap">{equipo.modelo}</td>
                     <td className="px-2 py-1 border whitespace-nowrap">{equipo.serie}</td>
                     <td className="px-2 py-1 border whitespace-nowrap">{equipo.imei}</td>
                     <td className={`px-2 py-1 border whitespace-nowrap ${colorEstado[equipo.estado] || ""}`}>{equipo.estado}</td>
                     <td className="px-2 py-1 border whitespace-nowrap">{equipo.tipo}</td>
+                    <td className="px-2 py-1 border whitespace-nowrap">{equipo.responsableAnterior}</td>
                     {equipo.tipo === "Teléfono móvil" ? (
                       <>
                         <td className="px-2 py-1 border whitespace-nowrap">{equipo.numeroAsignado}</td>

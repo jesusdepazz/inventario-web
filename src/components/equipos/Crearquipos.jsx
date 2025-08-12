@@ -22,6 +22,7 @@ const CrearEquipo = () => {
         numeroAsignado: "",
         extension: "",
         tipo: "",
+        responsableAnterior:"",
         estado: "",
         especificaciones: "",
         accesorios: "",
@@ -68,7 +69,6 @@ const CrearEquipo = () => {
             "marca",
             "modelo",
             "ubicacion",
-            "fechaIngreso",
             "codificacion",
         ];
 
@@ -429,6 +429,21 @@ const CrearEquipo = () => {
                                     <option value="Equipo de escritorio">Equipo de escritorio</option>
                                     <option value="Equipo comunal">Equipo comunal</option>
                                 </select>
+                            </div>
+
+                            <div className="flex flex-col">
+                                <label htmlFor="responsableAnterior" className="mb-1 font-medium text-gray-700">
+                                    Responsable Anterior
+                                </label>
+                                <input
+                                    type="text"
+                                    id="responsableAnterior"
+                                    name="responsableAnterior"
+                                    value={form.responsableAnterior}
+                                    onChange={handleChange}
+                                    placeholder="Responsable Anterior"
+                                    className="input-field"
+                                />
                             </div>
 
                             <div className="flex flex-col">
