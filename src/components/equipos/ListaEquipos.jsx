@@ -1,5 +1,17 @@
 import React, { useEffect, useState } from "react";
 import EquiposService from "../../services/EquiposServices";
+import { exportarExcel } from "../../services/ExoirtExcel";
+
+const camposFiltro = [
+    { label: "Codificación", value: "codificacion", tipo: "texto" },
+    { label: "Factura", value: "factura", tipo: "texto" },
+    { label: "Marca", value: "marca", tipo: "texto" },
+    { label: "Proveedor", value: "proveedor", tipo: "texto" },
+    { label: "Modelo", value: "modelo", tipo: "texto" },
+    { label: "Estado", value: "estado", tipo: "select", opciones: ["Buen estado", "Inactivo", "Obsoleto"] },
+    { label: "Ubicación", value: "ubicacion", tipo: "texto" },
+    { label: "Asignado a", value: "asignaciones", tipo: "texto" },
+];
 
 const camposFiltro = [
     { label: "Codificación", value: "codificacion", tipo: "texto" },
@@ -361,6 +373,14 @@ const ListaEquipos = () => {
                             )}
                         </tbody>
                     </table>
+                </div>
+                <div className="m-4 flex justify-center">
+                    <button
+                        onClick={() => exportarExcel(resultadosFiltrados)}
+                        className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+                    >
+                        Exportar a Excel
+                    </button>
                 </div>
             </div>
         </div>

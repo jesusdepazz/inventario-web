@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import axios from 'axios';
+import UbicacionesService from '../../services/UbicaionesServices';
 
 const HojaBajaActivo = () => {
     const [codEquipo, setCodEquipo] = useState('');
@@ -14,12 +15,28 @@ const HojaBajaActivo = () => {
         otro: false,
     });
     const [justificacion, setJustificacion] = useState('');
-    const fechaActual = new Date().toLocaleDateString('es-GT');
+    const [ubicaciones, setUbicaciones] = useState([]);
+    const [ubicacionActual, setUbicacionActual] = useState('');
+    const [destino, setDestino] = useState('');
+
+    useEffect(() => {
+        UbicacionesService.obtenerTodas()
+            .then(res => {
+                setUbicaciones(res.data);
+            })
+            .catch(err => {
+                console.error("Error cargando ubicaciones:", err);
+            });
+    }, []);
 
     const handleAgregarEquipo = async () => {
         if (!codEquipo.trim()) return;
         try {
+<<<<<<< HEAD
             const res = await axios.get(`https://inveq-test.guandy.com/api/equipos/por-codificacion/${codEquipo}`);
+=======
+            const res = await axios.get(`https://localhost:7291/api/equipos/por-codificacion/${codEquipo}`);
+>>>>>>> jesusdepazz
             setEquipos(prev => [...prev, { ...res.data, codificacion: codEquipo }]);
             setCodEquipo('');
         } catch (error) {
@@ -29,12 +46,14 @@ const HojaBajaActivo = () => {
 
     const handleGenerarPDF = () => {
         const doc = new jsPDF();
+        const ubicacionActualNombre = ubicaciones.find(u => String(u.id) === String(ubicacionActual))?.nombre || '';
+        const destinoNombre = ubicaciones.find(u => String(u.id) === String(destino))?.nombre || '';
         const pageWidth = doc.internal.pageSize.getWidth();
         const marginX = 5;
         const availableFooterWidth = pageWidth - marginX * 2;
 
         const headerY = 10;
-        const logoWidth = 30;
+        const logoWidth = 40;
         const logoHeight = 25;
         const cellPadding = 4;
 
@@ -42,14 +61,14 @@ const HojaBajaActivo = () => {
 
         doc.addImage('/logo_guandy.png', 'PNG', marginX, headerY, logoWidth, logoHeight);
 
-        const centroX = marginX + logoWidth + 10;
+        const centroX = marginX + logoWidth + 50;
         doc.setFontSize(10);
         doc.setFont('helvetica', 'bold');
-        doc.text('GUANDY S.A.', centroX, headerY + 5);
+        doc.text('Guatemala Candies, S.A.', centroX, headerY + 5);
         doc.setFontSize(9);
         doc.setFont('helvetica', 'normal');
-        doc.text('Departamento de Activos Fijos', centroX, headerY + 11);
-        doc.text('Control de bienes institucionales', centroX, headerY + 17);
+        doc.text('Administracion de Activos Fijos', centroX, headerY + 11);
+        doc.text('Baja de Equipo de Computo', centroX, headerY + 17);
 
         doc.setFontSize(9);
         doc.setFont('helvetica', 'bold');
@@ -218,28 +237,12 @@ const HojaBajaActivo = () => {
                     eq.tipo,
                 ]),
                 [
-                    {
-                        content: 'Ubicación Actual',
-                        colSpan: 1,
-                        styles: { fontStyle: 'bold', halign: 'left' }
-                    },
-                    {
-                        content: '',
-                        colSpan: 6,
-                        styles: { halign: 'left' }
-                    }
+                    { content: "Ubicación Actual", styles: { fontStyle: "bold" } },
+                    { content: ubicacionActualNombre, colSpan: 5 }
                 ],
                 [
-                    {
-                        content: 'Destino',
-                        colSpan: 1,
-                        styles: { fontStyle: 'bold', halign: 'left' }
-                    },
-                    {
-                        content: '',
-                        colSpan: 6,
-                        styles: { halign: 'left' }
-                    }
+                    { content: "Destino", styles: { fontStyle: "bold" } },
+                    { content: destinoNombre, colSpan: 5 }
                 ],
                 [
                     {
@@ -384,13 +387,14 @@ const HojaBajaActivo = () => {
                 ],
                 [
                     {
-                        content: 'Nombre y firma solicitante',
+                        content: 'Nombre y firma solicitante\n\n\n\nAmparo Castellanos',
                         styles: {
                             halign: 'center',
                             fontSize: 8,
                             fontStyle: 'bold',
                             fillColor: [230, 230, 230],
-                            textColor: 0
+                            textColor: 0,
+                            cellPadding: 2,
                         }
                     },
                     {
@@ -404,7 +408,7 @@ const HojaBajaActivo = () => {
                         }
                     },
                     {
-                        content: 'Vo.Co. Contador General',
+                        content: 'Vo.Co. Contador General\n\n\n\nErick Pacajoj',
                         styles: {
                             halign: 'center',
                             fontSize: 8,
@@ -416,7 +420,7 @@ const HojaBajaActivo = () => {
                 ],
                 [
                     {
-                        content: 'Vo.Bo. Activos Fijos',
+                        content: 'Vo.Bo. Activos Fijos\n\n\n\nKelin Blanco',
                         styles: {
                             halign: 'center',
                             fontSize: 8,
@@ -426,7 +430,7 @@ const HojaBajaActivo = () => {
                         }
                     },
                     {
-                        content: 'Recibido',
+                        content: 'Recibido\n\n\n\nGabriela Martinez/ Vanessa Aguilar',
                         styles: {
                             halign: 'center',
                             fontSize: 8,
@@ -436,7 +440,7 @@ const HojaBajaActivo = () => {
                         }
                     },
                     {
-                        content: 'Autorización',
+                        content: 'Autorización\n\n\n\nGerrardo Araneda/ Vanessa Santiago',
                         styles: {
                             halign: 'center',
                             fontSize: 8,
@@ -513,6 +517,37 @@ const HojaBajaActivo = () => {
                     className="w-full border border-gray-300 px-3 py-2 rounded"
                     placeholder="Describa la razón detallada por la que se da de baja este activo..."
                 />
+            </div>
+            <div className="mb-4">
+                <label className="block font-semibold mb-1">Ubicación Actual</label>
+                <select
+                    value={ubicacionActual}
+                    onChange={e => setUbicacionActual(e.target.value)}
+                    className="border border-gray-300 px-3 py-2 rounded w-full"
+                >
+                    <option value="">Seleccione una ubicación</option>
+                    {ubicaciones.map((ubi) => (
+                        <option key={ubi.id} value={ubi.id}>
+                            {ubi.nombre}
+                        </option>
+                    ))}
+                </select>
+            </div>
+
+            <div className="mb-4">
+                <label className="block font-semibold mb-1">Destino</label>
+                <select
+                    value={destino}
+                    onChange={e => setDestino(e.target.value)}
+                    className="border border-gray-300 px-3 py-2 rounded w-full"
+                >
+                    <option value="">Seleccione un destino</option>
+                    {ubicaciones.map((ubi) => (
+                        <option key={ubi.id} value={ubi.id}>
+                            {ubi.nombre}
+                        </option>
+                    ))}
+                </select>
             </div>
             <div className="text-center mt-8">
                 <button
