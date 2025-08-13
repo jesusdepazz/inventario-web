@@ -32,11 +32,7 @@ const HojaBajaActivo = () => {
     const handleAgregarEquipo = async () => {
         if (!codEquipo.trim()) return;
         try {
-<<<<<<< HEAD
             const res = await axios.get(`https://inveq-test.guandy.com/api/equipos/por-codificacion/${codEquipo}`);
-=======
-            const res = await axios.get(`https://localhost:7291/api/equipos/por-codificacion/${codEquipo}`);
->>>>>>> jesusdepazz
             setEquipos(prev => [...prev, { ...res.data, codificacion: codEquipo }]);
             setCodEquipo('');
         } catch (error) {
@@ -51,7 +47,6 @@ const HojaBajaActivo = () => {
         const pageWidth = doc.internal.pageSize.getWidth();
         const marginX = 5;
         const availableFooterWidth = pageWidth - marginX * 2;
-
         const headerY = 10;
         const logoWidth = 40;
         const logoHeight = 25;
