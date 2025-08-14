@@ -165,7 +165,10 @@ export default function Sidebar() {
                                 <Link to="/formatos/hojaderesponsabilidad" className="flex items-center gap-3">
                                     <FaUpload /> Hoja de responsabilidad
                                 </Link>
-                                <Link to="/formatos/hojaderesponsabilidad" className="flex items-center gap-3">
+                                <Link to="/formatos/listahojasresponsabilidad" className="flex items-center gap-3">
+                                     <FaClipboardList/>Historial Hojas de Responsabilidad
+                                </Link>
+                                <Link to="/formatos/hojaSalidaRetorno" className="flex items-center gap-3">
                                     <FaUpload /> Pase de salida con retorno
                                 </Link>
                                 <Link to="/formatos/bajaAtivos" className="flex items-center gap-3">

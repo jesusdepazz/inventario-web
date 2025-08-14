@@ -6,22 +6,33 @@ import EquiposService from "../../services/EquiposServices";
 
 const CrearEquipo = () => {
     const [form, setForm] = useState({
+        registroDeprec: "",
         orderCompra: "",
         factura: "",
         proveedor: "",
-        tipo: "",
+        fechaIngreso: "",
+        hojaNo: "",
+        fechaActualizacion: "",
         codificacion: "",
-        estado: "",
+        tipoEquipo: "",
         marca: "",
         modelo: "",
         serie: "",
         imei: "",
         numeroAsignado: "",
         extension: "",
+        tipo: "",
+        responsableAnterior: "",
+        estado: "",
         especificaciones: "",
         accesorios: "",
         ubicacion: "",
-        fechaIngreso: "",
+        revisadoTomaFisica: "",
+        fechaToma: "",
+        estadoSticker: "",
+        asignadoHojaResponsabilidad: "",
+        comentarios: "",
+        obsevacion: "",
         imagen: null,
     });
 
@@ -58,7 +69,6 @@ const CrearEquipo = () => {
             "marca",
             "modelo",
             "ubicacion",
-            "fechaIngreso",
             "codificacion",
         ];
 
@@ -108,9 +118,26 @@ const CrearEquipo = () => {
                 <form onSubmit={handleSubmit} encType="multipart/form-data" className="space-y-4">
                     <section>
                         <h3 className="text-xl font-semibold mb-4 border-b border-indigo-300 pb-2">
-                            Datos de compra
+                            DATOS DE COMPRA
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div className="flex flex-col">
+                                <label
+                                    htmlFor="registroDeprec"
+                                    className="mb-1 font-medium text-gray-700"
+                                >
+                                    No. de Registro en Deprec
+                                </label>
+                                <input
+                                    type="text"
+                                    id="registroDeprec"
+                                    name="registroDeprec"
+                                    value={form.registroDeprec}
+                                    onChange={handleChange}
+                                    className="input-field"
+                                    placeholder="No. de Registro en Deprec"
+                                />
+                            </div>
                             <div className="flex flex-col">
                                 <label
                                     htmlFor="orderCompra"
@@ -162,32 +189,71 @@ const CrearEquipo = () => {
                                     placeholder="Proveedor"
                                 />
                             </div>
+                            <div className="flex flex-col">
+                                <label
+                                    htmlFor="fechaIngreso"
+                                    className="mb-1 font-medium text-gray-700"
+                                >
+                                    Fecha Ingreso <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="date"
+                                    id="fechaIngreso"
+                                    name="fechaIngreso"
+                                    value={form.fechaIngreso}
+                                    onChange={handleChange}
+                                    required
+                                    className="input-field"
+                                />
+                            </div>
                         </div>
                     </section>
                     <section>
                         <h3 className="text-xl font-semibold mb-4 border-b border-indigo-300 pb-2">
-                            Datos de equipo
+                            DATOS DE USUARIO
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div className="flex flex-col">
-                                <label htmlFor="tipo" className="mb-1 font-medium text-gray-700">
-                                    Tipo <span className="text-red-500">*</span>
+                                <label
+                                    htmlFor="hojaNo"
+                                    className="mb-1 font-medium text-gray-700"
+                                >
+                                    Hoja No.
                                 </label>
-                                <select
-                                    id="tipo"
-                                    name="tipo"
-                                    value={form.tipo}
+                                <input
+                                    type="text"
+                                    id="hojaNo"
+                                    name="hojaNo"
+                                    value={form.hojaNo}
+                                    onChange={handleChange}
+                                    className="input-field"
+                                    placeholder="Hoja No."
+                                />
+                            </div>
+                            <div className="flex flex-col">
+                                <label
+                                    htmlFor="fechaActualizacion"
+                                    className="mb-1 font-medium text-gray-700"
+                                >
+                                    Fecha Actualización <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="date"
+                                    id="fechaActualizacion"
+                                    name="fechaActualizacion"
+                                    value={form.fechaActualizacion}
                                     onChange={handleChange}
                                     required
                                     className="input-field"
-                                >
-                                    <option value="">-- Seleccione tipo --</option>
-                                    <option value="Equipo móvil">Equipo móvil</option>
-                                    <option value="Equipo de escritorio">Equipo de escritorio</option>
-                                    <option value="Equipo comunal">Equipo comunal</option>
-                                </select>
+                                />
                             </div>
-
+                        </div>
+                    </section>
+                    <section>
+                        <h3 className="text-xl font-semibold mb-4 border-b border-indigo-300 pb-2">
+                            DATOS DE EQUIPO
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div className="flex flex-col">
                                 <label
                                     htmlFor="codificacion"
@@ -209,24 +275,20 @@ const CrearEquipo = () => {
 
                             <div className="flex flex-col">
                                 <label
-                                    htmlFor="estado"
+                                    htmlFor="tipoEquipo"
                                     className="mb-1 font-medium text-gray-700"
                                 >
-                                    Estado <span className="text-red-500">*</span>
+                                    Equipo
                                 </label>
-                                <select
-                                    id="estado"
-                                    name="estado"
-                                    value={form.estado}
+                                <input
+                                    type="text"
+                                    id="tipoEquipo"
+                                    name="tipoEquipo"
+                                    value={form.tipoEquipo}
                                     onChange={handleChange}
-                                    required
+                                    placeholder="Equipo"
                                     className="input-field"
-                                >
-                                    <option value="">-- Seleccione estado --</option>
-                                    <option value="Buen estado">Buen estado</option>
-                                    <option value="Inactivo">Inactivo</option>
-                                    <option value="Obsoleto">Obsoleto</option>
-                                </select>
+                                />
                             </div>
 
                             <div className="flex flex-col">
@@ -330,6 +392,62 @@ const CrearEquipo = () => {
 
                             <div className="flex flex-col">
                                 <label
+                                    htmlFor="estado"
+                                    className="mb-1 font-medium text-gray-700"
+                                >
+                                    Estado <span className="text-red-500">*</span>
+                                </label>
+                                <select
+                                    id="estado"
+                                    name="estado"
+                                    value={form.estado}
+                                    onChange={handleChange}
+                                    required
+                                    className="input-field"
+                                >
+                                    <option value="">-- Seleccione estado --</option>
+                                    <option value="Buen estado" className="text-green-500">Buen estado</option>
+                                    <option value="Inactivo" className="text-red-500">Inactivo</option>
+                                    <option value="Obsoleto" className="text-orange-500">Obsoleto</option>
+                                </select>
+                            </div>
+
+                            <div className="flex flex-col">
+                                <label htmlFor="tipo" className="mb-1 font-medium text-gray-700">
+                                    Tipo <span className="text-red-500">*</span>
+                                </label>
+                                <select
+                                    id="tipo"
+                                    name="tipo"
+                                    value={form.tipo}
+                                    onChange={handleChange}
+                                    required
+                                    className="input-field"
+                                >
+                                    <option value="">-- Seleccione tipo --</option>
+                                    <option value="Equipo móvil" >Equipo móvil</option>
+                                    <option value="Equipo de escritorio">Equipo de escritorio</option>
+                                    <option value="Equipo comunal">Equipo comunal</option>
+                                </select>
+                            </div>
+
+                            <div className="flex flex-col">
+                                <label htmlFor="responsableAnterior" className="mb-1 font-medium text-gray-700">
+                                    Responsable Anterior
+                                </label>
+                                <input
+                                    type="text"
+                                    id="responsableAnterior"
+                                    name="responsableAnterior"
+                                    value={form.responsableAnterior}
+                                    onChange={handleChange}
+                                    placeholder="Responsable Anterior"
+                                    className="input-field"
+                                />
+                            </div>
+
+                            <div className="flex flex-col">
+                                <label
                                     htmlFor="especificaciones"
                                     className="mb-1 font-medium text-gray-700"
                                 >
@@ -380,25 +498,8 @@ const CrearEquipo = () => {
                                     ))}
                                 </datalist>
                             </div>
-                            <div className="flex flex-col">
-                                <label
-                                    htmlFor="fechaIngreso"
-                                    className="mb-1 font-medium text-gray-700"
-                                >
-                                    Fecha Ingreso <span className="text-red-500">*</span>
-                                </label>
-                                <input
-                                    type="date"
-                                    id="fechaIngreso"
-                                    name="fechaIngreso"
-                                    value={form.fechaIngreso}
-                                    onChange={handleChange}
-                                    required
-                                    className="input-field"
-                                />
-                            </div>
 
-                            <div className="flex flex-col md:col-span-3">
+                            <div className="flex flex-col">
                                 <label htmlFor="imagen" className="mb-1 font-medium text-gray-700">
                                     Imagen
                                 </label>
@@ -409,6 +510,144 @@ const CrearEquipo = () => {
                                     accept="image/*"
                                     onChange={handleChange}
                                     className="file-input"
+                                />
+                            </div>
+                        </div>
+                    </section>
+                    <section>
+                        <h3 className="text-xl font-semibold mb-4 border-b border-indigo-300 pb-2">
+                            INFORMACION DE TOMA DE INVENTARIO
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div className="flex flex-col">
+                                <label className="mb-1 font-medium text-gray-700">
+                                    Revisado de Toma Física
+                                </label>
+                                <div className="flex gap-4">
+                                    <label className="flex items-center gap-1">
+                                        <input
+                                            type="radio"
+                                            name="revisadoTomaFisica"
+                                            value="✅"
+                                            checked={form.revisadoTomaFisica === "✅"}
+                                            onChange={handleChange}
+                                        />
+                                        ✅
+                                    </label>
+                                    <label className="flex items-center gap-1">
+                                        <input
+                                            type="radio"
+                                            name="revisadoTomaFisica"
+                                            value="❌"
+                                            checked={form.revisadoTomaFisica === "❌"}
+                                            onChange={handleChange}
+                                        />
+                                        ❌
+                                    </label>
+                                </div>
+                            </div>
+                            <div className="flex flex-col">
+                                <label
+                                    htmlFor="fechaToma"
+                                    className="mb-1 font-medium text-gray-700"
+                                >
+                                    Fecha de Toma <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="date"
+                                    id="fechaToma"
+                                    name="fechaToma"
+                                    value={form.fechaToma}
+                                    onChange={handleChange}
+                                    required
+                                    className="input-field"
+                                />
+                            </div>
+                            <div className="flex flex-col">
+                                <label
+                                    htmlFor="estadoSticker"
+                                    className="mb-1 font-medium text-gray-700"
+                                >
+                                    Estado de Sticker
+                                </label>
+                                <select
+                                    id="estadoSticker"
+                                    name="estadoSticker"
+                                    value={form.estadoSticker}
+                                    onChange={handleChange}
+                                    required
+                                    className="input-field"
+                                >
+                                    <option value="">-- Seleccione un estado --</option>
+                                    <option value="buen" className="text-green-600">
+                                        Buen estado
+                                    </option>
+                                    <option value="cambio" className="text-orange-500">
+                                        Cambio
+                                    </option>
+                                </select>
+                            </div>
+                            <div className="flex flex-col">
+                                <label className="mb-1 font-medium text-gray-700">
+                                    Asignado a Hoja responsabilidad
+                                </label>
+                                <div className="flex gap-4">
+                                    <label className="flex items-center gap-1">
+                                        <input
+                                            type="radio"
+                                            name="asignadoHojaResponsabilidad"
+                                            value="✅"
+                                            checked={form.asignadoHojaResponsabilidad === "✅"}
+                                            onChange={handleChange}
+                                        />
+                                        ✅
+                                    </label>
+                                    <label className="flex items-center gap-1">
+                                        <input
+                                            type="radio"
+                                            name="asignadoHojaResponsabilidad"
+                                            value="❌"
+                                            checked={form.asignadoHojaResponsabilidad === "❌"}
+                                            onChange={handleChange}
+                                        />
+                                        ❌
+                                    </label>
+                                </div>
+                            </div>
+                            <div className="flex flex-col">
+                                <label
+                                    htmlFor="comentarios"
+                                    className="mb-1 font-medium text-gray-700"
+                                >
+                                    Comentarios
+                                </label>
+                                <input
+                                    type="text"
+                                    id="comentarios"
+                                    name="comentarios"
+                                    value={form.comentarios}
+                                    onChange={handleChange}
+                                    placeholder="Comentarios"
+                                    required
+                                    className="input-field"
+                                />
+                            </div>
+                            <div className="flex flex-col">
+                                <label
+                                    htmlFor="observaciones"
+                                    className="mb-1 font-medium text-gray-700"
+                                >
+                                    Observaciones
+                                </label>
+                                <input
+                                    type="text"
+                                    id="observaciones"
+                                    name="observaciones"
+                                    value={form.observaciones}
+                                    onChange={handleChange}
+                                    placeholder="Observaciones"
+                                    required
+                                    className="input-field"
                                 />
                             </div>
                         </div>

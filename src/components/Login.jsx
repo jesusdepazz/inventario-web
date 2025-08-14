@@ -3,7 +3,7 @@ import { loginRequest } from "../authConfig";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { FaWindows } from "react-icons/fa";
-import AuthServices from "../services/AuthSerivices";
+import AuthServices from "../services/AuthServices";
 
 export default function Login() {
   const { instance } = useMsal();
