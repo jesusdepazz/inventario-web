@@ -5,7 +5,6 @@ const ListaHojasResponsabilidad = () => {
                 <div className="text-center mb-4">
                     <p className="font-bold text-lg">Guatemalan Candies, S.A.</p>
                     <p className="font-bold text-lg text-blue-500">Listado de hojas de responsabilidad - Equipo de cómputo</p>
-                    <p className="font-bold text-lg">Administración de Activos Fijos / Depto de contabilidad</p>
                     <p className="font-bold text-lg">
                         {new Date().toLocaleDateString("es-ES", {
                             weekday: "long",

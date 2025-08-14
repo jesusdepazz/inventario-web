@@ -61,9 +61,6 @@ const EditarEquipo = () => {
     const guardarCambios = async () => {
         try {
             const formData = new FormData();
-            formData.append("OrderCompra", equipo.orderCompra || "");
-            formData.append("Factura", equipo.factura || "");
-            formData.append("Proveedor", equipo.proveedor || "");
             formData.append("Tipo", equipo.tipo || "");
             formData.append("Codificacion", equipo.codificacion || "");
             formData.append("Estado", equipo.estado || "");
@@ -71,27 +68,46 @@ const EditarEquipo = () => {
             formData.append("Modelo", equipo.modelo || "");
             formData.append("Serie", equipo.serie || "");
             formData.append("Imei", equipo.imei || "");
-            formData.append("NumeroAsignado", equipo.numeroAsignado || "");
-            formData.append("Extension", equipo.extension || "");
             formData.append("Especificaciones", equipo.especificaciones || "");
             formData.append("Accesorios", equipo.accesorios || "");
             formData.append("Ubicacion", equipo.ubicacion || "");
             formData.append("FechaIngreso", equipo.fechaIngreso ? equipo.fechaIngreso.slice(0, 10) : "");
 
             if (nuevaImagen) {
-    formData.append("Imagen", nuevaImagen);
-}
+                formData.append("Imagen", nuevaImagen);
+            }
 
-try {
-    await EquiposServices.editar(equipo.id, formData);
-    toast.success("Equipo actualizado correctamente");
-} catch (err) {
-    console.error("Error al actualizar equipo", err);
-    toast.error("No se pudo actualizar el equipo");
-}
+            try {
+                await EquiposServices.editar(equipo.id, formData);
+                toast.success("Equipo actualizado correctamente");
+            } catch (err) {
+                console.error("Error al actualizar equipo:", err);
 
-            toast.success("Equipo actualizado correctamente");
+                if (err.response) {
+                    console.error("Status:", err.response.status);
+                    console.error("Headers:", err.response.headers);
+                    console.error("Data:", err.response.data);
+
+                    if (err.response.data && err.response.data.errors) {
+                        console.group("Errores de validación");
+                        for (const campo in err.response.data.errors) {
+                            console.error(`${campo}:`, err.response.data.errors[campo]);
+                        }
+                        console.groupEnd();
+
+                        const mensajes = Object.values(err.response.data.errors).flat().join("\n");
+                        toast.error(`Errores de validación:\n${mensajes}`);
+                    } else {
+                        toast.error("Error al actualizar el equipo (sin detalles de validación)");
+                    }
+                } else {
+                    toast.error("Error desconocido al actualizar el equipo");
+                }
+                return; 
+            }
+
         } catch (error) {
+            console.error("Error al guardar cambios:", error);
             toast.error("Error al guardar cambios");
         }
     };

@@ -20,7 +20,7 @@ const HojaResponsabilidad = () => {
         controlRemoto: false,
         baterias: false,
         estuche: false,
-        memoriaSDI: false,
+        memoriaSD: false,
         otros: false,
     });
 
