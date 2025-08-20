@@ -18,9 +18,10 @@ import EliminarAsignacion from "./components/asignaciones/EliminarAsignacion";
 import CrearSolicitud from "./components/solicitudes/CrearSolicitud";
 import ListaSolicitud from "./components/solicitudes/ListaSolicitud";
 import EliminarSolicitud from "./components/solicitudes/EliminarSolicitud";
-import HojaResponsabilidad from "./components/formatos/HojaResponsabilidad";
 import HojaBajaActivo from "./components/formatos/HojaBajaActivo";
 import HojaSalidaRetorno from "./components/formatos/HojaSalidaRetorno";
+import HojaResponsabilidad from "./components/formatos/HojaResponsabilidad/HojaResponsabilidad";
+import ListaHojasResponsabilidad from "./components/formatos/HojaResponsabilidad/ListaHojaResponsabilidad";
 
 function RequireAuth({ children }) {
   const isAuthenticated = useIsAuthenticated();
@@ -74,6 +75,7 @@ function AppRoutes() {
           <Route path="/solicitudes/eliminar" element={<EliminarSolicitud/>} />
           {/* FORMATOS */}
           <Route path="/formatos/hojaderesponsabilidad" element={<HojaResponsabilidad/>} />
+          <Route path="/formatos/listahojasresponsabilidad" element={<ListaHojasResponsabilidad/>} />
           <Route path="/formatos/bajaAtivos" element={<HojaBajaActivo/>} />
           <Route path="/formatos/hojaSalidaRetorno" element={<HojaSalidaRetorno/>} />
          </Route>
