@@ -49,8 +49,8 @@ const HojaResponsabilidad = () => {
         try {
             const res = await axios.get(`https://localhost:7291/api/equipos/por-codificacion/${codigoEquipo}`);
             setEquipo({
-                fechaEquipo: res.data.fechaIngreso, // 👈 se asigna al campo correcto
-                equipo: res.data.tipoEquipo,        // 👈 se asigna al campo correcto
+                fechaEquipo: res.data.fechaIngreso,
+                equipo: res.data.tipoEquipo,       
                 modelo: res.data.modelo,
                 serie: res.data.serie,
                 ubicacion: res.data.ubicacion,
