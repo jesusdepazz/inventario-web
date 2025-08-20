@@ -6,20 +6,9 @@ const HojaResponsabilidad = () => {
     const [codigoEmpleado, setCodigoEmpleado] = useState("");
     const [codigoEquipo, setCodigoEquipo] = useState("");
 
-    const [empleado, setEmpleado] = useState({
-        nombre: "",
-        puesto: "",
-        departamento: "",
-    });
-
-    const [equipo, setEquipo] = useState({
-        fechaEquipo: "",
-        equipo: "",
-        modelo: "",
-        serie: "",
-        ubicacion: "",
-        marca: "",
-    });
+    // Cambiado a arrays
+    const [empleados, setEmpleados] = useState([]); // array de empleados
+    const [equipos, setEquipos] = useState([]);     // array de equipos
 
     const [fechaActualizacion, setFechaActualizacion] = useState("");
     const [jefeInmediato, setJefeInmediato] = useState("");
@@ -30,75 +19,83 @@ const HojaResponsabilidad = () => {
     const [fechaSolvencia, setFechaSolvencia] = useState("")
     const [observaciones, setObservaciones] = useState("")
 
+    // --- Manejar múltiples empleados ---
     const handleBuscarEmpleado = async () => {
         if (!codigoEmpleado.trim()) return;
         try {
             const res = await axios.get(`https://localhost:7291/api/empleados/${codigoEmpleado}`);
-            setEmpleado({
+            const nuevoEmpleado = {
+                codigo: codigoEmpleado,
                 nombre: res.data.nombre,
                 puesto: res.data.puesto,
                 departamento: res.data.departamento,
-            });
+            };
+            setEmpleados(prev => [...prev, nuevoEmpleado]);
+            setCodigoEmpleado(""); // limpiar input
         } catch (error) {
             alert("Empleado no encontrado");
         }
     };
 
+    // --- Manejar múltiples equipos ---
     const handleBuscarEquipo = async () => {
         if (!codigoEquipo.trim()) return;
         try {
             const res = await axios.get(`https://localhost:7291/api/equipos/por-codificacion/${codigoEquipo}`);
-            setEquipo({
-                fechaEquipo: res.data.fechaIngreso, // 👈 se asigna al campo correcto
-                equipo: res.data.tipoEquipo,        // 👈 se asigna al campo correcto
+            const nuevoEquipo = {
+                codigo: codigoEquipo,
+                fechaEquipo: res.data.fechaIngreso,
+                equipo: res.data.tipoEquipo,      
                 modelo: res.data.modelo,
                 serie: res.data.serie,
                 ubicacion: res.data.ubicacion,
                 marca: res.data.marca,
-            });
+            };
+            setEquipos(prev => [...prev, nuevoEquipo]);
+            setCodigoEquipo(""); // limpiar input
         } catch (error) {
             alert("Equipo no encontrado");
         }
     };
 
     const handleGuardarHoja = async () => {
-        if (!codigoEmpleado || !codigoEquipo) {
-            alert("Debes completar Código de Empleado y Código de Equipo");
+        if (empleados.length === 0 || equipos.length === 0) {
+            alert("Debes agregar al menos un empleado y un equipo");
             return;
         }
 
         const nuevaHoja = {
             FechaActualizacion: fechaActualizacion,
-            CodigoEmpleado: codigoEmpleado,
-            NombreEmpleado: empleado.nombre,
-            Puesto: empleado.puesto,
-            Departamento: empleado.departamento,
-
-            FechaEquipo: equipo.fechaEquipo,
-            CodigoEquipo: codigoEquipo,
-            Equipo: equipo.equipo,
-            Modelo: equipo.modelo,
-            Serie: equipo.serie,
-            Ubicacion: equipo.ubicacion,
-            Marca: equipo.marca,
-
+            Empleados: empleados, // enviar array
+            Equipos: equipos,     // enviar array
             JefeInmediato: jefeInmediato,
             MotivoActualizacion: motivoActualizacion,
             Comentarios: comentarios,
             Estado: estado,
             SolvenciaNo: solvenciaNo,
-            fechaSolvencia: fechaSolvencia,
-            observaciones: observaciones
+            FechaSolvencia: fechaSolvencia,
+            Observaciones: observaciones
         };
-
 
         try {
             const res = await HojasServices.crear(nuevaHoja);
             alert(`Hoja guardada ✅ Número de hoja: ${res.data.hojaNo}`);
+            // Limpiar todo después de guardar
+            setEmpleados([]);
+            setEquipos([]);
+            setCodigoEmpleado("");
+            setCodigoEquipo("");
+            setFechaActualizacion("");
+            setJefeInmediato("");
+            setMotivoActualizacion("");
+            setComentarios("");
+            setEstado("");
+            setSolvenciaNo("");
+            setFechaSolvencia("");
+            setObservaciones("");
         } catch (error) {
             if (error.response) {
-                console.error("Error 400 Bad Request - detalles del backend:");
-                console.log(JSON.stringify(error.response.data, null, 2));
+                console.error("Error 400 Bad Request:", JSON.stringify(error.response.data, null, 2));
                 alert("Error al guardar hoja ❌ Revisa la consola para ver los errores de validación.");
             } else if (error.request) {
                 console.error("Request hecho pero sin respuesta:", error.request);
@@ -130,14 +127,14 @@ const HojaResponsabilidad = () => {
                             onClick={handleBuscarEmpleado}
                             className="bg-blue-600 text-white px-4 py-2 rounded"
                         >
-                            Buscar
+                            Agregar
                         </button>
                     </div>
-                    {empleado.nombre && (
-                        <p className="mt-2 text-gray-700 text-sm">
-                            {empleado.nombre} | {empleado.puesto} | {empleado.departamento}
+                    {empleados.map((emp, i) => (
+                        <p key={i} className="mt-2 text-gray-700 text-sm">
+                            {emp.codigo} | {emp.nombre} | {emp.puesto} | {emp.departamento}
                         </p>
-                    )}
+                    ))}
                 </div>
 
                 {/* Código Equipo */}
@@ -155,14 +152,14 @@ const HojaResponsabilidad = () => {
                             onClick={handleBuscarEquipo}
                             className="bg-blue-600 text-white px-4 py-2 rounded"
                         >
-                            Buscar
+                            Agregar
                         </button>
                     </div>
-                    {equipo.modelo && (
-                        <p className="mt-2 text-gray-700 text-sm">
-                            {equipo.marca} {equipo.modelo} | Serie: {equipo.serie} | Ubicación: {equipo.ubicacion} | Fecha ingreso: {equipo.fechaIngreso}
+                    {equipos.map((eq, i) => (
+                        <p key={i} className="mt-2 text-gray-700 text-sm">
+                            {eq.codigo} | {eq.marca} {eq.modelo} | Serie: {eq.serie} | Ubicación: {eq.ubicacion} | Fecha ingreso: {eq.fechaEquipo}
                         </p>
-                    )}
+                    ))}
                 </div>
 
                 {/* Fecha de Actualización */}
@@ -197,6 +194,7 @@ const HojaResponsabilidad = () => {
                         rows={3}
                     />
                 </div>
+
                 {/* Comentarios */}
                 <div className="col-span-3">
                     <label className="block font-semibold mb-1">Comentarios</label>
@@ -265,7 +263,6 @@ const HojaResponsabilidad = () => {
                 </button>
             </div>
         </div>
-
     );
 };
 
