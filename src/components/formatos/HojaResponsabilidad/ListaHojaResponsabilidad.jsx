@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import HojasServices from "../../../services/HojasServices";
-import generarPDFHojaResponsabilidad from "./generarPDFHojaResponsabilidad";
 
 const ListaHojasResponsabilidad = () => {
     const [hojas, setHojas] = useState([]);
@@ -97,7 +96,6 @@ const ListaHojasResponsabilidad = () => {
                                         <td className="px-4 py-2">{hoja.observaciones}</td>
                                         <td className="px-4 py-2">
                                             <button
-                                                onClick={() => generarPDFHojaResponsabilidad(hoja)}
                                                 className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
                                             >
                                                 Exportar PDF
