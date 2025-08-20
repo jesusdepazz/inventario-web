@@ -18,10 +18,10 @@ import EliminarAsignacion from "./components/asignaciones/EliminarAsignacion";
 import CrearSolicitud from "./components/solicitudes/CrearSolicitud";
 import ListaSolicitud from "./components/solicitudes/ListaSolicitud";
 import EliminarSolicitud from "./components/solicitudes/EliminarSolicitud";
-import HojaResponsabilidad from "./components/formatos/HojaResponsabilidad";
 import HojaBajaActivo from "./components/formatos/HojaBajaActivo";
 import HojaSalidaRetorno from "./components/formatos/HojaSalidaRetorno";
-import ListaHojasResponsabilidad from "./components/formatos/ListaHojaResponsabilidad";
+import HojaResponsabilidad from "./components/formatos/HojaResponsabilidad/HojaResponsabilidad";
+import ListaHojasResponsabilidad from "./components/formatos/HojaResponsabilidad/ListaHojaResponsabilidad";
 
 function RequireAuth({ children }) {
   const isAuthenticated = useIsAuthenticated();
