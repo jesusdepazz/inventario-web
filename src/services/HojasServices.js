@@ -1,13 +1,32 @@
-import apiClient from "./ApiClient";
+import ApiClient from "./ApiClient";
 
-const HojasServices = {
-  obtenerTodas: () => apiClient.get("/HojaResponsabilidad"),
+const HojasService = {
+  crearHoja: async (payload) => {
+    try {
+      const response = await ApiClient.post("/HojasResponsabilidad", payload);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
 
-  obtenerPorId: (id) => apiClient.get(`/HojaResponsabilidad/${id}`),
+  obtenerHoja: async (id) => {
+    try {
+      const response = await ApiClient.get(`/HojasResponsabilidad/${id}`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
 
-  crear: (hoja) => apiClient.post("/HojaResponsabilidad", hoja),
-
-  eliminar: (id) => apiClient.delete(`/HojaResponsabilidad/${id}`)
+  listarHojas: async () => {
+    try {
+      const response = await ApiClient.get("/HojasResponsabilidad");
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
 };
 
-export default HojasServices;
+export default HojasService;

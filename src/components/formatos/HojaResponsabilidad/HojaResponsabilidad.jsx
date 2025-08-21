@@ -1,10 +1,16 @@
 import React, { useState } from "react";
-import axios from "axios";
+import HojasService from "../../../services/HojasServices";
+import EquiposService from "../../../services/EquiposServices";
+import EmpleadosService from "../../../services/EmpleadosServices";
 
 const HojaResponsabilidadForm = () => {
     const [hojaNo, setHojaNo] = useState("");
     const [motivo, setMotivo] = useState("");
     const [comentarios, setComentarios] = useState("");
+    const [estado, SetEstado] = useState("");
+    const [solvenciaNo, SetSolvenciaNo] = useState("")
+    const [fechaSolvencia, SetFechaSolvencia] = useState("")
+    const [observaciones, SetObservaciones] = useState("")
 
     const [empleados, setEmpleados] = useState([]);
     const [equipos, setEquipos] = useState([]);
@@ -13,71 +19,70 @@ const HojaResponsabilidadForm = () => {
     const [equipoCodificacion, setEquipoCodificacion] = useState("");
 
     const agregarEmpleado = async () => {
-        if (!empleadoCodigo) return;
+    if (!empleadoCodigo) return;
 
-        try {
-            const res = await axios.get(`https://localhost:7291/api/Empleados/${empleadoCodigo}`);
-            setEmpleados([...empleados, res.data]);
-            setEmpleadoCodigo("");
-        } catch (err) {
-            alert("Empleado no encontrado");
-        }
+    try {
+      const res = await EmpleadosService.obtenerPorCodigo(empleadoCodigo);
+      setEmpleados([...empleados, res.data]);
+      setEmpleadoCodigo("");
+    } catch (err) {
+      window.alert("Empleado no encontrado");
+    }
+  };
+
+  const agregarEquipo = async () => {
+    if (!equipoCodificacion) return;
+
+    try {
+      const res = await EquiposService.obtenerPorCodificacion(equipoCodificacion);
+      setEquipos([...equipos, res.data]);
+      setEquipoCodificacion("");
+    } catch (err) {
+      window.alert("Equipo no encontrado");
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const payload = {
+      hojaNo,
+      motivo,
+      comentarios,
+      estado,
+      solvenciaNo,
+      fechaSolvencia,
+      observaciones,
+      empleados: empleados.map((emp) => ({
+        empleadoId: emp.codigoEmpleado,
+        nombre: emp.nombre,
+        puesto: emp.puesto,
+        departamento: emp.departamento,
+      })),
+      equipos: equipos.map((eq) => ({
+        codificacion: eq.codificacion,
+        marca: eq.marca,
+        modelo: eq.modelo,
+        serie: eq.serie,
+        tipo: eq.tipo,
+        tipoEquipo: eq.tipoEquipo,
+        estado: eq.estado,
+        ubicacion: eq.ubicacion,
+      })),
     };
 
-    const agregarEquipo = async () => {
-        if (!equipoCodificacion) return;
-
-        try {
-            const res = await axios.get(`https://localhost:7291/api/Equipos/por-codificacion/${equipoCodificacion}`);
-            setEquipos([...equipos, res.data]);
-            setEquipoCodificacion("");
-        } catch (err) {
-            alert("Equipo no encontrado");
-        }
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        const payload = {
-            hojaNo,
-            motivo,
-            comentarios,
-            empleados: empleados.map(emp => ({
-                empleadoId: emp.codigoEmpleado,
-                nombre: emp.nombre,
-                puesto: emp.puesto,
-                departamento: emp.departamento
-            })),
-            equipos: equipos.map(eq => ({
-                codificacion: eq.codificacion,
-                marca: eq.marca,
-                modelo: eq.modelo,
-                serie: eq.serie,
-                tipo: eq.tipo,
-                tipoEquipo: eq.tipoEquipo,
-                estado: eq.estado,
-                ubicacion: eq.ubicacion
-            }))
-        };
-
-        try {
-            const res = await axios.post("https://localhost:7291/api/HojasResponsabilidad", payload);
-            alert("Hoja creada con éxito! ID: " + res.data.id);
-        } catch (error) {
-            // Aquí capturamos el error exacto que envía el servidor
-            if (error.response) {
-                console.error("Respuesta del servidor:", error.response.data);
-                alert("Error del servidor: " + JSON.stringify(error.response.data, null, 2));
-            } else if (error.request) {
-                console.error("No hubo respuesta del servidor:", error.request);
-                alert("No hubo respuesta del servidor");
-            } else {
-                console.error("Error al configurar la solicitud:", error.message);
-                alert("Error: " + error.message);
-            }
-        }
-    };
+    try {
+      const res = await HojasService.crearHoja(payload);
+      window.alert("Hoja creada con éxito! ID: " + res.id);
+    } catch (error) {
+      if (error.mensaje) {
+        window.alert("Error del servidor: " + error.mensaje);
+      } else {
+        console.error(error);
+        window.alert("Ocurrió un error al crear la hoja");
+      }
+    }
+  };
 
     return (
         <div className="flex justify-center items-start px-4 py-1">
@@ -103,6 +108,43 @@ const HojaResponsabilidadForm = () => {
                                 <input
                                     value={motivo}
                                     onChange={e => setMotivo(e.target.value)}
+                                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-gray-600 mb-1">Estado</label>
+                                <select
+                                    value={estado}
+                                    onChange={e => SetEstado(e.target.value)}
+                                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                >
+                                    <option value="">-- Selecciona estado --</option>
+                                    <option value="Activa">Activa</option>
+                                    <option value="Inactiva">Inactiva</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-gray-600 mb-1">No. Solvencia</label>
+                                <input
+                                    value={solvenciaNo}
+                                    onChange={e => SetSolvenciaNo(e.target.value)}
+                                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-gray-600 mb-1">Fecha de Solvencia</label>
+                                <input
+                                    type="date"
+                                    value={fechaSolvencia}
+                                    onChange={e => SetFechaSolvencia(e.target.value)}
+                                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-gray-600 mb-1">Observaciones</label>
+                                <input
+                                    value={observaciones}
+                                    onChange={e => SetObservaciones(e.target.value)}
                                     className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                                 />
                             </div>

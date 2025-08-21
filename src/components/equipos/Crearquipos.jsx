@@ -43,8 +43,6 @@ const CrearEquipo = () => {
         const cargarUbicaciones = async () => {
             try {
                 const res = await UbicacionesService.obtenerTodas();
-                console.log("Respuesta ubicaciones:", res.data);
-
                 let lista = [];
 
                 if (Array.isArray(res.data)) {

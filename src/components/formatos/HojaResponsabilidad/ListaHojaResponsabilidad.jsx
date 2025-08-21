@@ -1,27 +1,24 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import HojasService from "../../../services/HojasServices";
 
 const ListaHojasResponsabilidad = () => {
     const [hojas, setHojas] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    const fetchHojas = async () => {
-        try {
-            const res = await axios.get("https://localhost:7291/api/hojas");
-            setHojas(res.data);
-        } catch (err) {
-            console.error("Error al obtener hojas:", err);
-            alert("No se pudieron cargar las hojas");
-        } finally {
-            setLoading(false);
-        }
-    };
 
     useEffect(() => {
+        const fetchHojas = async () => {
+            try {
+                const data = await HojasService.listarHojas();
+                const hojasNormalizadas = data?.$values ?? data;
+                setHojas(hojasNormalizadas);
+                console.log("Hojas:", hojasNormalizadas);
+            } catch (error) {
+                console.error("Error al obtener hojas:", error);
+                window.alert("Error al cargar las hojas de responsabilidad");
+            }
+        };
+
         fetchHojas();
     }, []);
-
-    if (loading) return <p>Cargando hojas...</p>;
 
     return (
         <div className="p-6 max-w-7xl mx-auto">
@@ -40,20 +37,70 @@ const ListaHojasResponsabilidad = () => {
                 </div>
 
                 <div className="overflow-x-auto">
-                    <table border={1} cellPadding={5} cellSpacing={0}>
+                    <table className="min-w-[2000px] text-xs text-left border border-gray-200">
                         <thead>
-                            <tr>
-                                <th>Hoja No</th>
-                                <th>Equipo</th>
-                                <th>Motivo</th>
-                                <th>Accesorios</th>
-                                <th>Comentarios</th>
+                            <tr className="text-center bg-blue-800 text-white">
+                                <th className="px-6 py-3 border">Hoja No</th>
+                                <th className="px-6 py-3 border">Fecha de Actualizacion</th>
+                                <th className="px-6 py-3 border">Codigo</th>
+                                <th className="px-6 py-3 border">Responsable</th>
+                                <th className="px-6 py-3 border">Puesto</th>
+                                <th className="px-6 py-3 border">Departamento</th>
+                                <th className="px-6 py-3 border">Jefe Inmediato</th>
+                                <th className="px-6 py-3 border">Ubicacion del equipo</th>
+                                <th className="px-6 py-3 border">Estado</th>
+                                <th className="px-6 py-3 border">Solvencia No.</th>
+                                <th className="px-6 py-3 border">Fecha Solvencia</th>
+                                <th className="px-6 py-3 border">Observaciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             {hojas.map((hoja) => (
-                                <tr key={hoja.hojaNo}>
-                                    <td>{hoja.hojaNo}</td>
+                                <tr key={hoja.hojaNo} className="text-center border-b">
+                                    <td className="px-4 py-2">{hoja.hojaNo}</td>
+                                    <td className="px-4 py-2">
+                                        {new Date(hoja.fechaCreacion).toLocaleDateString("es-ES", {
+                                            day: "2-digit",
+                                            month: "2-digit",
+                                            year: "numeric"
+                                        })}
+                                    </td>
+                                    <td className="px-4 py-2">
+                                        {
+                                            hoja.empleados?.$values?.[0]?.empleadoId ?? "—"
+                                        }
+                                    </td>
+                                    <td className="px-4 py-2">
+                                        {
+                                            hoja.empleados?.$values?.[0]?.nombre ?? "—"
+                                        }
+                                    </td>
+                                    <td className="px-4 py-2">
+                                        {
+                                            hoja.empleados?.$values?.[0]?.puesto ?? "—"
+                                        }
+                                    </td>
+                                    <td className="px-4 py-2">
+                                        {
+                                            hoja.empleados?.$values?.[0]?.departamento ?? "—"
+                                        }
+                                    </td>
+                                    <td className="px-4 py-2">{hoja.motivo}</td>
+                                    <td>
+                                        {
+                                            hoja.equipos?.$values?.[0]?.ubicacion ?? "—"
+                                        }
+                                    </td>
+                                    <td className="px-4 py-2">{hoja.estado}</td>
+                                    <td className="px-4 py-2">{hoja.solvenciaNo}</td>
+                                    <td className="px-4 py-2">
+                                        {new Date(hoja.fechaSolvencia).toLocaleDateString("es-ES", {
+                                            day: "2-digit",
+                                            month: "2-digit",
+                                            year: "numeric"
+                                        })}
+                                    </td>
+                                    <td className="px-4 py-2">{hoja.observaciones}</td>
                                 </tr>
                             ))}
 
