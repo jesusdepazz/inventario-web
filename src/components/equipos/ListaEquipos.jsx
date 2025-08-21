@@ -33,20 +33,29 @@ const camposFiltro = [
 
 const ListaEquipos = () => {
     const [equipos, setEquipos] = useState([]);
-
     const [filtros, setFiltros] = useState([]);
 
     useEffect(() => {
-        const cargarEquipos = async () => {
-            try {
-                const res = await EquiposService.obtenerEquipos();
-                setEquipos(res.data);
-            } catch (err) {
-                console.error("Error al obtener equipos:", err);
+    const cargarEquipos = async () => {
+        try {
+            const res = await EquiposService.obtenerEquipos();
+            let lista = [];
+
+            if (Array.isArray(res.data)) {
+                lista = res.data;
+            } else if (Array.isArray(res.data?.$values)) {
+                lista = res.data.$values;
             }
-        };
-        cargarEquipos();
-    }, []);
+            setEquipos(lista);
+        } catch (err) {
+            console.error("Error al obtener equipos:", err);
+        }
+    };
+
+    cargarEquipos();
+}, []);
+
+
 
     const agregarFiltro = () => {
         setFiltros((prev) => [...prev, { campo: camposFiltro[0].value, valor: "" }]);

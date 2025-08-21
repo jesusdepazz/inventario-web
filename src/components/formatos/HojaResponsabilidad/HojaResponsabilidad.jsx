@@ -1,272 +1,226 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import HojasServices from '../../../services/HojasServices';
+import React, { useState } from "react";
+import HojasService from "../../../services/HojasServices";
+import EquiposService from "../../../services/EquiposServices";
+import EmpleadosService from "../../../services/EmpleadosServices";
 
-const HojaResponsabilidad = () => {
-    const [codigoEmpleado, setCodigoEmpleado] = useState("");
-    const [codigoEquipo, setCodigoEquipo] = useState("");
-
-    const [empleado, setEmpleado] = useState({
-        nombre: "",
-        puesto: "",
-        departamento: "",
-    });
-
-    const [equipo, setEquipo] = useState({
-        fechaEquipo: "",
-        equipo: "",
-        modelo: "",
-        serie: "",
-        ubicacion: "",
-        marca: "",
-    });
-
-    const [fechaActualizacion, setFechaActualizacion] = useState("");
-    const [jefeInmediato, setJefeInmediato] = useState("");
-    const [motivoActualizacion, setMotivoActualizacion] = useState("");
+const HojaResponsabilidadForm = () => {
+    const [hojaNo, setHojaNo] = useState("");
+    const [motivo, setMotivo] = useState("");
     const [comentarios, setComentarios] = useState("");
-    const [estado, setEstado] = useState("");
-    const [solvenciaNo, setSolvenciaNo] = useState("")
-    const [fechaSolvencia, setFechaSolvencia] = useState("")
-    const [observaciones, setObservaciones] = useState("")
+    const [estado, SetEstado] = useState("");
+    const [solvenciaNo, SetSolvenciaNo] = useState("")
+    const [fechaSolvencia, SetFechaSolvencia] = useState("")
+    const [observaciones, SetObservaciones] = useState("")
 
-    const handleBuscarEmpleado = async () => {
-        if (!codigoEmpleado.trim()) return;
-        try {
-            const res = await axios.get(`https://localhost:7291/api/empleados/${codigoEmpleado}`);
-            setEmpleado({
-                nombre: res.data.nombre,
-                puesto: res.data.puesto,
-                departamento: res.data.departamento,
-            });
-        } catch (error) {
-            alert("Empleado no encontrado");
-        }
+    const [empleados, setEmpleados] = useState([]);
+    const [equipos, setEquipos] = useState([]);
+
+    const [empleadoCodigo, setEmpleadoCodigo] = useState("");
+    const [equipoCodificacion, setEquipoCodificacion] = useState("");
+
+    const agregarEmpleado = async () => {
+    if (!empleadoCodigo) return;
+
+    try {
+      const res = await EmpleadosService.obtenerPorCodigo(empleadoCodigo);
+      setEmpleados([...empleados, res.data]);
+      setEmpleadoCodigo("");
+    } catch (err) {
+      window.alert("Empleado no encontrado");
+    }
+  };
+
+  const agregarEquipo = async () => {
+    if (!equipoCodificacion) return;
+
+    try {
+      const res = await EquiposService.obtenerPorCodificacion(equipoCodificacion);
+      setEquipos([...equipos, res.data]);
+      setEquipoCodificacion("");
+    } catch (err) {
+      window.alert("Equipo no encontrado");
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const payload = {
+      hojaNo,
+      motivo,
+      comentarios,
+      estado,
+      solvenciaNo,
+      fechaSolvencia,
+      observaciones,
+      empleados: empleados.map((emp) => ({
+        empleadoId: emp.codigoEmpleado,
+        nombre: emp.nombre,
+        puesto: emp.puesto,
+        departamento: emp.departamento,
+      })),
+      equipos: equipos.map((eq) => ({
+        codificacion: eq.codificacion,
+        marca: eq.marca,
+        modelo: eq.modelo,
+        serie: eq.serie,
+        tipo: eq.tipo,
+        tipoEquipo: eq.tipoEquipo,
+        estado: eq.estado,
+        ubicacion: eq.ubicacion,
+      })),
     };
 
-    const handleBuscarEquipo = async () => {
-        if (!codigoEquipo.trim()) return;
-        try {
-            const res = await axios.get(`https://localhost:7291/api/equipos/por-codificacion/${codigoEquipo}`);
-            setEquipo({
-                fechaEquipo: res.data.fechaIngreso,
-                equipo: res.data.tipoEquipo,       
-                modelo: res.data.modelo,
-                serie: res.data.serie,
-                ubicacion: res.data.ubicacion,
-                marca: res.data.marca,
-            });
-        } catch (error) {
-            alert("Equipo no encontrado");
-        }
-    };
-
-    const handleGuardarHoja = async () => {
-        if (!codigoEmpleado || !codigoEquipo) {
-            alert("Debes completar Código de Empleado y Código de Equipo");
-            return;
-        }
-
-        const nuevaHoja = {
-            FechaActualizacion: fechaActualizacion,
-            CodigoEmpleado: codigoEmpleado,
-            NombreEmpleado: empleado.nombre,
-            Puesto: empleado.puesto,
-            Departamento: empleado.departamento,
-
-            FechaEquipo: equipo.fechaEquipo,
-            CodigoEquipo: codigoEquipo,
-            Equipo: equipo.equipo,
-            Modelo: equipo.modelo,
-            Serie: equipo.serie,
-            Ubicacion: equipo.ubicacion,
-            Marca: equipo.marca,
-
-            JefeInmediato: jefeInmediato,
-            MotivoActualizacion: motivoActualizacion,
-            Comentarios: comentarios,
-            Estado: estado,
-            SolvenciaNo: solvenciaNo,
-            fechaSolvencia: fechaSolvencia,
-            observaciones: observaciones
-        };
-
-
-        try {
-            const res = await HojasServices.crear(nuevaHoja);
-            alert(`Hoja guardada ✅ Número de hoja: ${res.data.hojaNo}`);
-        } catch (error) {
-            if (error.response) {
-                console.error("Error 400 Bad Request - detalles del backend:");
-                console.log(JSON.stringify(error.response.data, null, 2));
-                alert("Error al guardar hoja ❌ Revisa la consola para ver los errores de validación.");
-            } else if (error.request) {
-                console.error("Request hecho pero sin respuesta:", error.request);
-            } else {
-                console.error("Error configurando la solicitud:", error.message);
-            }
-        }
-    };
+    try {
+      const res = await HojasService.crearHoja(payload);
+      window.alert("Hoja creada con éxito! ID: " + res.id);
+    } catch (error) {
+      if (error.mensaje) {
+        window.alert("Error del servidor: " + error.mensaje);
+      } else {
+        console.error(error);
+        window.alert("Ocurrió un error al crear la hoja");
+      }
+    }
+  };
 
     return (
-        <div className="p-6 max-w-6xl mx-auto bg-white shadow-lg rounded-xl">
-            <h2 className="text-2xl font-bold text-center mb-6">
-                Crear Hoja de Responsabilidad
-            </h2>
+        <div className="flex justify-center items-start px-4 py-1">
+            <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-4xl">
+                <h2 className="text-2xl font-bold mb-6 text-center text-blue-900">Crear Hoja de Responsabilidad</h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {/* Código Empleado */}
-                <div>
-                    <label className="block font-semibold mb-1">Código de Empleado</label>
-                    <div className="flex gap-2">
-                        <input
-                            type="text"
-                            value={codigoEmpleado}
-                            onChange={e => setCodigoEmpleado(e.target.value)}
-                            className="border px-3 py-2 rounded w-full"
-                            placeholder="Ej. T01234"
-                        />
+                <form onSubmit={handleSubmit} className="space-y-6">
+
+                    {/* Sección Hoja */}
+                    <div className="bg-gray-50 p-4 rounded-xl shadow-inner border border-gray-200">
+                        <h3 className="text-lg font-semibold mb-4 text-gray-700">Detalles de la Hoja</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-gray-600 mb-1">Hoja No.</label>
+                                <input
+                                    value={hojaNo}
+                                    onChange={e => setHojaNo(e.target.value)}
+                                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-gray-600 mb-1">Motivo</label>
+                                <input
+                                    value={motivo}
+                                    onChange={e => setMotivo(e.target.value)}
+                                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-gray-600 mb-1">Estado</label>
+                                <select
+                                    value={estado}
+                                    onChange={e => SetEstado(e.target.value)}
+                                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                >
+                                    <option value="">-- Selecciona estado --</option>
+                                    <option value="Activa">Activa</option>
+                                    <option value="Inactiva">Inactiva</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-gray-600 mb-1">No. Solvencia</label>
+                                <input
+                                    value={solvenciaNo}
+                                    onChange={e => SetSolvenciaNo(e.target.value)}
+                                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-gray-600 mb-1">Fecha de Solvencia</label>
+                                <input
+                                    type="date"
+                                    value={fechaSolvencia}
+                                    onChange={e => SetFechaSolvencia(e.target.value)}
+                                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-gray-600 mb-1">Observaciones</label>
+                                <input
+                                    value={observaciones}
+                                    onChange={e => SetObservaciones(e.target.value)}
+                                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                />
+                            </div>
+                        </div>
+                        <div className="mt-4">
+                            <label className="block text-gray-600 mb-1">Comentarios</label>
+                            <textarea
+                                value={comentarios}
+                                onChange={e => setComentarios(e.target.value)}
+                                rows={3}
+                                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="bg-gray-50 p-4 rounded-xl shadow-inner border border-gray-200">
+                        <h3 className="text-lg font-semibold mb-4 text-gray-700">Agregar Empleado</h3>
+                        <div className="flex gap-2 mb-3">
+                            <input
+                                placeholder="Código de empleado"
+                                value={empleadoCodigo}
+                                onChange={e => setEmpleadoCodigo(e.target.value)}
+                                className="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+                            />
+                            <button
+                                type="button"
+                                onClick={agregarEmpleado}
+                                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
+                            >
+                                Agregar
+                            </button>
+                        </div>
+                        <ul className="list-disc list-inside space-y-1">
+                            {empleados.map((emp, i) => (
+                                <li key={i} className="text-gray-700">{emp.nombre} - {emp.puesto}</li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    <div className="bg-gray-50 p-4 rounded-xl shadow-inner border border-gray-200">
+                        <h3 className="text-lg font-semibold mb-4 text-gray-700">Agregar Equipo</h3>
+                        <div className="flex gap-2 mb-3">
+                            <input
+                                placeholder="Codificación del equipo"
+                                value={equipoCodificacion}
+                                onChange={e => setEquipoCodificacion(e.target.value)}
+                                className="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
+                            />
+                            <button
+                                type="button"
+                                onClick={agregarEquipo}
+                                className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700"
+                            >
+                                Agregar
+                            </button>
+                        </div>
+                        <ul className="list-disc list-inside space-y-1">
+                            {equipos.map((eq, i) => (
+                                <li key={i} className="text-gray-700">{eq.marca} {eq.modelo} ({eq.codificacion})</li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    <div className="text-center">
                         <button
-                            onClick={handleBuscarEmpleado}
-                            className="bg-blue-600 text-white px-4 py-2 rounded"
+                            type="submit"
+                            className="bg-blue-600 text-white px-6 py-2 rounded-xl font-semibold hover:bg-blue-700 transition-colors"
                         >
-                            Buscar
+                            Crear Hoja
                         </button>
                     </div>
-                    {empleado.nombre && (
-                        <p className="mt-2 text-gray-700 text-sm">
-                            {empleado.nombre} | {empleado.puesto} | {empleado.departamento}
-                        </p>
-                    )}
-                </div>
-
-                {/* Código Equipo */}
-                <div>
-                    <label className="block font-semibold mb-1">Código de Equipo</label>
-                    <div className="flex gap-2">
-                        <input
-                            type="text"
-                            value={codigoEquipo}
-                            onChange={e => setCodigoEquipo(e.target.value)}
-                            className="border px-3 py-2 rounded w-full"
-                            placeholder="Ej. EQP-1234"
-                        />
-                        <button
-                            onClick={handleBuscarEquipo}
-                            className="bg-blue-600 text-white px-4 py-2 rounded"
-                        >
-                            Buscar
-                        </button>
-                    </div>
-                    {equipo.modelo && (
-                        <p className="mt-2 text-gray-700 text-sm">
-                            {equipo.marca} {equipo.modelo} | Serie: {equipo.serie} | Ubicación: {equipo.ubicacion} | Fecha ingreso: {equipo.fechaIngreso}
-                        </p>
-                    )}
-                </div>
-
-                {/* Fecha de Actualización */}
-                <div>
-                    <label className="block font-semibold mb-1">Fecha de Actualización</label>
-                    <input
-                        type="date"
-                        value={fechaActualizacion}
-                        onChange={e => setFechaActualizacion(e.target.value)}
-                        className="border px-3 py-2 rounded w-full"
-                    />
-                </div>
-
-                {/* Jefe Inmediato */}
-                <div>
-                    <label className="block font-semibold mb-1">Jefe Inmediato</label>
-                    <input
-                        type="text"
-                        value={jefeInmediato}
-                        onChange={e => setJefeInmediato(e.target.value)}
-                        className="border px-3 py-2 rounded w-full"
-                    />
-                </div>
-
-                {/* Motivo de actualización */}
-                <div className="col-span-3">
-                    <label className="block font-semibold mb-1">Motivo de actualización</label>
-                    <textarea
-                        value={motivoActualizacion}
-                        onChange={e => setMotivoActualizacion(e.target.value)}
-                        className="border px-3 py-2 rounded w-full"
-                        rows={3}
-                    />
-                </div>
-                {/* Comentarios */}
-                <div className="col-span-3">
-                    <label className="block font-semibold mb-1">Comentarios</label>
-                    <textarea
-                        value={comentarios}
-                        onChange={e => setComentarios(e.target.value)}
-                        className="border px-3 py-2 rounded w-full"
-                        rows={2}
-                    />
-                </div>
-
-                {/* Estado */}
-                <div>
-                    <label className="block font-semibold mb-1">Estado</label>
-                    <select
-                        value={estado}
-                        onChange={e => setEstado(e.target.value)}
-                        className="border px-3 py-2 rounded w-full"
-                    >
-                        <option value="">-- Selecciona un estado --</option>
-                        <option value="Activa">Activa</option>
-                        <option value="Inactiva">Inactiva</option>
-                    </select>
-                </div>
-
-                {/* Solvencia No */}
-                <div>
-                    <label className="block font-semibold mb-1">Solvencia No.</label>
-                    <input
-                        type="text"
-                        value={solvenciaNo}
-                        onChange={e => setSolvenciaNo(e.target.value)}
-                        className="border px-3 py-2 rounded w-full"
-                    />
-                </div>
-
-                {/* Fecha Solvencia */}
-                <div>
-                    <label className="block font-semibold mb-1">Fecha Solvencia</label>
-                    <input
-                        type="date"
-                        value={fechaSolvencia}
-                        onChange={e => setFechaSolvencia(e.target.value)}
-                        className="border px-3 py-2 rounded w-full"
-                    />
-                </div>
-
-                {/* Observaciones */}
-                <div className="col-span-3">
-                    <label className="block font-semibold mb-1">Observaciones</label>
-                    <textarea
-                        value={observaciones}
-                        onChange={e => setObservaciones(e.target.value)}
-                        className="border px-3 py-2 rounded w-full"
-                        rows={2}
-                    />
-                </div>
-            </div>
-
-            <div className="text-center mt-6">
-                <button
-                    onClick={handleGuardarHoja}
-                    className="bg-green-600 text-white px-6 py-3 rounded font-bold"
-                >
-                    Guardar Hoja
-                </button>
+                </form>
             </div>
         </div>
 
     );
 };
 
-export default HojaResponsabilidad;
+export default HojaResponsabilidadForm;

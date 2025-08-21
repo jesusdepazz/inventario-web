@@ -1,21 +1,23 @@
 import React, { useState, useEffect } from "react";
-import HojasServices from "../../../services/HojasServices";
-import generarPDFHojaResponsabilidad from "./generarPDFHojaResponsabilidad";
+import HojasService from "../../../services/HojasServices";
 
 const ListaHojasResponsabilidad = () => {
     const [hojas, setHojas] = useState([]);
 
     useEffect(() => {
-        const cargarHojas = async () => {
+        const fetchHojas = async () => {
             try {
-                const res = await HojasServices.obtenerTodas();
-                setHojas(res.data);
-            } catch (err) {
-                console.error("Error al obtener hojas:", err);
+                const data = await HojasService.listarHojas();
+                const hojasNormalizadas = data?.$values ?? data;
+                setHojas(hojasNormalizadas);
+                console.log("Hojas:", hojasNormalizadas);
+            } catch (error) {
+                console.error("Error al obtener hojas:", error);
+                window.alert("Error al cargar las hojas de responsabilidad");
             }
         };
 
-        cargarHojas();
+        fetchHojas();
     }, []);
 
     return (
@@ -38,75 +40,70 @@ const ListaHojasResponsabilidad = () => {
                     <table className="min-w-[2000px] text-xs text-left border border-gray-200">
                         <thead>
                             <tr className="text-center bg-blue-800 text-white">
-                                <th className="px-6 py-3 border">No. de Hoja</th>
+                                <th className="px-6 py-3 border">Hoja No</th>
                                 <th className="px-6 py-3 border">Fecha de Actualizacion</th>
-                                <th className="px-6 py-3 border">Codigo de Usuario</th>
+                                <th className="px-6 py-3 border">Codigo</th>
                                 <th className="px-6 py-3 border">Responsable</th>
                                 <th className="px-6 py-3 border">Puesto</th>
                                 <th className="px-6 py-3 border">Departamento</th>
                                 <th className="px-6 py-3 border">Jefe Inmediato</th>
-                                <th className="px-6 py-3 border">Ubicacion</th>
+                                <th className="px-6 py-3 border">Ubicacion del equipo</th>
                                 <th className="px-6 py-3 border">Estado</th>
                                 <th className="px-6 py-3 border">Solvencia No.</th>
-                                <th className="px-6 py-3 border">Fecha de Solvencia</th>
+                                <th className="px-6 py-3 border">Fecha Solvencia</th>
                                 <th className="px-6 py-3 border">Observaciones</th>
-                                <th className="px-6 py-3 border">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {hojas.length === 0 ? (
-                                <tr>
-                                    <td colSpan={14} className="text-center py-4">
-                                        No hay hojas de responsabilidad registradas
+                            {hojas.map((hoja) => (
+                                <tr key={hoja.hojaNo} className="text-center border-b">
+                                    <td className="px-4 py-2">{hoja.hojaNo}</td>
+                                    <td className="px-4 py-2">
+                                        {new Date(hoja.fechaCreacion).toLocaleDateString("es-ES", {
+                                            day: "2-digit",
+                                            month: "2-digit",
+                                            year: "numeric"
+                                        })}
                                     </td>
+                                    <td className="px-4 py-2">
+                                        {
+                                            hoja.empleados?.$values?.[0]?.empleadoId ?? "—"
+                                        }
+                                    </td>
+                                    <td className="px-4 py-2">
+                                        {
+                                            hoja.empleados?.$values?.[0]?.nombre ?? "—"
+                                        }
+                                    </td>
+                                    <td className="px-4 py-2">
+                                        {
+                                            hoja.empleados?.$values?.[0]?.puesto ?? "—"
+                                        }
+                                    </td>
+                                    <td className="px-4 py-2">
+                                        {
+                                            hoja.empleados?.$values?.[0]?.departamento ?? "—"
+                                        }
+                                    </td>
+                                    <td className="px-4 py-2">{hoja.motivo}</td>
+                                    <td>
+                                        {
+                                            hoja.equipos?.$values?.[0]?.ubicacion ?? "—"
+                                        }
+                                    </td>
+                                    <td className="px-4 py-2">{hoja.estado}</td>
+                                    <td className="px-4 py-2">{hoja.solvenciaNo}</td>
+                                    <td className="px-4 py-2">
+                                        {new Date(hoja.fechaSolvencia).toLocaleDateString("es-ES", {
+                                            day: "2-digit",
+                                            month: "2-digit",
+                                            year: "numeric"
+                                        })}
+                                    </td>
+                                    <td className="px-4 py-2">{hoja.observaciones}</td>
                                 </tr>
-                            ) : (
-                                hojas.map((hoja) => (
-                                    <tr key={hoja.id} className="text-center border-b">
-                                        <td className="px-4 py-2">{hoja.hojaNo}</td>
-                                        <td className="px-4 py-2">
-                                            {hoja.fechaActualizacion
-                                                ? (() => {
-                                                    const d = new Date(hoja.fechaActualizacion);
-                                                    const dia = String(d.getDate()).padStart(2, "0");
-                                                    const mes = String(d.getMonth() + 1).padStart(2, "0");
-                                                    const anio = String(d.getFullYear()).padStart(4, "0");
-                                                    return `${dia}/${mes}/${anio}`;
-                                                })()
-                                                : ""}
-                                        </td>
-                                        <td className="px-4 py-2">{hoja.codigoEmpleado}</td>
-                                        <td className="px-4 py-2">{hoja.nombreEmpleado}</td>
-                                        <td className="px-4 py-2">{hoja.puesto}</td>
-                                        <td className="px-4 py-2">{hoja.departamento}</td>
-                                        <td className="px-4 py-2">{hoja.jefeInmediato}</td>
-                                        <td className="px-4 py-2">{hoja.ubicacion}</td>
-                                        <td className="px-4 py-2">{hoja.estado}</td>
-                                        <td className="px-4 py-2">{hoja.solvenciaNo}</td>
-                                        <td className="px-4 py-2">
-                                            {hoja.fechaSolvencia
-                                                ? (() => {
-                                                    const d = new Date(hoja.fechaSolvencia);
-                                                    const dia = String(d.getDate()).padStart(2, "0");
-                                                    const mes = String(d.getMonth() + 1).padStart(2, "0");
-                                                    const anio = String(d.getFullYear()).padStart(4, "0");
-                                                    return `${dia}/${mes}/${anio}`;
-                                                })()
-                                                : ""}
-                                        </td>
-                                        <td className="px-4 py-2">{hoja.observaciones}</td>
-                                        <td className="px-4 py-2">
-                                            <button
-                                                onClick={() => generarPDFHojaResponsabilidad(hoja)}
-                                                className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
-                                            >
-                                                Exportar PDF
-                                            </button>
-                                        </td>
+                            ))}
 
-                                    </tr>
-                                ))
-                            )}
                         </tbody>
                     </table>
                 </div>
