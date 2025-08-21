@@ -37,16 +37,17 @@ const ListaEquipos = () => {
     const [filtros, setFiltros] = useState([]);
 
     useEffect(() => {
-        const cargarEquipos = async () => {
-            try {
-                const res = await EquiposService.obtenerEquipos();
-                setEquipos(res.data);
-            } catch (err) {
-                console.error("Error al obtener equipos:", err);
-            }
-        };
-        cargarEquipos();
-    }, []);
+    const cargarEquipos = async () => {
+        try {
+            const res = await EquiposService.obtenerEquipos();
+            setEquipos(res.data);   // <-- aquí guardas directo
+        } catch (err) {
+            console.error("Error al obtener equipos:", err);
+        }
+    };
+    cargarEquipos();
+}, []);
+
 
     const agregarFiltro = () => {
         setFiltros((prev) => [...prev, { campo: camposFiltro[0].value, valor: "" }]);
