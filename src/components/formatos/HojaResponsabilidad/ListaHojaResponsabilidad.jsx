@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import HojasService from "../../../services/HojasServices";
+import generarPDFHoja from "./HojaResponsabilidadPDF";
 
 const ListaHojasResponsabilidad = () => {
     const [hojas, setHojas] = useState([]);
@@ -52,6 +53,7 @@ const ListaHojasResponsabilidad = () => {
                                 <th className="px-6 py-3 border">Solvencia No.</th>
                                 <th className="px-6 py-3 border">Fecha Solvencia</th>
                                 <th className="px-6 py-3 border">Observaciones</th>
+                                <th className="px-6 py-3 border">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -101,6 +103,14 @@ const ListaHojasResponsabilidad = () => {
                                         })}
                                     </td>
                                     <td className="px-4 py-2">{hoja.observaciones}</td>
+                                    <td className="px-4 py-2">
+                                        <button
+                                            onClick={() => generarPDFHoja(hoja)}
+                                            className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
+                                        >
+                                            PDF
+                                        </button>
+                                    </td>
                                 </tr>
                             ))}
 
