@@ -11,14 +11,11 @@ const HojaResponsabilidadForm = () => {
   const [solvenciaNo, SetSolvenciaNo] = useState("");
   const [fechaSolvencia, SetFechaSolvencia] = useState("");
   const [observaciones, SetObservaciones] = useState("");
-
   const [empleados, setEmpleados] = useState([]);
   const [equipos, setEquipos] = useState([]);
-
   const [empleadoCodigo, setEmpleadoCodigo] = useState("");
   const [equipoCodificacion, setEquipoCodificacion] = useState("");
 
-  // Agregar empleado
   const agregarEmpleado = async () => {
     if (!empleadoCodigo) return;
 
@@ -31,12 +28,10 @@ const HojaResponsabilidadForm = () => {
     }
   };
 
-  // Eliminar empleado
   const eliminarEmpleado = (index) => {
     setEmpleados(empleados.filter((_, i) => i !== index));
   };
 
-  // Agregar equipo
   const agregarEquipo = async () => {
     if (!equipoCodificacion) return;
 
@@ -49,7 +44,6 @@ const HojaResponsabilidadForm = () => {
     }
   };
 
-  // Eliminar equipo
   const eliminarEquipo = (index) => {
     setEquipos(equipos.filter((_, i) => i !== index));
   };
@@ -104,7 +98,6 @@ const HojaResponsabilidadForm = () => {
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Sección Hoja */}
           <div className="bg-gray-50 p-4 rounded-xl shadow-inner border border-gray-200">
             <h3 className="text-lg font-semibold mb-4 text-gray-700">
               Detalles de la Hoja
@@ -175,7 +168,6 @@ const HojaResponsabilidadForm = () => {
             </div>
           </div>
 
-          {/* Sección Empleados */}
           <div className="bg-gray-50 p-4 rounded-xl shadow-inner border border-gray-200">
             <h3 className="text-lg font-semibold mb-4 text-gray-700">
               Agregar Empleado
@@ -216,7 +208,6 @@ const HojaResponsabilidadForm = () => {
             </ul>
           </div>
 
-          {/* Sección Equipos */}
           <div className="bg-gray-50 p-4 rounded-xl shadow-inner border border-gray-200">
             <h3 className="text-lg font-semibold mb-4 text-gray-700">
               Agregar Equipo
