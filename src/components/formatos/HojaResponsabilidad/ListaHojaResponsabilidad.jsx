@@ -68,30 +68,20 @@ const ListaHojasResponsabilidad = () => {
                                         })}
                                     </td>
                                     <td className="px-4 py-2">
-                                        {
-                                            hoja.empleados?.$values?.[0]?.empleadoId ?? "—"
-                                        }
+                                        {hoja.empleados?.[0]?.empleadoId ?? "—"}
                                     </td>
                                     <td className="px-4 py-2">
-                                        {
-                                            hoja.empleados?.$values?.[0]?.nombre ?? "—"
-                                        }
+                                        {hoja.empleados?.[0]?.nombre ?? "—"}
                                     </td>
                                     <td className="px-4 py-2">
-                                        {
-                                            hoja.empleados?.$values?.[0]?.puesto ?? "—"
-                                        }
+                                        {hoja.empleados?.[0]?.puesto ?? "—"}
                                     </td>
                                     <td className="px-4 py-2">
-                                        {
-                                            hoja.empleados?.$values?.[0]?.departamento ?? "—"
-                                        }
+                                        {hoja.empleados?.[0]?.departamento ?? "—"}
                                     </td>
-                                    <td className="px-4 py-2">{hoja.motivo}</td>
-                                    <td>
-                                        {
-                                            hoja.equipos?.$values?.[0]?.ubicacion ?? "—"
-                                        }
+                                    <td className="px-4 py-2"></td>
+                                    <td className="px-4 py-2">
+                                        {hoja.equipos?.[0]?.ubicacion ?? "—"}
                                     </td>
                                     <td className="px-4 py-2">{hoja.estado}</td>
                                     <td className="px-4 py-2">{hoja.solvenciaNo}</td>
