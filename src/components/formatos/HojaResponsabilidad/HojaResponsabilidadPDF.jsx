@@ -9,6 +9,16 @@ const generarPDFHoja = async (hoja) => {
   const pageHeight = doc.internal.pageSize.getHeight();
 
   const fechaActual = new Date().toLocaleDateString("es-ES");
+
+  const formatFecha = (fecha) => {
+    if (!fecha || fecha.startsWith("0001-01-01")) return "—";
+    return new Date(fecha).toLocaleDateString("es-ES", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric"
+    });
+  };
+
   const loadImage = (url) =>
     new Promise((resolve, reject) => {
       const img = new Image();
@@ -66,8 +76,16 @@ const generarPDFHoja = async (hoja) => {
     doc.text("ADMINISTRACION DE ACTIVOS FIJOS", marginX, yStart);
 
     if (mostrarContador) {
+      doc.setFontSize(15);
       doc.setTextColor(255, 0, 0);
-      doc.text(`No. ${String(numeroHoja).padStart(5, "0")}`, pageWidth - marginX - 20, yStart);
+      doc.text(
+        `No. ${String(numeroHoja).padStart(5, "0")}`,
+        pageWidth - marginX, 
+        yStart,
+        { align: "right" }  
+      );
+
+      doc.setFontSize(10); 
     }
 
     doc.setTextColor(0, 0, 0);
@@ -88,7 +106,7 @@ const generarPDFHoja = async (hoja) => {
     doc.setFont("helvetica", "bold");
     doc.text(titulo, tituloX, yTitulo + 7);
 
-    return yTitulo + lineHeight + 6;
+    return yTitulo + lineHeight + 5;
   };
 
   const numeroHoja = hoja.hojaNo ?? 1;
@@ -109,7 +127,7 @@ const generarPDFHoja = async (hoja) => {
     styles: { fontSize: 8, lineColor: [0, 0, 0], lineWidth: 0.3 },
     headStyles: { fillColor: [30, 58, 138], textColor: [255, 255, 255] }
   });
-  yActual = doc.lastAutoTable.finalY + 6;
+  yActual = doc.lastAutoTable.finalY + 5;
 
   const motivoLabel = "Motivo de actualización:";
   const motivoTexto = hoja.motivo ?? "—";
@@ -123,7 +141,7 @@ const generarPDFHoja = async (hoja) => {
 
   doc.setFontSize(9);
   doc.setTextColor(0, 0, 0);
-  doc.text(motivoLabel, marginX + 2, yActual + 6);
+  doc.text(motivoLabel, marginX + 2, yActual + 5);
 
   doc.setFillColor(255, 255, 255);
   doc.rect(motivoTextoX, yActual + 1.5, motivoTextoWidth, motivoHeight - 3, 'FD');
@@ -135,22 +153,21 @@ const generarPDFHoja = async (hoja) => {
     yActual + 6
   );
 
-  yActual += motivoHeight + 4;
+  yActual += motivoHeight + 5;
 
   const equipos = hoja.equipos ?? [];
   const equiposBody = equipos.map(eq => [
+    eq.fechaIngreso ? formatFecha(eq.fechaIngreso) : "—",
     eq.codificacion ?? "—",
+    eq.tipoEquipo ?? "—",
     eq.marca ?? "—",
     eq.modelo ?? "—",
     eq.serie ?? "—",
-    eq.estado ?? "—",
-    eq.tipo ?? "—",
-    eq.ubicacion ?? "—"
   ]);
 
   autoTable(doc, {
     startY: yActual,
-    head: [["Codificación", "Marca", "Modelo", "Serie", "Estado", "Tipo", "Ubicación"]],
+    head: [["Fecha", "Codificacion", "Equipo", "Marca", "Modelo", "Serie", "Observaciones"]],
     body: equiposBody.length > 0 ? equiposBody : [["—", "—", "—", "—", "—", "—", "—"]],
     styles: {
       fontSize: 8,
@@ -166,7 +183,7 @@ const generarPDFHoja = async (hoja) => {
     tableLineColor: [0, 0, 0],
     tableLineWidth: 0.3
   });
-  yActual = doc.lastAutoTable.finalY + 10;
+  yActual = doc.lastAutoTable.finalY + 5;
 
   const alturaTituloAccesorios = 8;
   doc.setFillColor(200, 230, 255);
@@ -234,7 +251,7 @@ const generarPDFHoja = async (hoja) => {
   yActual = printWrappedText('C) Verificar la integridad de las etiquetas de código de activos, cualquier anomalía se reportará a Administrador de Activos Fijos.', marginX, yActual, boxWidth);
   yActual = printWrappedText('D) Me comprometo a devolver los recursos en buenas condiciones, y en el momento que sean devueltos, si por circunstancias el Activo fuese destruido total o parcialmente por negligencia mía, AUTORIZO a la empresa ¨Guatemalan Candies, S.A.¨ realizar el reclamo respectivo del mismo, deduciendo la suma que cubra el valor del o los recursos de mi salario al cual tengo derecho.', marginX, yActual, boxWidth);
 
-  yActual += 10;
+  yActual += 12;
 
   agregarFooter(doc, doc.internal.getNumberOfPages());
 
@@ -246,80 +263,80 @@ const generarPDFHoja = async (hoja) => {
   }
 
 
-const marginFirma = 40;
-const filaAltura = 40;
-let firmaYActual = yActual;
+  const marginFirma = 40;
+  const filaAltura = 40;
+  let firmaYActual = yActual;
 
-if (empleados.length > 0) {
-  const firmasPorFila = 3;
+  if (empleados.length > 0) {
+    const firmasPorFila = 3;
 
-  for (let i = 0; i < empleados.length; i++) {
-    const emp = empleados[i];
-    const filaIndex = Math.floor(i / firmasPorFila);
-    const posicionEnFila = i % firmasPorFila;
-    const empleadosEnFila = Math.min(firmasPorFila, empleados.length - filaIndex * firmasPorFila);
+    for (let i = 0; i < empleados.length; i++) {
+      const emp = empleados[i];
+      const filaIndex = Math.floor(i / firmasPorFila);
+      const posicionEnFila = i % firmasPorFila;
+      const empleadosEnFila = Math.min(firmasPorFila, empleados.length - filaIndex * firmasPorFila);
 
-    firmaYActual = yActual + filaIndex * filaAltura;
+      firmaYActual = yActual + filaIndex * filaAltura;
 
-    if (firmaYActual + 30 > pageHeight - 20) {
-      doc.addPage();
-      firmaYActual = await agregarEncabezado(doc, numeroHoja, marginX, true);
-      yActual = firmaYActual;
-      i--; 
-      continue;
+      if (firmaYActual + 30 > pageHeight - 20) {
+        doc.addPage();
+        firmaYActual = await agregarEncabezado(doc, numeroHoja, marginX, true);
+        yActual = firmaYActual;
+        i--;
+        continue;
+      }
+
+      let xPos;
+      if (empleadosEnFila === 1) {
+        xPos = pageWidth / 2;
+      } else if (empleadosEnFila === 2) {
+        xPos = posicionEnFila === 0 ? marginFirma : pageWidth - marginFirma;
+      } else {
+        if (posicionEnFila === 0) xPos = marginFirma;
+        else if (posicionEnFila === 1) xPos = pageWidth / 2;
+        else xPos = pageWidth - marginFirma;
+      }
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(10);
+      doc.setTextColor(0, 0, 0);
+      doc.text("(F):________________", xPos, firmaYActual, { align: "center" });
+
+      doc.setFontSize(8);
+      doc.text("Responsable:", xPos, firmaYActual + 6, { align: "center" });
+
+      doc.setTextColor(0, 102, 204);
+      doc.text(emp.nombre ?? "", xPos, firmaYActual + 12, { align: "center" });
+
+      doc.setTextColor(0, 0, 0);
+      doc.text(emp.puesto ?? "", xPos, firmaYActual + 18, { align: "center" });
     }
+  }
 
-    let xPos;
-    if (empleadosEnFila === 1) {
-      xPos = pageWidth / 2;
-    } else if (empleadosEnFila === 2) {
-      xPos = posicionEnFila === 0 ? marginFirma : pageWidth - marginFirma;
-    } else {
-      if (posicionEnFila === 0) xPos = marginFirma;
-      else if (posicionEnFila === 1) xPos = pageWidth / 2;
-      else xPos = pageWidth - marginFirma;
-    }
+  yActual = firmaYActual + 30;
+
+  const responsablesFinales = [
+    { nombre: "Kelin Stefani Blanco", puesto: "Administración de Activos Fijos", label: "Realizado Por:" },
+    { nombre: "Carlos Mazariegos", puesto: "Gerente de Sistemas", label: "Entrega de Equipo:" }
+  ];
+
+  responsablesFinales.forEach((r, index) => {
+    const x = index === 0 ? marginFirma : pageWidth - marginFirma;
 
     doc.setFont("helvetica", "bold");
     doc.setFontSize(10);
     doc.setTextColor(0, 0, 0);
-    doc.text("(F):________________", xPos, firmaYActual, { align: "center" });
+    doc.text("(F):________________", x, yActual, { align: "center" });
 
     doc.setFontSize(8);
-    doc.text("Responsable:", xPos, firmaYActual + 6, { align: "center" });
+    doc.text(r.label, x, yActual + 6, { align: "center" });
 
     doc.setTextColor(0, 102, 204);
-    doc.text(emp.nombre ?? "", xPos, firmaYActual + 12, { align: "center" });
+    doc.text(r.nombre, x, yActual + 12, { align: "center" });
 
     doc.setTextColor(0, 0, 0);
-    doc.text(emp.puesto ?? "", xPos, firmaYActual + 18, { align: "center" });
-  }
-}
-
-yActual = firmaYActual + 30;
-
-const responsablesFinales = [
-  { nombre: "Kelin Stefani Blanco", puesto: "Administración de Activos Fijos", label: "Realizado Por:" },
-  { nombre: "Carlos Mazariegos", puesto: "Gerente de Sistemas", label: "Entrega de Equipo:" }
-];
-
-responsablesFinales.forEach((r, index) => {
-  const x = index === 0 ? marginFirma : pageWidth - marginFirma;
-
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(10);
-  doc.setTextColor(0, 0, 0);
-  doc.text("(F):________________", x, yActual, { align: "center" });
-
-  doc.setFontSize(8);
-  doc.text(r.label, x, yActual + 6, { align: "center" });
-
-  doc.setTextColor(0, 102, 204);
-  doc.text(r.nombre, x, yActual + 12, { align: "center" });
-
-  doc.setTextColor(0, 0, 0);
-  doc.text(r.puesto, x, yActual + 18, { align: "center" });
-});
+    doc.text(r.puesto, x, yActual + 18, { align: "center" });
+  });
 
   yActual += 50;
 
