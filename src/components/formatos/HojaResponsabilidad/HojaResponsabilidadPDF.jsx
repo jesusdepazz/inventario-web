@@ -214,17 +214,15 @@ const accesoriosSeleccionados = hoja.accesorios
   ? hoja.accesorios.split(",").map((a) => a.trim())
   : [];
 
-const spacingX = 35; // separación horizontal entre casillas
-const spacingY = 12; // separación vertical entre filas
+const spacingX = 35;
+const spacingY = 12; 
 
 accesorios.forEach((acc, i) => {
   const x = marginX + (i % 5) * spacingX;
   const y = yActual + Math.floor(i / 5) * spacingY;
 
-  // Checkbox
   doc.rect(x, y, 4, 4);
 
-  // Marcar si está seleccionado
   if (accesoriosSeleccionados.includes(acc)) {
     doc.setFont("helvetica", "bold");
     doc.text("X", x + 1, y + 3);
