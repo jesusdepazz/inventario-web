@@ -3,7 +3,7 @@ import autoTable from "jspdf-autotable";
 
 const generarPDFHoja = async (hoja) => {
   const doc = new jsPDF();
-  const marginX = 14;
+  const marginX = 5;
   const pageWidth = doc.internal.pageSize.getWidth();
   const boxWidth = pageWidth - marginX * 2;
   const pageHeight = doc.internal.pageSize.getHeight();
@@ -70,7 +70,7 @@ const generarPDFHoja = async (hoja) => {
 
     yStart = logoY + logoHeight + 5;
 
-    doc.setFontSize(9);
+    doc.setFontSize(10);
     doc.setFont("helvetica", "bold");
     doc.setTextColor(0, 0, 0);
     doc.text("ADMINISTRACION DE ACTIVOS FIJOS", marginX, yStart);
@@ -80,20 +80,20 @@ const generarPDFHoja = async (hoja) => {
       doc.setTextColor(255, 0, 0);
       doc.text(
         `No. ${String(numeroHoja).padStart(5, "0")}`,
-        pageWidth - marginX, 
+        pageWidth - marginX,
         yStart,
-        { align: "right" }  
+        { align: "right" }
       );
 
-      doc.setFontSize(10); 
+      doc.setFontSize(10);
     }
 
     doc.setTextColor(0, 0, 0);
-    doc.text("HOJA DE RESPONSABILIDAD", marginX, yStart + 6);
-    doc.text("ACTIVOS FIJOS, EQUIPOS Y SUMINISTROS", marginX, yStart + 12);
-    doc.text(`FECHA DE ACTUALIZACIÓN: ${fechaActual}`, marginX, yStart + 18);
+    doc.text("HOJA DE RESPONSABILIDAD", marginX, yStart + 4);
+    doc.text("ACTIVOS FIJOS, EQUIPOS Y SUMINISTROS", marginX, yStart + 8);
+    doc.text(`FECHA DE ACTUALIZACIÓN: ${fechaActual}`, marginX, yStart + 12);
 
-    const yTitulo = yStart + 26;
+    const yTitulo = yStart + 22;
     const titulo = "HOJA DE RESPONSABILIDAD EQUIPO DE COMPUTO";
     const textWidth = doc.getTextWidth(titulo);
     const tituloX = (pageWidth - textWidth) / 3;
@@ -125,7 +125,9 @@ const generarPDFHoja = async (hoja) => {
     head: [["Código", "Nombre", "Puesto", "Departamento"]],
     body: empleadosBody.length > 0 ? empleadosBody : [["—", "—", "—", "—"]],
     styles: { fontSize: 8, lineColor: [0, 0, 0], lineWidth: 0.3 },
-    headStyles: { fillColor: [30, 58, 138], textColor: [255, 255, 255] }
+    headStyles: { fillColor: [30, 58, 138], textColor: [255, 255, 255] },
+    margin: { left: marginX, right: marginX },
+    tableWidth: boxWidth
   });
   yActual = doc.lastAutoTable.finalY + 5;
 
@@ -180,28 +182,66 @@ const generarPDFHoja = async (hoja) => {
       lineColor: [0, 0, 0],
       lineWidth: 0.3
     },
-    tableLineColor: [0, 0, 0],
-    tableLineWidth: 0.3
+    margin: { left: marginX, right: marginX },
+    tableWidth: boxWidth
   });
   yActual = doc.lastAutoTable.finalY + 5;
 
   const alturaTituloAccesorios = 8;
-  doc.setFillColor(200, 230, 255);
-  doc.rect(marginX, yActual, boxWidth, alturaTituloAccesorios, 'F');
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(8);
-  doc.setTextColor(0, 0, 0);
-  doc.text("Detalle de accesorios entregados:", marginX + 2, yActual + 6);
+doc.setFillColor(200, 230, 255);
+doc.rect(marginX, yActual, boxWidth, alturaTituloAccesorios, "F");
+doc.setFont("helvetica", "bold");
+doc.setFontSize(8);
+doc.setTextColor(0, 0, 0);
+doc.text("Detalle de accesorios entregados:", marginX + 2, yActual + 6);
 
-  yActual += alturaTituloAccesorios + 4;
+yActual += alturaTituloAccesorios + 4;
 
-  const accesorios = ["Maletín", "Adaptador", "Cable USB", "Cargador/Cubo", "Audífonos", "Control Remoto", "Baterías", "Estuche", "Memoria SD", "Otros"];
-  accesorios.forEach((acc, i) => {
-    doc.rect(marginX + (i % 5) * 35, yActual + Math.floor(i / 5) * 8, 4, 4);
-    doc.text(acc, marginX + 6 + (i % 5) * 35, yActual + 3 + Math.floor(i / 5) * 8);
-  });
+const accesorios = [
+  "Maletin",
+  "Adaptador",
+  "Cable USB",
+  "Cargador/Cubo",
+  "Audífonos",
+  "Control Remoto",
+  "Baterías",
+  "Estuche",
+  "Memoria SD",
+  "Otros",
+];
 
-  yActual += 20;
+const accesoriosSeleccionados = hoja.accesorios
+  ? hoja.accesorios.split(",").map((a) => a.trim())
+  : [];
+
+const spacingX = 35; // separación horizontal entre casillas
+const spacingY = 12; // separación vertical entre filas
+
+accesorios.forEach((acc, i) => {
+  const x = marginX + (i % 5) * spacingX;
+  const y = yActual + Math.floor(i / 5) * spacingY;
+
+  // Checkbox
+  doc.rect(x, y, 4, 4);
+
+  // Marcar si está seleccionado
+  if (accesoriosSeleccionados.includes(acc)) {
+    doc.setFont("helvetica", "bold");
+    doc.text("X", x + 1, y + 3);
+  }
+
+  doc.setFont("helvetica", "normal");
+  doc.text(acc, x + 6, y + 3);
+
+  if (acc === "Otros") {
+    const lineStartX = x + 30; 
+    const lineEndX = pageWidth - marginX;
+    doc.setDrawColor(0, 0, 0);
+    doc.line(lineStartX, y + 3, lineEndX, y + 3);
+  }
+});
+
+  yActual += 18
 
   const col1Width = boxWidth * 0.7;
   const col2Width = boxWidth * 0.3;
@@ -251,7 +291,7 @@ const generarPDFHoja = async (hoja) => {
   yActual = printWrappedText('C) Verificar la integridad de las etiquetas de código de activos, cualquier anomalía se reportará a Administrador de Activos Fijos.', marginX, yActual, boxWidth);
   yActual = printWrappedText('D) Me comprometo a devolver los recursos en buenas condiciones, y en el momento que sean devueltos, si por circunstancias el Activo fuese destruido total o parcialmente por negligencia mía, AUTORIZO a la empresa ¨Guatemalan Candies, S.A.¨ realizar el reclamo respectivo del mismo, deduciendo la suma que cubra el valor del o los recursos de mi salario al cual tengo derecho.', marginX, yActual, boxWidth);
 
-  yActual += 12;
+  yActual += 0;
 
   agregarFooter(doc, doc.internal.getNumberOfPages());
 
@@ -297,23 +337,25 @@ const generarPDFHoja = async (hoja) => {
         else xPos = pageWidth - marginFirma;
       }
 
+      const offsetY = 15;
+
       doc.setFont("helvetica", "bold");
       doc.setFontSize(10);
       doc.setTextColor(0, 0, 0);
-      doc.text("(F):________________", xPos, firmaYActual, { align: "center" });
+      doc.text("(F):________________", xPos, firmaYActual + offsetY, { align: "center" });
 
       doc.setFontSize(8);
-      doc.text("Responsable:", xPos, firmaYActual + 6, { align: "center" });
+      doc.text("Responsable:", xPos, firmaYActual + 6 + offsetY, { align: "center" });
 
       doc.setTextColor(0, 102, 204);
-      doc.text(emp.nombre ?? "", xPos, firmaYActual + 12, { align: "center" });
+      doc.text(emp.nombre ?? "", xPos, firmaYActual + 12 + offsetY, { align: "center" });
 
       doc.setTextColor(0, 0, 0);
-      doc.text(emp.puesto ?? "", xPos, firmaYActual + 18, { align: "center" });
+      doc.text(emp.puesto ?? "", xPos, firmaYActual + 18 + offsetY, { align: "center" });
     }
   }
 
-  yActual = firmaYActual + 30;
+  yActual = firmaYActual + 35;
 
   const responsablesFinales = [
     { nombre: "Kelin Stefani Blanco", puesto: "Administración de Activos Fijos", label: "Realizado Por:" },
