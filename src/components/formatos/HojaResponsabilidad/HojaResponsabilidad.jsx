@@ -72,10 +72,8 @@ const HojaResponsabilidadForm = () => {
             motivo,
             comentarios,
             estado,
-            solvenciaNo,
-            fechaSolvencia,
             observaciones,    
-            ...(estado === "Activa" && { solvenciaNo, fechaSolvencia }),
+            ...(estado === "Inactiva" && { solvenciaNo, fechaSolvencia }),
             accesorios: accesorios.join(", "),
             empleados: empleados.map((emp) => ({
                 empleadoId: emp.codigoEmpleado,
@@ -151,7 +149,7 @@ const HojaResponsabilidadForm = () => {
                                     <option value="Inactiva">Inactiva</option>
                                 </select>
                             </div>
-                            {estado === "Activa" && (
+                            {estado === "Inactiva" && (
                                 <>
                                     <div>
                                         <label className="block text-gray-600 mb-1">No. Solvencia</label>
