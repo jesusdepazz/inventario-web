@@ -12,21 +12,28 @@ import {
     FaTrash,
     FaUserCheck,
     FaTools,
-    FaPlus,
 } from "react-icons/fa";
 
 export default function Sidebar() {
     const navigate = useNavigate();
     const [equiposOpen, setEquiposOpen] = useState(false);
-    const [InventarioOpen, setInventarioOpen] = useState(false);
     const [asignacionesOpen, setAsignacionesOpen] = useState(false);
     const [mantenimientosOpen, setMantenimientosOpen] = useState(false);
-    const [formatosOpen, SetFormatosOpen] = useState(false);
+    const [formatosOpen, setFormatosOpen] = useState(false);
+    const [modalHojaOpen, setModalHojaOpen] = useState(false);
 
     const handleLogout = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("username");
         navigate("/login");
+    };
+
+    const openHojaModal = () => setModalHojaOpen(true);
+    const closeHojaModal = () => setModalHojaOpen(false);
+
+    const handleHojaOption = (path) => {
+        navigate(path);
+        closeHojaModal();
     };
 
     return (
@@ -91,35 +98,6 @@ export default function Sidebar() {
                                 <Link to="/asignaciones/eliminar" className="flex items-center gap-3">
                                     <FaTrash /> Desasignar
                                 </Link>
-                                <div>
-                                    <button
-                                        onClick={() => setMantenimientosOpen(!mantenimientosOpen)}
-                                        className="flex items-center justify-between w-full font-bold text-lg hover:text-blue-300 transition-transform duration-300 ease-in-out"
-                                    >
-                                        <span className="flex items-center gap-3">
-                                            <FaTools /> Mantenimientos
-                                        </span>
-                                        {mantenimientosOpen ? (
-                                            <FaChevronUp className="text-xs" />
-                                        ) : (
-                                            <FaChevronDown className="text-xs" />
-                                        )}
-                                    </button>
-                                    {mantenimientosOpen && (
-                                        <div className="ml-8 mt-1 flex flex-col gap-1 text-base font-medium">
-                                            <Link to="/mantenimientos/crear" className="flex items-center gap-3">
-                                                <FaUpload />
-                                                Ingresar
-                                            </Link>
-                                            <Link to="/mantenimientos/lista" className="flex items-center gap-3">
-                                                <FaClipboardList /> Lista
-                                            </Link>
-                                            <Link to="/mantenimientos/eliminar" className="flex items-center gap-3">
-                                                <FaTrash /> Eliminar
-                                            </Link>
-                                        </div>
-                                    )}
-                                </div>
                             </div>
                         )}
                     </div>
@@ -150,7 +128,7 @@ export default function Sidebar() {
                     </div>
                     <div>
                         <button
-                            onClick={() => SetFormatosOpen(!formatosOpen)}
+                            onClick={() => setFormatosOpen(!formatosOpen)}
                             className="flex items-center justify-between w-full font-bold text-lg hover:text-blue-300 transition-transform duration-300 ease-in-out"
                         >
                             <span className="flex items-center gap-3">
@@ -161,19 +139,19 @@ export default function Sidebar() {
                         </button>
                         {formatosOpen && (
                             <div className="ml-8 flex flex-col gap-1 text-base font-medium pt-1">
-                                <Link to="/formatos/hojaderesponsabilidad" className="flex items-center gap-3">
+                                <button
+                                    onClick={openHojaModal}
+                                    className="flex items-center gap-3 hover:text-blue-300 transition-colors duration-300"
+                                >
                                     <FaUpload /> Hoja de responsabilidad
-                                </Link>
-                                <Link to="/formatos/listahojasresponsabilidad" className="flex items-center gap-3">
-                                     <FaClipboardList/>Historial Hojas de Responsabilidad
-                                </Link>
+                                </button>
                                 <Link to="/formatos/hojaSalidaRetorno" className="flex items-center gap-3">
                                     <FaUpload /> Pase de salida con retorno
                                 </Link>
                                 <Link to="/formatos/bajaAtivos" className="flex items-center gap-3">
                                     <FaUpload /> Bajas
                                 </Link>
-                                <Link to="/formatos/hojaderesponsabilidad" className="flex items-center gap-3">
+                                <Link to="/formatos/listahojasSolvencias" className="flex items-center gap-3">
                                     <FaUpload /> Solvencias
                                 </Link>
                                 <Link to="/formatos/hojaderesponsabilidad" className="flex items-center gap-3">
@@ -194,6 +172,32 @@ export default function Sidebar() {
                     <FaSignOutAlt /> Cerrar sesión
                 </button>
             </div>
+
+            {modalHojaOpen && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg shadow-lg p-6 w-80">
+                        <h2 className="text-lg font-bold mb-4 text-black text-center">Selecciona una opción</h2>
+                        <button
+                            onClick={() => handleHojaOption("/formatos/hojaderesponsabilidad")}
+                            className="w-full bg-blue-500 text-white py-2 px-4 rounded mb-2 hover:bg-blue-600"
+                        >
+                            Crear
+                        </button>
+                        <button
+                            onClick={() => handleHojaOption("/formatos/listahojasresponsabilidad")}
+                            className="w-full bg-blue-500 text-white py-2 px-4 rounded mb-2 hover:bg-blue-600"
+                        >
+                            Ver Historial
+                        </button>
+                        <button
+                            onClick={closeHojaModal}
+                            className="w-full bg-blue-500 text-white py-2 px-4 rounded mb-2 hover:bg-blue-600"
+                        >
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

@@ -293,8 +293,8 @@ accesorios.forEach((acc, i) => {
 
   agregarFooter(doc, doc.internal.getNumberOfPages());
 
-  const espacioNecesario = 30;
-  if (yActual + espacioNecesario > pageHeight - 20) {
+  const espacioNecesario = 20;
+  if (yActual + espacioNecesario > pageHeight - 40) {
     doc.addPage();
     yActual = await agregarEncabezado(doc, numeroHoja, marginX, true);
     yActual = pageHeight / 2 - 30;

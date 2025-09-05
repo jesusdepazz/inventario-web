@@ -22,6 +22,7 @@ import HojaBajaActivo from "./components/formatos/HojaBajaActivo";
 import HojaSalidaRetorno from "./components/formatos/HojaSalidaRetorno";
 import HojaResponsabilidad from "./components/formatos/HojaResponsabilidad/HojaResponsabilidad";
 import ListaHojasResponsabilidad from "./components/formatos/HojaResponsabilidad/ListaHojaResponsabilidad";
+import ListaHojaSolvencia from "./components/formatos/HojaSolvencia/ListaHojaSolvencia";
 
 function RequireAuth({ children }) {
   const isAuthenticated = useIsAuthenticated();
@@ -76,6 +77,7 @@ function AppRoutes() {
           {/* FORMATOS */}
           <Route path="/formatos/hojaderesponsabilidad" element={<HojaResponsabilidad/>} />
           <Route path="/formatos/listahojasresponsabilidad" element={<ListaHojasResponsabilidad/>} />
+          <Route path="/formatos/listahojasSolvencias" element={<ListaHojaSolvencia/>} />
           <Route path="/formatos/bajaAtivos" element={<HojaBajaActivo/>} />
           <Route path="/formatos/hojaSalidaRetorno" element={<HojaSalidaRetorno/>} />
          </Route>
