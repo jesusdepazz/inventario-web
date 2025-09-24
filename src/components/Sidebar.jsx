@@ -143,15 +143,6 @@ export default function Sidebar() {
                         </div>
                     </div>
                     <div>
-                        <button
-                            onClick={() => setFormatosOpen(!formatosOpen)}
-                            className="flex items-center justify-between w-full font-semibold text-lg px-3 py-2 rounded-lg hover:bg-white/10 transition-all duration-300"
-                        >
-                            <span className="flex items-center gap-3">
-                                <FaClipboardList /> Formatos
-                            </span>
-                            {formatosOpen ? <FaChevronUp /> : <FaChevronDown />}
-                        </button>
                         <div>
                         <button
                             onClick={() => setFormatosOpen(!formatosOpen)}
@@ -167,7 +158,6 @@ export default function Sidebar() {
                                 formatosOpen ? "max-h-64" : "max-h-0"
                             }`}
                         >
-                            {/* Modal Hoja Responsabilidad */}
                             <button
                                 onClick={openHojaModal}
                                 className="flex items-center gap-2 hover:text-blue-300"
