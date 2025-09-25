@@ -153,15 +153,6 @@ export default function Sidebar() {
                             {formatosOpen ? <FaChevronUp /> : <FaChevronDown />}
                         </button>
                         <div>
-                        <button
-                            onClick={() => setFormatosOpen(!formatosOpen)}
-                            className="flex items-center justify-between w-full font-semibold text-lg px-3 py-2 rounded-lg hover:bg-white/10 transition-all duration-300"
-                        >
-                            <span className="flex items-center gap-3">
-                                <FaClipboardList /> Formatos
-                            </span>
-                            {formatosOpen ? <FaChevronUp /> : <FaChevronDown />}
-                        </button>
                         <div
                             className={`ml-6 mt-1 flex flex-col gap-2 overflow-hidden transition-all duration-500 ${
                                 formatosOpen ? "max-h-64" : "max-h-0"
