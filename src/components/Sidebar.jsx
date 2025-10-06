@@ -143,6 +143,7 @@ export default function Sidebar() {
                         </div>
                     </div>
                     <div>
+                        <div>
                         <button
                             onClick={() => setFormatosOpen(!formatosOpen)}
                             className="flex items-center justify-between w-full font-semibold text-lg px-3 py-2 rounded-lg hover:bg-white/10 transition-all duration-300"
@@ -152,7 +153,6 @@ export default function Sidebar() {
                             </span>
                             {formatosOpen ? <FaChevronUp /> : <FaChevronDown />}
                         </button>
-                        <div>
                         <div
                             className={`ml-6 mt-1 flex flex-col gap-2 overflow-hidden transition-all duration-500 ${
                                 formatosOpen ? "max-h-64" : "max-h-0"
@@ -164,6 +164,8 @@ export default function Sidebar() {
                             >
                                 <FaUpload /> Hoja de responsabilidad
                             </button>
+
+                            {/* Modal Solvencias */}
                             <button
                                 onClick={openSolvenciaModal}
                                 className="flex items-center gap-2 hover:text-blue-300"
@@ -233,6 +235,7 @@ export default function Sidebar() {
                     </div>
                 </div>
             )}
+            {/* Modal Solvencias */}
             {modalSolvenciaOpen && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
                     <div className="bg-white rounded-2xl shadow-2xl p-6 w-96">

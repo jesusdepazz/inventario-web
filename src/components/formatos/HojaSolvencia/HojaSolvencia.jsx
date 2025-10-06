@@ -31,7 +31,7 @@ export default function HojaSolvencia() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!selectedHoja) {
-      setMensaje("⚠️ Debes seleccionar una hoja de responsabilidad.");
+      setMensaje("Debes seleccionar una hoja de responsabilidad.");
       return;
     }
 

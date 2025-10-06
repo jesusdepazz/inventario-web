@@ -19,11 +19,12 @@ import CrearSolicitud from "./components/solicitudes/CrearSolicitud";
 import ListaSolicitud from "./components/solicitudes/ListaSolicitud";
 import EliminarSolicitud from "./components/solicitudes/EliminarSolicitud";
 import HojaBajaActivo from "./components/formatos/HojaBajaActivo";
-import HojaSalidaRetorno from "./components/formatos/HojaSalidaRetorno";
 import HojaResponsabilidad from "./components/formatos/HojaResponsabilidad/HojaResponsabilidad";
 import ListaHojasResponsabilidad from "./components/formatos/HojaResponsabilidad/ListaHojaResponsabilidad";
 import ListaHojaSolvencia from "./components/formatos/HojaSolvencia/ListaHojaSolvencia";
 import HojaSolvencia from "./components/formatos/HojaSolvencia/HojaSolvencia";
+import HistoricoTraslados from "./components/formatos/Traslados/ListaTraslados";
+import CrearTraslado from "./components/formatos/Traslados/Traslados";
 
 function RequireAuth({ children }) {
   const isAuthenticated = useIsAuthenticated();
@@ -81,8 +82,11 @@ function AppRoutes() {
           {/* FORMATOS/SOLVENCIAS */}
           <Route path="/formatos/listahojasSolvencias" element={<ListaHojaSolvencia/>} />
           <Route path="/formatos/hojasSolvencias" element={<HojaSolvencia/>} />
+          {/* FORMATOS/BAJADEACTIVOS */}
           <Route path="/formatos/bajaAtivos" element={<HojaBajaActivo/>} />
-          <Route path="/formatos/hojaSalidaRetorno" element={<HojaSalidaRetorno/>} />
+          {/* FORMATOS/TRASLADOS */}
+          <Route path="/formatos/traslados" element={<HistoricoTraslados/>} />
+          <Route path="/formatos/traslados/crear" element={<CrearTraslado/>} />
          </Route>
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>

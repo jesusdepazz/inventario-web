@@ -3,7 +3,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import EquiposServices from "../../services/EquiposServices";
-import UbicacionesService from "../../services/UbicaionesServices";
+import UbicacionesService from "../../services/UbicacionesServices";
 
 const EditarEquipo = () => {
     const [id, setId] = useState("");
