@@ -21,6 +21,7 @@ export default function Sidebar() {
     const [formatosOpen, setFormatosOpen] = useState(false);
     const [modalHojaOpen, setModalHojaOpen] = useState(false);
     const [modalSolvenciaOpen, setModalSolvenciaOpen] = useState(false);
+    const [modalTrasladoOpen, setModalTrasladoOpen] = useState(false); // 👈 Nuevo modal
 
     const handleLogout = () => {
         localStorage.removeItem("token");
@@ -28,22 +29,29 @@ export default function Sidebar() {
         navigate("/login");
     };
 
+    // ---- Hojas de responsabilidad ----
     const openHojaModal = () => setModalHojaOpen(true);
     const closeHojaModal = () => setModalHojaOpen(false);
-
-    const openSolvenciaModal = () => setModalSolvenciaOpen(true);
-    const closeSolvenciaModal = () => setModalSolvenciaOpen(false);
-
     const handleHojaOption = (path) => {
         navigate(path);
         closeHojaModal();
     };
 
-      const handleSolvenciaOption = (path) => {
+    // ---- Solvencias ----
+    const openSolvenciaModal = () => setModalSolvenciaOpen(true);
+    const closeSolvenciaModal = () => setModalSolvenciaOpen(false);
+    const handleSolvenciaOption = (path) => {
         navigate(path);
         closeSolvenciaModal();
     };
 
+    // ---- Traslados ----
+    const openTrasladoModal = () => setModalTrasladoOpen(true);
+    const closeTrasladoModal = () => setModalTrasladoOpen(false);
+    const handleTrasladoOption = (path) => {
+        navigate(path);
+        closeTrasladoModal();
+    };
 
     return (
         <div className="bg-gradient-to-b from-blue-900 via-blue-800 to-blue-700 text-white w-80 h-screen p-6 fixed flex flex-col justify-between shadow-2xl rounded-r-2xl">
@@ -53,6 +61,7 @@ export default function Sidebar() {
                     <h2 className="text-xl font-extrabold tracking-wider">INVENTARIO</h2>
                     <hr className="border-blue-400 w-3/4 mt-4" />
                 </div>
+
                 <nav className="flex flex-col gap-3">
                     <Link
                         to="/dashboard"
@@ -60,6 +69,8 @@ export default function Sidebar() {
                     >
                         <FaHome /> Inicio
                     </Link>
+
+                    {/* Equipos */}
                     <div>
                         <button
                             onClick={() => setEquiposOpen(!equiposOpen)}
@@ -71,9 +82,7 @@ export default function Sidebar() {
                             {equiposOpen ? <FaChevronUp /> : <FaChevronDown />}
                         </button>
                         <div
-                            className={`ml-6 mt-1 flex flex-col gap-2 overflow-hidden transition-all duration-500 ${
-                                equiposOpen ? "max-h-40" : "max-h-0"
-                            }`}
+                            className={`ml-6 mt-1 flex flex-col gap-2 overflow-hidden transition-all duration-500 ${equiposOpen ? "max-h-40" : "max-h-0"}`}
                         >
                             <Link to="/equipos/inventario" className="flex items-center gap-2 hover:text-blue-300">
                                 <FaClipboardList /> Inventario
@@ -89,6 +98,8 @@ export default function Sidebar() {
                             </Link>
                         </div>
                     </div>
+
+                    {/* Asignaciones */}
                     <div>
                         <button
                             onClick={() => setAsignacionesOpen(!asignacionesOpen)}
@@ -100,9 +111,7 @@ export default function Sidebar() {
                             {asignacionesOpen ? <FaChevronUp /> : <FaChevronDown />}
                         </button>
                         <div
-                            className={`ml-6 mt-1 flex flex-col gap-2 overflow-hidden transition-all duration-500 ${
-                                asignacionesOpen ? "max-h-32" : "max-h-0"
-                            }`}
+                            className={`ml-6 mt-1 flex flex-col gap-2 overflow-hidden transition-all duration-500 ${asignacionesOpen ? "max-h-32" : "max-h-0"}`}
                         >
                             <Link to="/asignaciones/crear" className="flex items-center gap-2 hover:text-blue-300">
                                 <FaUpload /> Asignar
@@ -116,6 +125,7 @@ export default function Sidebar() {
                         </div>
                     </div>
 
+                    {/* Solicitudes */}
                     <div>
                         <button
                             onClick={() => setMantenimientosOpen(!mantenimientosOpen)}
@@ -127,9 +137,7 @@ export default function Sidebar() {
                             {mantenimientosOpen ? <FaChevronUp /> : <FaChevronDown />}
                         </button>
                         <div
-                            className={`ml-6 mt-1 flex flex-col gap-2 overflow-hidden transition-all duration-500 ${
-                                mantenimientosOpen ? "max-h-32" : "max-h-0"
-                            }`}
+                            className={`ml-6 mt-1 flex flex-col gap-2 overflow-hidden transition-all duration-500 ${mantenimientosOpen ? "max-h-32" : "max-h-0"}`}
                         >
                             <Link to="/solicitudes/crear" className="flex items-center gap-2 hover:text-blue-300">
                                 <FaUpload /> Crear
@@ -142,8 +150,9 @@ export default function Sidebar() {
                             </Link>
                         </div>
                     </div>
+
+                    {/* Formatos */}
                     <div>
-                        <div>
                         <button
                             onClick={() => setFormatosOpen(!formatosOpen)}
                             className="flex items-center justify-between w-full font-semibold text-lg px-3 py-2 rounded-lg hover:bg-white/10 transition-all duration-300"
@@ -154,48 +163,30 @@ export default function Sidebar() {
                             {formatosOpen ? <FaChevronUp /> : <FaChevronDown />}
                         </button>
                         <div
-                            className={`ml-6 mt-1 flex flex-col gap-2 overflow-hidden transition-all duration-500 ${
-                                formatosOpen ? "max-h-64" : "max-h-0"
-                            }`}
+                            className={`ml-6 mt-1 flex flex-col gap-2 overflow-hidden transition-all duration-500 ${formatosOpen ? "max-h-64" : "max-h-0"}`}
                         >
-                            <button
-                                onClick={openHojaModal}
-                                className="flex items-center gap-2 hover:text-blue-300"
-                            >
+                            <button onClick={openHojaModal} className="flex items-center gap-2 hover:text-blue-300">
                                 <FaUpload /> Hoja de responsabilidad
                             </button>
-
-                            {/* Modal Solvencias */}
-                            <button
-                                onClick={openSolvenciaModal}
-                                className="flex items-center gap-2 hover:text-blue-300"
-                            >
+                            <button onClick={openSolvenciaModal} className="flex items-center gap-2 hover:text-blue-300">
                                 <FaUpload /> Solvencias
                             </button>
-
-                            <Link
-                                to="/formatos/hojaSalidaRetorno"
-                                className="flex items-center gap-2 hover:text-blue-300"
-                            >
+                            <Link to="/formatos/hojaSalidaRetorno" className="flex items-center gap-2 hover:text-blue-300">
                                 <FaUpload /> Pase de salida con retorno
                             </Link>
-                            <Link
-                                to="/formatos/bajaAtivos"
-                                className="flex items-center gap-2 hover:text-blue-300"
-                            >
+                            <Link to="/formatos/bajaAtivos" className="flex items-center gap-2 hover:text-blue-300">
                                 <FaUpload /> Bajas
                             </Link>
-                            <Link
-                                to="/formatos/hojaderesponsabilidad"
-                                className="flex items-center gap-2 hover:text-blue-300"
-                            >
-                                <FaUpload /> Traslado
-                            </Link>
+                            {/* 🔹 Ahora el modal de traslados */}
+                            <button onClick={openTrasladoModal} className="flex items-center gap-2 hover:text-blue-300">
+                                <FaUpload /> Traslados
+                            </button>
                         </div>
-                    </div>
                     </div>
                 </nav>
             </div>
+
+            {/* Cerrar sesión */}
             <div>
                 <hr className="border-blue-400 my-4" />
                 <button
@@ -206,63 +197,67 @@ export default function Sidebar() {
                 </button>
             </div>
 
-            {modalHojaOpen && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-2xl shadow-2xl p-6 w-96">
-                        <h2 className="text-xl font-bold mb-6 text-gray-800 text-center">
-                            Selecciona una opción
-                        </h2>
-                        <div className="flex flex-col gap-3">
-                            <button
-                                onClick={() => handleHojaOption("/formatos/hojaderesponsabilidad")}
-                                className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
-                            >
-                                Crear
-                            </button>
-                            <button
-                                onClick={() => handleHojaOption("/formatos/listahojasresponsabilidad")}
-                                className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
-                            >
-                                Ver Historial
-                            </button>
-                            <button
-                                onClick={closeHojaModal}
-                                className="w-full bg-gray-400 text-white py-2 px-4 rounded-lg hover:bg-gray-500"
-                            >
-                                Cancelar
-                            </button>
-                        </div>
+            {modalHojaOpen && (<div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                <div className="bg-white rounded-2xl shadow-2xl p-6 w-96">
+                    <h2 className="text-xl font-bold mb-6 text-gray-800 text-center"> Selecciona una opción </h2>
+                    <div className="flex flex-col gap-3">
+                        <button onClick={() => handleHojaOption("/formatos/hojaderesponsabilidad")} className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700" > Crear </button>
+                        <button onClick={() => handleHojaOption("/formatos/listahojasresponsabilidad")} className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700" > Ver Historial </button>
+                        <button onClick={closeHojaModal} className="w-full bg-gray-400 text-white py-2 px-4 rounded-lg hover:bg-gray-500" > Cancelar </button>
                     </div>
                 </div>
-            )}
+            </div>)}
             {/* Modal Solvencias */}
-            {modalSolvenciaOpen && (
+            {modalSolvenciaOpen && (<div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                <div className="bg-white rounded-2xl shadow-2xl p-6 w-96">
+                    <h2 className="text-xl font-bold mb-6 text-gray-800 text-center"> Solvencias </h2>
+                    <div className="flex flex-col gap-3">
+                        <button onClick={() => handleSolvenciaOption("/formatos/hojasSolvencias")}
+                            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+                        > Crear
+                        </button>
+                        <button onClick={() => handleSolvenciaOption("/formatos/listahojasSolvencias")}
+                            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+                        > Ver Historial
+                        </button>
+                        <button onClick={() => handleSolvenciaOption("/formatos/eliminarSolvencias")}
+                            className="w-full bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700"
+                        > Eliminar
+                        </button>
+                        <button onClick={closeSolvenciaModal}
+                            className="w-full bg-gray-400 text-white py-2 px-4 rounded-lg hover:bg-gray-500"
+                        > Cancelar
+                        </button>
+                    </div>
+                </div>
+            </div>)}
+            {modalTrasladoOpen && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
                     <div className="bg-white rounded-2xl shadow-2xl p-6 w-96">
                         <h2 className="text-xl font-bold mb-6 text-gray-800 text-center">
-                            Solvencias
+                            Traslados
                         </h2>
                         <div className="flex flex-col gap-3">
                             <button
-                                onClick={() => handleSolvenciaOption("/formatos/hojasSolvencias")}
+                                onClick={() => handleTrasladoOption("/formatos/traslados/crear")}
                                 className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
                             >
                                 Crear
                             </button>
                             <button
-                                onClick={() => handleSolvenciaOption("/formatos/listahojasSolvencias")}
+                                onClick={() => handleTrasladoOption("/formatos/traslados")}
                                 className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
                             >
                                 Ver Historial
                             </button>
                             <button
-                                onClick={() => handleSolvenciaOption("/formatos/eliminarSolvencias")}
+                                onClick={() => handleTrasladoOption("/formatos/eliminarTraslados")}
                                 className="w-full bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700"
                             >
                                 Eliminar
                             </button>
                             <button
-                                onClick={closeSolvenciaModal}
+                                onClick={closeTrasladoModal}
                                 className="w-full bg-gray-400 text-white py-2 px-4 rounded-lg hover:bg-gray-500"
                             >
                                 Cancelar

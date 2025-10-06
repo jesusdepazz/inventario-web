@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import UbicacionesService from "../../services/UbicaionesServices";
+import UbicacionesService from "../../services/UbicacionesServices";
 import EquiposService from "../../services/EquiposServices";
 
 const CrearEquipo = () => {

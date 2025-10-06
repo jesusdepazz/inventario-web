@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import axios from 'axios';
-import UbicacionesService from '../../services/UbicaionesServices';
+import UbicacionesService from '../../services/UbicacionesServices';
 
 const HojaBajaActivo = () => {
     const [codEquipo, setCodEquipo] = useState('');
