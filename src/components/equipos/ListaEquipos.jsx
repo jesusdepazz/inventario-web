@@ -188,7 +188,7 @@ const ListaEquipos = () => {
                         <thead>
                             <tr className="text-center font-bold text-white">
                                 <th
-                                    colSpan="6"
+                                    colSpan="5"
                                     className="px-2 py-1 border whitespace-nowrap bg-blue-700 text-white"
                                 >
                                     <div className="flex items-center justify-center gap-2">
@@ -230,7 +230,7 @@ const ListaEquipos = () => {
                                 </th>
 
                                 <th
-                                    colSpan="11"
+                                    colSpan="7"
                                     className="px-2 py-1 border whitespace-nowrap bg-blue-900 text-white"
                                 >
                                     <div className="flex items-center justify-center gap-2">
@@ -282,7 +282,7 @@ const ListaEquipos = () => {
                                 </th>
 
                                 <th
-                                    colSpan="6"
+                                    colSpan="2"
                                     className="px-2 py-1 border whitespace-nowrap bg-blue-800 text-white"
                                 >
                                     <div className="flex items-center justify-center gap-2">
@@ -305,7 +305,6 @@ const ListaEquipos = () => {
                             </tr>
                             <tr className="text-center text-white">
                                 <th className="px-2 py-1 border whitespace-nowrap bg-blue-700">#</th>
-                                <th className="px-2 py-1 border whitespace-nowrap bg-blue-700">No. de Registro Deprect</th>
                                 <th className="px-2 py-1 border whitespace-nowrap bg-blue-700">Orden de Compra</th>
                                 <th className="px-2 py-1 border whitespace-nowrap bg-blue-700">Factura</th>
                                 <th className="px-2 py-1 border whitespace-nowrap bg-blue-700">Proveedor</th>
@@ -318,17 +317,9 @@ const ListaEquipos = () => {
                                 <th className="px-2 py-1 border whitespace-nowrap bg-blue-900">Marca</th>
                                 <th className="px-2 py-1 border whitespace-nowrap bg-blue-900">Modelo</th>
                                 <th className="px-2 py-1 border whitespace-nowrap bg-blue-900">Serie</th>
-                                <th className="px-2 py-1 border whitespace-nowrap bg-blue-900">IMEI</th>
-                                <th className="px-2 py-1 border whitespace-nowrap bg-blue-900">Estado</th>
-                                <th className="px-2 py-1 border whitespace-nowrap bg-blue-900">Tipo</th>
                                 <th className="px-2 py-1 border whitespace-nowrap bg-blue-900">Responsable Anterior</th>
-                                <th className="px-2 py-1 border whitespace-nowrap bg-blue-900">Número asignado</th>
                                 <th className="px-2 py-1 border whitespace-nowrap bg-blue-900">Extensión</th>
                                 <th className="px-2 py-1 border whitespace-nowrap bg-blue-600">Ubicacion</th>
-                                <th className="px-2 py-1 border whitespace-nowrap bg-blue-800">Revisado de toma fisica</th>
-                                <th className="px-2 py-1 border whitespace-nowrap bg-blue-800">Fecha de toma</th>
-                                <th className="px-2 py-1 border whitespace-nowrap bg-blue-800">Estado de Sticker</th>
-                                <th className="px-2 py-1 border whitespace-nowrap bg-blue-800">Asignado a Hoja de responsabilidad</th>
                                 <th className="px-2 py-1 border whitespace-nowrap bg-blue-800">Comentarios</th>
                                 <th className="px-2 py-1 border whitespace-nowrap bg-blue-800">Observaciones</th>
                             </tr>
@@ -338,8 +329,7 @@ const ListaEquipos = () => {
                                 resultadosFiltrados.map((equipo, index) => (
                                     <tr key={equipo.id} className="text-center">
                                         <td className="px-2 py-1 border whitespace-nowrap">{index + 1}</td>
-                                        <td className="px-2 py-1 border whitespace-nowrap">{equipo.registroDeprec || "Sin registro"}</td>
-                                        <td className="px-2 py-1 border whitespace-nowrap">{equipo.orderCompra}</td>
+                                        <td className="px-2 py-1 border whitespace-nowrap">{equipo.ordenCompra}</td>
                                         <td className="px-2 py-1 border whitespace-nowrap">{equipo.factura}</td>
                                         <td className="px-2 py-1 border whitespace-nowrap">{equipo.proveedor}</td>
                                         <td className="px-2 py-1 border whitespace-nowrap">{equipo.fechaIngreso ? new Date(equipo.fechaIngreso).toLocaleDateString("es-ES") : "Sin fecha"}</td>
@@ -361,21 +351,9 @@ const ListaEquipos = () => {
                                         <td className="px-2 py-1 border whitespace-nowrap">{equipo.marca}</td>
                                         <td className="px-2 py-1 border whitespace-nowrap">{equipo.modelo}</td>
                                         <td className="px-2 py-1 border whitespace-nowrap">{equipo.serie}</td>
-                                        <td className="px-2 py-1 border whitespace-nowrap">{equipo.imei}</td>
-                                        <td className={`px-2 py-1 border whitespace-nowrap text-white ${equipo.estado === "Buen estado" ? "bg-green-500" : equipo.estado === "Inactivo" ? "bg-red-500" : equipo.estado === "Obsoleto" ? "bg-orange-500" : "bg-gray-300"}`}> {equipo.estado || "Sin estado"} </td>
-                                        <td className="px-2 py-1 border whitespace-nowrap">{equipo.tipo}</td>
                                         <td className="px-2 py-1 border whitespace-nowrap">{equipo.responsableAnterior}</td>
-                                        <td className="px-2 py-1 border whitespace-nowrap">{equipo.numeroAsignado}</td>
                                         <td className="px-2 py-1 border whitespace-nowrap">{equipo.extension}</td>
                                         <td className="px-2 py-1 border whitespace-nowrap">{equipo.ubicacion}</td>
-                                        <td className="px-2 py-1 border whitespace-nowrap text-center">
-                                            {equipo.revisadoTomaFisica}
-                                        </td>
-                                        <td className="px-2 py-1 border whitespace-nowrap">{equipo.fechaToma ? new Date(equipo.fechaToma).toLocaleDateString("es-ES") : "Sin fecha"}</td>
-                                        <td className={`px-2 py-1 border whitespace-nowrap text-white ${equipo.estadoSticker === "buen" ? "bg-green-500" : equipo.estadoSticker === "cambio" ? "bg-orange-500" : "bg-gray-300"}`}> {equipo.estadoSticker === "buen" ? "Buen estado" : equipo.estadoSticker === "cambio" ? "Cambio" : "Sin estado"} </td>
-                                        <td className="px-2 py-1 border whitespace-nowrap text-center">
-                                            {equipo.asignadoHojaResponsabilidad}
-                                        </td>
                                         <td className="px-2 py-1 border whitespace-nowrap">{equipo.comentarios}</td>
                                         <td className="px-2 py-1 border whitespace-nowrap">{equipo.observaciones}</td>
                                     </tr>
