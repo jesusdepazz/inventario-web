@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import SolicitudesService from "../../services/SolicitudesServices";
-import UbicacionesService from "../../services/UbicaionesServices";
+import UbicacionesService from "../../services/UbicacionesServices";
 
 const ListaSolicitud = () => {
     const [solicitudes, setSolicitudes] = useState([]);

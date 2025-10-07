@@ -50,7 +50,6 @@ export default function Login() {
         <h2 className="text-2xl font-bold text-gray-800 mb-6">
           Inicia sesión con tu cuenta de Microsoft
         </h2>
-
         <button
           onClick={handleLogin}
           disabled={loading}
@@ -60,7 +59,6 @@ export default function Login() {
           <FaWindows className="text-xl" />
           {loading ? "Conectando..." : "Iniciar sesión con Microsoft"}
         </button>
-
         <p className="mt-6 text-gray-600 text-sm">
           Solo usuarios autorizados podrán acceder a la plataforma.
         </p>

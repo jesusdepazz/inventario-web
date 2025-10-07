@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import UbicacionesService from "../../services/UbicaionesServices";
+import UbicacionesService from "../../services/UbicacionesServices";
 import EquiposService from "../../services/EquiposServices";
 
 const CrearEquipo = () => {
@@ -43,13 +43,23 @@ const CrearEquipo = () => {
         const cargarUbicaciones = async () => {
             try {
                 const res = await UbicacionesService.obtenerTodas();
-                setUbicaciones(res.data.map((u) => u.nombre));
+                let lista = [];
+
+                if (Array.isArray(res.data)) {
+                    lista = res.data;
+                } else if (Array.isArray(res.data?.$values)) {
+                    lista = res.data.$values;
+                }
+
+                setUbicaciones(lista.map(u => u.nombre));
             } catch (error) {
                 console.error("Error al cargar ubicaciones:", error);
             }
         };
+
         cargarUbicaciones();
     }, []);
+
 
     const handleChange = (e) => {
         const { name, value, files } = e.target;

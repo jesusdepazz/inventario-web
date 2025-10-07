@@ -18,10 +18,13 @@ import EliminarAsignacion from "./components/asignaciones/EliminarAsignacion";
 import CrearSolicitud from "./components/solicitudes/CrearSolicitud";
 import ListaSolicitud from "./components/solicitudes/ListaSolicitud";
 import EliminarSolicitud from "./components/solicitudes/EliminarSolicitud";
-import HojaResponsabilidad from "./components/formatos/HojaResponsabilidad";
 import HojaBajaActivo from "./components/formatos/HojaBajaActivo";
-import HojaSalidaRetorno from "./components/formatos/HojaSalidaRetorno";
-import ListaHojasResponsabilidad from "./components/formatos/ListaHojaResponsabilidad";
+import HojaResponsabilidad from "./components/formatos/HojaResponsabilidad/HojaResponsabilidad";
+import ListaHojasResponsabilidad from "./components/formatos/HojaResponsabilidad/ListaHojaResponsabilidad";
+import ListaHojaSolvencia from "./components/formatos/HojaSolvencia/ListaHojaSolvencia";
+import HojaSolvencia from "./components/formatos/HojaSolvencia/HojaSolvencia";
+import HistoricoTraslados from "./components/formatos/Traslados/ListaTraslados";
+import CrearTraslado from "./components/formatos/Traslados/Traslados";
 
 function RequireAuth({ children }) {
   const isAuthenticated = useIsAuthenticated();
@@ -73,11 +76,17 @@ function AppRoutes() {
           <Route path="/solicitudes/crear" element={<CrearSolicitud/>} />
           <Route path="/solicitudes/lista" element={<ListaSolicitud/>} />
           <Route path="/solicitudes/eliminar" element={<EliminarSolicitud/>} />
-          {/* FORMATOS */}
+          {/* FORMATOS/RESPONSABILIDAD */}
           <Route path="/formatos/hojaderesponsabilidad" element={<HojaResponsabilidad/>} />
           <Route path="/formatos/listahojasresponsabilidad" element={<ListaHojasResponsabilidad/>} />
+          {/* FORMATOS/SOLVENCIAS */}
+          <Route path="/formatos/listahojasSolvencias" element={<ListaHojaSolvencia/>} />
+          <Route path="/formatos/hojasSolvencias" element={<HojaSolvencia/>} />
+          {/* FORMATOS/BAJADEACTIVOS */}
           <Route path="/formatos/bajaAtivos" element={<HojaBajaActivo/>} />
-          <Route path="/formatos/hojaSalidaRetorno" element={<HojaSalidaRetorno/>} />
+          {/* FORMATOS/TRASLADOS */}
+          <Route path="/formatos/traslados" element={<HistoricoTraslados/>} />
+          <Route path="/formatos/traslados/crear" element={<CrearTraslado/>} />
          </Route>
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
