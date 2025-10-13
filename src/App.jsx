@@ -25,6 +25,10 @@ import ListaHojaSolvencia from "./components/formatos/HojaSolvencia/ListaHojaSol
 import HojaSolvencia from "./components/formatos/HojaSolvencia/HojaSolvencia";
 import HistoricoTraslados from "./components/formatos/Traslados/ListaTraslados";
 import CrearTraslado from "./components/formatos/Traslados/Traslados";
+import MovimientosForm from "./components/suministros/MovimientosForm";
+import HistorialMovimientos from "./components/suministros/HistorialMovimientos";
+import InventarioSuministros from "./components/suministros/InventarioSuministros";
+import CrearSuministro from "./components/suministros/Suministro";
 
 function RequireAuth({ children }) {
   const isAuthenticated = useIsAuthenticated();
@@ -87,6 +91,11 @@ function AppRoutes() {
           {/* FORMATOS/TRASLADOS */}
           <Route path="/formatos/traslados" element={<HistoricoTraslados/>} />
           <Route path="/formatos/traslados/crear" element={<CrearTraslado/>} />
+          {/* SUMINISTROS */}
+          <Route path="/suministros" element={<CrearSuministro/>} />
+          <Route path="/suministros/inventario" element={<InventarioSuministros/>} />
+          <Route path="/suministros/movimientos" element={<MovimientosForm/>} />
+          <Route path="/suministros/movimientos/historial" element={<HistorialMovimientos/>} />
          </Route>
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>

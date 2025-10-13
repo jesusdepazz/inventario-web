@@ -11,7 +11,12 @@ import {
     FaEdit,
     FaTrash,
     FaUserCheck,
+    FaBoxOpen,      
+    FaPlus,        
+    FaExchangeAlt, 
+    FaHistory       
 } from "react-icons/fa";
+
 
 export default function Sidebar() {
     const navigate = useNavigate();
@@ -21,7 +26,9 @@ export default function Sidebar() {
     const [formatosOpen, setFormatosOpen] = useState(false);
     const [modalHojaOpen, setModalHojaOpen] = useState(false);
     const [modalSolvenciaOpen, setModalSolvenciaOpen] = useState(false);
-    const [modalTrasladoOpen, setModalTrasladoOpen] = useState(false); // 👈 Nuevo modal
+    const [modalTrasladoOpen, setModalTrasladoOpen] = useState(false);
+    const [suministrosOpen, setSuministrosOpen] = useState(false);
+
 
     const handleLogout = () => {
         localStorage.removeItem("token");
@@ -95,6 +102,48 @@ export default function Sidebar() {
                             </Link>
                             <Link to="/equipos/eliminar" className="flex items-center gap-2 hover:text-blue-300">
                                 <FaTrash /> Eliminar
+                            </Link>
+                        </div>
+                    </div>
+
+                    {/* --- Sección de Suministros --- */}
+                    <div>
+                        <button
+                            onClick={() => setSuministrosOpen(!suministrosOpen)}
+                            className="flex items-center justify-between w-full font-semibold text-lg px-3 py-2 rounded-lg hover:bg-white/10 transition-all duration-300"
+                        >
+                            <span className="flex items-center gap-3">
+                                <FaBoxOpen /> Suministros
+                            </span>
+                            {suministrosOpen ? <FaChevronUp /> : <FaChevronDown />}
+                        </button>
+
+                        <div
+                            className={`ml-6 mt-1 flex flex-col gap-2 overflow-hidden transition-all duration-500 ${suministrosOpen ? "max-h-48" : "max-h-0"}`}
+                        >
+                            <Link
+                                to="/suministros"
+                                className="flex items-center gap-2 hover:text-blue-300"
+                            >
+                                <FaPlus /> Crear Suministro
+                            </Link>
+                            <Link
+                                to="/suministros/movimientos"
+                                className="flex items-center gap-2 hover:text-blue-300"
+                            >
+                                <FaExchangeAlt /> Registrar Movimiento
+                            </Link>
+                            <Link
+                                to="/suministros/movimientos/historial"
+                                className="flex items-center gap-2 hover:text-blue-300"
+                            >
+                                <FaHistory /> Historial de Movimientos
+                            </Link>
+                            <Link
+                                to="/suministros/inventario"
+                                className="flex items-center gap-2 hover:text-blue-300"
+                            >
+                                <FaClipboardList /> Inventario
                             </Link>
                         </div>
                     </div>
@@ -176,6 +225,9 @@ export default function Sidebar() {
                             </Link>
                             <Link to="/formatos/bajaAtivos" className="flex items-center gap-2 hover:text-blue-300">
                                 <FaUpload /> Bajas
+                            </Link>
+                            <Link to="/suministros" className="flex items-center gap-2 hover:text-blue-300">
+                                <FaUpload /> Suministros
                             </Link>
                             {/* 🔹 Ahora el modal de traslados */}
                             <button onClick={openTrasladoModal} className="flex items-center gap-2 hover:text-blue-300">
