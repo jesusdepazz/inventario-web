@@ -36,13 +36,14 @@ export default function HistoricoTraslados() {
                             <th className="p-3 font-semibold">#</th>
                             <th className="p-3 font-semibold">Número</th>
                             <th className="p-3 font-semibold">Fecha Emisión</th>
-                            <th className="p-3 font-semibold">Solicitante</th>
+                            <th className="p-3 font-semibold">Persona quien entrega</th>
+                            <th className="p-3 font-semibold">Persona quien recibe</th>
                             <th className="p-3 font-semibold">Equipo</th>
                             <th className="p-3 font-semibold">Motivo</th>
-                            <th className="p-3 font-semibold">Razón</th>
                             <th className="p-3 font-semibold">Ubicación Desde</th>
                             <th className="p-3 font-semibold">Ubicación Hasta</th>
                             <th className="p-3 font-semibold">Estado</th>
+                            <th className="p-3 font-semibold">Observaciones</th>
                         </tr>
                     </thead>
                     <tbody>
