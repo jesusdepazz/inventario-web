@@ -21,14 +21,14 @@ const EliminarEquipos = () => {
     };
 
     const cargarEquipo = async () => {
-        try {
-            const res = await EquiposService.obtenerEquipos();
-            setEquipo(res.data);
-        } catch (err) {
-            console.error("Error al cargar equipos", err);
-            toast.error("Error al obtener los equipos");
-        }
-    };
+  try {
+    const res = await EquiposService.obtenerEquipos();
+    setEquipo(res.data);
+  } catch (err) {
+    console.error("Error al cargar equipos", err);
+    toast.error("Error al obtener los equipos");
+  }
+};
 
     const eliminarEquipos = async (id) => {
         if (!window.confirm("¿Estás seguro de eliminar este equipo?")) return;
@@ -58,7 +58,6 @@ const EliminarEquipos = () => {
             equipo.codificacion?.toLowerCase().includes(filtros.codificacion.toLowerCase()) &&
             equipo.marca?.toLowerCase().includes(filtros.marca.toLowerCase()) &&
             equipo.modelo?.toLowerCase().includes(filtros.modelo.toLowerCase()) &&
-            equipo.tipo?.toLowerCase().includes(filtros.tipo.toLowerCase()) &&
             (!filtros.fechaExacta ||
                 new Date(equipo.fechaIngreso).toISOString().split("T")[0] === filtros.fechaExacta)
         );
@@ -118,11 +117,7 @@ const EliminarEquipos = () => {
                             <th className="px-4 py-2 border">Marca</th>
                             <th className="px-4 py-2 border">Modelo</th>
                             <th className="px-4 py-2 border">Serie</th>
-                            <th className="px-4 py-2 border">IMEI</th>
-                            <th className="px-4 py-2 border">Estado</th>
-                            <th className="px-4 py-2 border">Tipo</th>
                             <th className="px-4 py-2 border">Ubicación</th>
-                            <th className="px-4 py-2 border">Imagen</th>
                             <th className="px-4 py-2 border">Fecha Ingreso</th>
                             <th className="px-4 py-2 border">Acciones</th>
                         </tr>
@@ -136,23 +131,7 @@ const EliminarEquipos = () => {
                                     <td className="px-4 py-2 border">{equipo.marca}</td>
                                     <td className="px-4 py-2 border">{equipo.modelo}</td>
                                     <td className="px-4 py-2 border">{equipo.serie}</td>
-                                    <td className="px-4 py-2 border">{equipo.imei}</td>
-                                    <td className={`px-4 py-2 border ${colorEstado[equipo.estado] || ""}`}>
-                                        {equipo.estado}
-                                    </td>
-                                    <td className="px-4 py-2 border">{equipo.tipo}</td>
                                     <td className="px-4 py-2 border">{equipo.ubicacion}</td>
-                                    <td className="px-4 py-2 border">
-                                        {equipo.imagenRuta ? (
-                                            <img
-                                                src={`https://inveq.guandy.com/${equipo.imagenRuta}`}
-                                                alt="Equipo"
-                                                className="w-20 h-auto rounded"
-                                            />
-                                        ) : (
-                                            "Sin imagen"
-                                        )}
-                                    </td>
                                     <td className="px-4 py-2 border">
                                         {new Date(equipo.fechaIngreso).toLocaleDateString()}
                                     </td>
