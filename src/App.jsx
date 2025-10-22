@@ -18,7 +18,9 @@ import EliminarAsignacion from "./components/asignaciones/EliminarAsignacion";
 import CrearSolicitud from "./components/solicitudes/CrearSolicitud";
 import ListaSolicitud from "./components/solicitudes/ListaSolicitud";
 import EliminarSolicitud from "./components/solicitudes/EliminarSolicitud";
-import HojaBajaActivo from "./components/formatos/HojaBajaActivo";
+import BajaActivosForm from "./components/formatos/BajaActivo/BajaActivo";
+import ListabajaAtivos from "./components/formatos/BajaActivo/ListaBajaActivo";
+import { generarBajaPDF } from "./components/formatos/BajaActivo/BajaActivoPDF";
 import HojaResponsabilidad from "./components/formatos/HojaResponsabilidad/HojaResponsabilidad";
 import ListaHojasResponsabilidad from "./components/formatos/HojaResponsabilidad/ListaHojaResponsabilidad";
 import ListaHojaSolvencia from "./components/formatos/HojaSolvencia/ListaHojaSolvencia";
@@ -32,11 +34,13 @@ import CrearSuministro from "./components/suministros/Suministro";
 
 function RequireAuth({ children }) {
   const isAuthenticated = useIsAuthenticated();
-  if (!isAuthenticated) {
+  const tokenApp = localStorage.getItem("tokenApp");
+  if (!isAuthenticated && !tokenApp) {
     return <Navigate to="/login" replace />;
   }
   return children;
 }
+
 
 function AppRoutes() {
   return (
@@ -87,7 +91,9 @@ function AppRoutes() {
           <Route path="/formatos/listahojasSolvencias" element={<ListaHojaSolvencia/>} />
           <Route path="/formatos/hojasSolvencias" element={<HojaSolvencia/>} />
           {/* FORMATOS/BAJADEACTIVOS */}
-          <Route path="/formatos/bajaAtivos" element={<HojaBajaActivo/>} />
+          <Route path="/formatos/bajaAtivos" element={<BajaActivosForm/>} />
+          <Route path="/formatos/ListabajaAtivos" element={<ListabajaAtivos/>} />
+          <Route path="/formatos/BajaActivo/BajaActivoPDF" element={<generarBajaPDF />} />
           {/* FORMATOS/TRASLADOS */}
           <Route path="/formatos/traslados" element={<HistoricoTraslados/>} />
           <Route path="/formatos/traslados/crear" element={<CrearTraslado/>} />
