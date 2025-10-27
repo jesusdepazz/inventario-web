@@ -29,6 +29,7 @@ export default function Sidebar() {
     const [modalTrasladoOpen, setModalTrasladoOpen] = useState(false);
     const [suministrosOpen, setSuministrosOpen] = useState(false);
     const [modalBajasActivoOpen, setModalBajasActivoOpen] = useState(false);
+    const [modalTrasladoRetornoOpen, setModalTrasladoRetornoOpen] = useState(false);
 
 
     const handleLogout = () => {
@@ -61,6 +62,13 @@ export default function Sidebar() {
         navigate(path);
         closeBajasActivoModal();
     };
+
+    const handleTrasladoRetornoOption = (ruta) => {
+        setModalTrasladoRetornoOpen(false);
+        navigate(ruta);
+    };
+
+    const closeTrasladoRetornoModal = () => setModalTrasladoRetornoOpen(false);
 
     return (
         <div className="bg-gradient-to-b from-blue-900 via-blue-800 to-blue-700 text-white w-80 h-screen p-6 fixed flex flex-col justify-between shadow-2xl rounded-r-2xl">
@@ -212,9 +220,12 @@ export default function Sidebar() {
                             <button onClick={openSolvenciaModal} className="flex items-center gap-2 hover:text-blue-300">
                                 <FaUpload /> Solvencias
                             </button>
-                            <Link to="/formatos/hojaSalidaRetorno" className="flex items-center gap-2 hover:text-blue-300">
+                            <button
+                                onClick={() => setModalTrasladoRetornoOpen(true)}
+                                className="flex items-center gap-2 hover:text-blue-300 w-full text-left"
+                            >
                                 <FaUpload /> Pase de salida con retorno
-                            </Link>
+                            </button>
                             <button onClick={openBajasActivoModal} className="flex items-center gap-2 hover:text-blue-300">
                                 <FaUpload /> Bajas
                             </button>
@@ -257,10 +268,6 @@ export default function Sidebar() {
                             className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
                         > Ver Historial
                         </button>
-                        <button onClick={() => handleSolvenciaOption("/formatos/eliminarSolvencias")}
-                            className="w-full bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700"
-                        > Eliminar
-                        </button>
                         <button onClick={closeSolvenciaModal}
                             className="w-full bg-gray-400 text-white py-2 px-4 rounded-lg hover:bg-gray-500"
                         > Cancelar
@@ -282,16 +289,10 @@ export default function Sidebar() {
                                 Crear
                             </button>
                             <button
-                                onClick={() => handleTrasladoOption("/formatos/traslados")}
+                                onClick={() => handleTrasladoOption("/formatos/traslados/lista")}
                                 className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
                             >
                                 Ver Historial
-                            </button>
-                            <button
-                                onClick={() => handleTrasladoOption("/formatos/eliminarTraslados")}
-                                className="w-full bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700"
-                            >
-                                Eliminar
                             </button>
                             <button
                                 onClick={closeTrasladoModal}
@@ -322,6 +323,42 @@ export default function Sidebar() {
                             </button>
                             <button
                                 onClick={closeBajasActivoModal}
+                                className="w-full bg-gray-400 text-white py-2 px-4 rounded-lg hover:bg-gray-500"
+                            >
+                                Cancelar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {modalTrasladoRetornoOpen && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-2xl shadow-2xl p-6 w-96 animate-fadeIn">
+                        <h2 className="text-xl font-bold mb-6 text-gray-800 text-center">
+                            Selecciona una opción
+                        </h2>
+
+                        <div className="flex flex-col gap-3">
+                            <button
+                                onClick={() =>
+                                    handleTrasladoRetornoOption("/formatos/trasladosRetorno/crear")
+                                }
+                                className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+                            >
+                                Crear Traslado Retorno
+                            </button>
+
+                            <button
+                                onClick={() =>
+                                    handleTrasladoRetornoOption("/formatos/trasladosRetorno/lista")
+                                }
+                                className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+                            >
+                                Ver Historial
+                            </button>
+
+                            <button
+                                onClick={closeTrasladoRetornoModal}
                                 className="w-full bg-gray-400 text-white py-2 px-4 rounded-lg hover:bg-gray-500"
                             >
                                 Cancelar
