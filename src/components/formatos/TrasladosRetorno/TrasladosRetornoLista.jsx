@@ -100,7 +100,7 @@ const TrasladosRetornoLista = () => {
                   <td className="p-2 border">{t.equipo}</td>
                   <td className="p-2 border">{t.descripcionEquipo}</td>
                   <td className="p-2 border">{t.motivoSalida}</td>
-                  <td className="p-2 border">{t.ubivacionRetorno}</td>
+                  <td className="p-2 border">{t.ubicacionRetorno}</td>
                   <td className="p-2 border text-center">
                     {formatearFecha(t.fechaRetorno)}
                   </td>
