@@ -25,12 +25,14 @@ import HojaResponsabilidad from "./components/formatos/HojaResponsabilidad/HojaR
 import ListaHojasResponsabilidad from "./components/formatos/HojaResponsabilidad/ListaHojaResponsabilidad";
 import ListaHojaSolvencia from "./components/formatos/HojaSolvencia/ListaHojaSolvencia";
 import HojaSolvencia from "./components/formatos/HojaSolvencia/HojaSolvencia";
-import HistoricoTraslados from "./components/formatos/Traslados/ListaTraslados";
 import CrearTraslado from "./components/formatos/Traslados/Traslados";
+import TrasladosLista from "./components/formatos/Traslados/ListaTraslados";
 import MovimientosForm from "./components/suministros/MovimientosForm";
 import HistorialMovimientos from "./components/suministros/HistorialMovimientos";
 import InventarioSuministros from "./components/suministros/InventarioSuministros";
 import CrearSuministro from "./components/suministros/Suministro";
+import CrearTrasladoRetorno from "./components/formatos/TrasladosRetorno/TrasladosRetorno";
+import TrasladosRetornoLista from "./components/formatos/TrasladosRetorno/TrasladosRetornoLista";
 
 function RequireAuth({ children }) {
   const isAuthenticated = useIsAuthenticated();
@@ -95,8 +97,11 @@ function AppRoutes() {
           <Route path="/formatos/ListabajaAtivos" element={<ListabajaAtivos/>} />
           <Route path="/formatos/BajaActivo/BajaActivoPDF" element={<generarBajaPDF />} />
           {/* FORMATOS/TRASLADOS */}
-          <Route path="/formatos/traslados" element={<HistoricoTraslados/>} />
+          <Route path="/formatos/traslados/lista" element={<TrasladosLista/>} />
           <Route path="/formatos/traslados/crear" element={<CrearTraslado/>} />
+          {/* FORMATOS/TRASLADOSRETORNO */}
+          <Route path="/formatos/trasladosRetorno/crear" element={<CrearTrasladoRetorno/>} />
+          <Route path="/formatos/trasladosRetorno/lista" element={<TrasladosRetornoLista/>} />
           {/* SUMINISTROS */}
           <Route path="/suministros" element={<CrearSuministro/>} />
           <Route path="/suministros/inventario" element={<InventarioSuministros/>} />
