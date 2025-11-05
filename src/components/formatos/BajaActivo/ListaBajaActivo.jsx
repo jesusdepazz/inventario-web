@@ -38,7 +38,7 @@ export default function ListabajaAtivos() {
     return (
         <div className="max-w-6xl mx-auto p-6 bg-white shadow-md rounded-2xl mt-6">
             <h2 className="text-2xl font-semibold mb-4 text-gray-800">
-                Historial de Bajas de Activos
+                Bajas de Activos
             </h2>
 
             {bajas.length === 0 ? (
