@@ -66,8 +66,13 @@ export default function BajaActivosForm() {
     setMensaje("");
 
     try {
-      await BajaActivosService.crear(form);
+      await BajaActivosService.crear({
+        ...form,
+        motivoBaja: form.motivoBaja.join(", ")
+      });
+
       setMensaje("✅ Baja registrada correctamente");
+
       setForm({
         fechaBaja: new Date().toISOString().split("T")[0],
         codificacionEquipo: "",
@@ -76,6 +81,7 @@ export default function BajaActivosForm() {
         ubicacionActual: "",
         ubicacionDestino: "",
       });
+
     } catch (error) {
       console.error(error);
       setMensaje("❌ Error al registrar la baja");

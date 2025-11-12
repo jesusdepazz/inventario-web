@@ -13,7 +13,7 @@ const CrearTrasladoRetorno = () => {
     equipo: "",
     descripcionEquipo: "",
     motivoSalida: "",
-    ubivacionRetorno: "",
+    ubicacionRetorno: "",
     fechaRetorno: "",
     status: "",
     razonNoLiquidada: "",
@@ -22,14 +22,12 @@ const CrearTrasladoRetorno = () => {
   const [empleadoInfo, setEmpleadoInfo] = useState(null);
   const [ubicaciones, setUbicaciones] = useState([]);
 
-  // Cargar ubicaciones al inicio
   useEffect(() => {
     UbicacionesService.obtenerTodas()
       .then((res) => setUbicaciones(res.data))
       .catch(() => toast.error("Error al cargar ubicaciones"));
   }, []);
 
-  // Buscar empleado al ingresar código
   const handleBuscarEmpleado = () => {
     if (!formData.solicitante.trim()) return;
     EmpleadosService.obtenerPorCodigo(formData.solicitante)
@@ -40,29 +38,29 @@ const CrearTrasladoRetorno = () => {
       });
   };
 
-  // Buscar equipo por codificación
   const handleBuscarEquipo = () => {
     if (!formData.equipo.trim()) return;
+
     EquiposService.obtenerPorCodificacion(formData.equipo)
-      .then((res) =>
+      .then((res) => {
         setFormData({
           ...formData,
           descripcionEquipo: res.data.tipoEquipo || "",
-        })
-      )
+          ubicacionRetorno: res.data.ubicacion || ""
+        });
+      })
       .catch(() => {
-        setFormData({ ...formData, descripcionEquipo: "" });
+        setFormData({ ...formData, descripcionEquipo: "", ubicacionRetorno: "" });
         toast.error("Equipo no encontrado");
       });
   };
 
-  // Cambios de inputs
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  // Guardar traslado
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -76,7 +74,7 @@ const CrearTrasladoRetorno = () => {
           equipo: "",
           descripcionEquipo: "",
           motivoSalida: "",
-          ubivacionRetorno: "",
+          ubicacionRetorno: "",
           fechaRetorno: "",
           status: "",
           razonNoLiquidada: "",
@@ -93,7 +91,6 @@ const CrearTrasladoRetorno = () => {
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* No y Fecha */}
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block font-medium">No.</label>
@@ -116,8 +113,6 @@ const CrearTrasladoRetorno = () => {
             />
           </div>
         </div>
-
-        {/* Solicitante */}
         <div>
           <label className="block font-medium">Solicitante (Código)</label>
           <div className="flex gap-2">
@@ -143,8 +138,6 @@ const CrearTrasladoRetorno = () => {
             </div>
           )}
         </div>
-
-        {/* Equipo */}
         <div>
           <label className="block font-medium">Equipo (Codificación)</label>
           <div className="flex gap-2">
@@ -163,8 +156,6 @@ const CrearTrasladoRetorno = () => {
             </button>
           </div>
         </div>
-
-        {/* Descripción */}
         <div>
           <label className="block font-medium">Descripción Equipo</label>
           <input
@@ -174,8 +165,6 @@ const CrearTrasladoRetorno = () => {
             className="border p-2 w-full rounded bg-gray-100"
           />
         </div>
-
-        {/* Motivo salida */}
         <div>
           <label className="block font-medium">Motivo de Salida</label>
           <input
@@ -185,26 +174,24 @@ const CrearTrasladoRetorno = () => {
             className="border p-2 w-full rounded"
           />
         </div>
-
-        {/* Ubicación retorno */}
         <div>
           <label className="block font-medium">Ubicación de Retorno</label>
           <select
-            name="ubivacionRetorno"
-            value={formData.ubivacionRetorno}
+            name="ubicacionRetorno"
+            value={formData.ubicacionRetorno}
             onChange={handleChange}
-            className="border p-2 w-full rounded"
+            className="border p-2 w-full rounded bg-gray-100"
+            disabled
           >
-            <option value="">Seleccionar...</option>
-            {ubicaciones.map((u) => (
-              <option key={u.id} value={u.nombre}>
-                {u.nombre}
+            {formData.ubicacionRetorno ? (
+              <option value={formData.ubicacionRetorno}>
+                {formData.ubicacionRetorno}
               </option>
-            ))}
+            ) : (
+              <option value="">Buscar equipo primero...</option>
+            )}
           </select>
         </div>
-
-        {/* Fecha retorno */}
         <div>
           <label className="block font-medium">Fecha Retorno</label>
           <input
@@ -215,8 +202,6 @@ const CrearTrasladoRetorno = () => {
             className="border p-2 w-full rounded"
           />
         </div>
-
-        {/* Status */}
         <div>
           <label className="block font-medium">Status</label>
           <input
@@ -226,8 +211,6 @@ const CrearTrasladoRetorno = () => {
             className="border p-2 w-full rounded"
           />
         </div>
-
-        {/* Razón no liquidada */}
         <div>
           <label className="block font-medium">Razón No Liquidada</label>
           <input

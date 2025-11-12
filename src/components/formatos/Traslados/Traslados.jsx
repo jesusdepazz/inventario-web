@@ -8,13 +8,12 @@ import EquiposService from "../../../services/EquiposServices";
 export default function CrearTraslado() {
   const navigate = useNavigate();
 
-  // Form alineado exactamente con la entidad C# Traslado
   const [form, setForm] = useState({
     No: "",
     FechaEmision: "",
-    PersonaEntrega: "", // aquí se ingresa el código del empleado (se guarda ese código)
-    PersonaRecibe: "",  // código del receptor
-    Equipo: "",         // codificación del equipo
+    PersonaEntrega: "",
+    PersonaRecibe: "",
+    Equipo: "",
     Motivo: "",
     UbicacionDesde: "",
     UbicacionHasta: "",
@@ -23,11 +22,10 @@ export default function CrearTraslado() {
   });
 
   const [ubicaciones, setUbicaciones] = useState([]);
-  const [infoEntrega, setInfoEntrega] = useState(null); // datos informativos de empleado entrega
-  const [infoRecibe, setInfoRecibe] = useState(null);   // datos informativos de empleado recibe
+  const [infoEntrega, setInfoEntrega] = useState(null);
+  const [infoRecibe, setInfoRecibe] = useState(null);
   const [infoEquipo, setInfoEquipo] = useState(null);
 
-  // Cargar ubicaciones
   useEffect(() => {
     const fetchUbicaciones = async () => {
       try {
@@ -40,13 +38,11 @@ export default function CrearTraslado() {
     fetchUbicaciones();
   }, []);
 
-  // Manejador genérico de inputs
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Buscar empleado por código — tipo: "entrega" o "recibe"
   const buscarEmpleado = async (codigo, tipo) => {
     if (!codigo) {
       if (tipo === "entrega") setInfoEntrega(null);
@@ -64,22 +60,31 @@ export default function CrearTraslado() {
     }
   };
 
-  // Buscar equipo por codificación
   const buscarEquipo = async (codificacion) => {
     if (!codificacion) {
       setInfoEquipo(null);
+      setForm(prev => ({ ...prev, UbicacionDesde: "" }));
       return;
     }
+
     try {
       const res = await EquiposService.obtenerPorCodificacion(codificacion);
+
       setInfoEquipo(res.data);
+
+      setForm(prev => ({
+        ...prev,
+        UbicacionDesde: res.data.ubicacion || ""
+      }));
+
     } catch (err) {
       setInfoEquipo(null);
+      setForm(prev => ({ ...prev, UbicacionDesde: "" }));
       alert("Equipo no encontrado ❌");
     }
   };
 
-  // Envío del formulario: payload usa exactamente las llaves de la entidad Traslado
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -100,7 +105,6 @@ export default function CrearTraslado() {
       await TrasladosServices.crear(payload);
       alert("Traslado creado correctamente ✅");
 
-      // reset
       setForm({
         No: "",
         FechaEmision: "",
@@ -117,8 +121,6 @@ export default function CrearTraslado() {
       setInfoRecibe(null);
       setInfoEquipo(null);
 
-      // opcional: navegar a dashboard o lista
-      // navigate("/trasladosDashboard");
     } catch (err) {
       console.error("Error creando traslado:", err);
       alert("Error creando traslado ❌");
@@ -129,7 +131,6 @@ export default function CrearTraslado() {
     <div className="h-screen flex items-center justify-center px-4 py-8">
       <div className="bg-white w-full max-w-6xl p-6 rounded-xl shadow-lg overflow-auto max-h-[90vh]">
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* DATOS GENERALES */}
           <section>
             <h3 className="text-xl font-semibold mb-4 border-b border-indigo-300 pb-2">
               Datos Generales
@@ -174,8 +175,6 @@ export default function CrearTraslado() {
               </div>
             </div>
           </section>
-
-          {/* EMPLEADOS */}
           <section>
             <h3 className="text-xl font-semibold mb-4 border-b border-indigo-300 pb-2">
               Empleados
@@ -223,8 +222,6 @@ export default function CrearTraslado() {
               </div>
             </div>
           </section>
-
-          {/* EQUIPO */}
           <section>
             <h3 className="text-xl font-semibold mb-4 border-b border-indigo-300 pb-2">
               Equipo
@@ -303,20 +300,13 @@ export default function CrearTraslado() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
               <div>
                 <label className="font-medium text-gray-700">Ubicación Desde</label>
-                <select
+                <input
+                  type="text"
                   name="UbicacionDesde"
                   value={form.UbicacionDesde}
-                  onChange={handleChange}
-                  className="w-full border rounded-lg p-2"
-                  required
-                >
-                  <option value="">Seleccione...</option>
-                  {ubicaciones.map((u) => (
-                    <option key={u.id} value={u.nombre}>
-                      {u.nombre}
-                    </option>
-                  ))}
-                </select>
+                  readOnly
+                  className="w-full border rounded-lg p-2 bg-gray-100"
+                />
               </div>
 
               <div>
