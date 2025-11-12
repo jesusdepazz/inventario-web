@@ -73,7 +73,16 @@ export default function ListabajaAtivos() {
                                     <td className="border p-2 font-medium text-gray-800">
                                         {baja.codificacionEquipo}
                                     </td>
-                                    <td className="border p-2">{baja.motivoBaja}</td>
+                                    <td className="border p-2">
+                                        {(() => {
+                                            try {
+                                                const motivos = JSON.parse(baja.motivoBaja);
+                                                return motivos.join(", ");
+                                            } catch {
+                                                return baja.motivoBaja;
+                                            }
+                                        })()}
+                                    </td>
                                     <td className="border p-2">{baja.detallesBaja}</td>
                                     <td className="border p-2">{baja.ubicacionActual}</td>
                                     <td className="border p-2 font-semibold text-blue-600">

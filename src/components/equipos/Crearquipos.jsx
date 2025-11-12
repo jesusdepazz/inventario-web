@@ -417,8 +417,8 @@ const CrearEquipo = () => {
                                 >
                                     <option value="">-- Seleccione estado --</option>
                                     <option value="Buen estado" className="text-green-500">Buen estado</option>
-                                    <option value="Inactivo" className="text-red-500">Inactivo</option>
-                                    <option value="Obsoleto" className="text-orange-500">Obsoleto</option>
+                                    <option value="Inactivo" className="text-yellow-500">Reparacion</option>
+                                    <option value="Obsoleto" className="text-red-500">Obsoleto</option>
                                 </select>
                             </div>
 
