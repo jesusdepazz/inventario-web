@@ -27,12 +27,12 @@ import ListaHojaSolvencia from "./components/formatos/HojaSolvencia/ListaHojaSol
 import HojaSolvencia from "./components/formatos/HojaSolvencia/HojaSolvencia";
 import CrearTraslado from "./components/formatos/Traslados/Traslados";
 import TrasladosLista from "./components/formatos/Traslados/ListaTraslados";
-import MovimientosForm from "./components/suministros/MovimientosForm";
-import HistorialMovimientos from "./components/suministros/HistorialMovimientos";
-import InventarioSuministros from "./components/suministros/InventarioSuministros";
-import CrearSuministro from "./components/suministros/Suministro";
+import Suministros from "./components/suministros/Suministro"
+import SuministrosInventario from "./components/suministros/InventarioSuministros";
+import Movimientos from "./components/suministros/MovimientoSuministro";
 import CrearTrasladoRetorno from "./components/formatos/TrasladosRetorno/TrasladosRetorno";
 import TrasladosRetornoLista from "./components/formatos/TrasladosRetorno/TrasladosRetornoLista";
+import ProtectedRoute from "./components/ProtectedRout";
 
 function RequireAuth({ children }) {
   const isAuthenticated = useIsAuthenticated();
@@ -75,39 +75,38 @@ function AppRoutes() {
           <Route path="/equipos/editar" element={<EditarEquipo />} />
           <Route path="/equipos/eliminar" element={<EliminarEquipos />} />
           {/* ASIGNACIONES */}
-          <Route path="/asignaciones/crear" element={<CrearAsignacion/>} />
-          <Route path="asignaciones/lista" element={<ListaAsignaciones/>} />
-          <Route path="asignaciones/eliminar" element={<EliminarAsignacion/>} />
+          <Route path="/asignaciones/crear" element={<CrearAsignacion />} />
+          <Route path="asignaciones/lista" element={<ListaAsignaciones />} />
+          <Route path="asignaciones/eliminar" element={<EliminarAsignacion />} />
           {/* MANTENIMIENTOS */}
-          <Route path="/mantenimientos/crear" element={<CrearMantenimiento/>} />
-          <Route path="/mantenimientos/lista" element={<ListaMantenimientos/>} />
+          <Route path="/mantenimientos/crear" element={<CrearMantenimiento />} />
+          <Route path="/mantenimientos/lista" element={<ListaMantenimientos />} />
           <Route path="/mantenimientos/eliminar" element={<EliminarMantenimientos />} />
           {/* SOLICITUDES */}
-          <Route path="/solicitudes/crear" element={<CrearSolicitud/>} />
-          <Route path="/solicitudes/lista" element={<ListaSolicitud/>} />
-          <Route path="/solicitudes/eliminar" element={<EliminarSolicitud/>} />
+          <Route path="/solicitudes/crear" element={<CrearSolicitud />} />
+          <Route path="/solicitudes/lista" element={<ListaSolicitud />} />
+          <Route path="/solicitudes/eliminar" element={<EliminarSolicitud />} />
           {/* FORMATOS/RESPONSABILIDAD */}
-          <Route path="/formatos/hojaderesponsabilidad" element={<HojaResponsabilidad/>} />
-          <Route path="/formatos/listahojasresponsabilidad" element={<ListaHojasResponsabilidad/>} />
+          <Route path="/formatos/hojaderesponsabilidad" element={<HojaResponsabilidad />} />
+          <Route path="/formatos/listahojasresponsabilidad" element={<ListaHojasResponsabilidad />} />
           {/* FORMATOS/SOLVENCIAS */}
-          <Route path="/formatos/listahojasSolvencias" element={<ListaHojaSolvencia/>} />
-          <Route path="/formatos/hojasSolvencias" element={<HojaSolvencia/>} />
+          <Route path="/formatos/listahojasSolvencias" element={<ListaHojaSolvencia />} />
+          <Route path="/formatos/hojasSolvencias" element={<HojaSolvencia />} />
           {/* FORMATOS/BAJADEACTIVOS */}
-          <Route path="/formatos/bajaAtivos" element={<BajaActivosForm/>} />
-          <Route path="/formatos/ListabajaAtivos" element={<ListabajaAtivos/>} />
+          <Route path="/formatos/bajaAtivos" element={<BajaActivosForm />} />
+          <Route path="/formatos/ListabajaAtivos" element={<ListabajaAtivos />} />
           <Route path="/formatos/BajaActivo/BajaActivoPDF" element={<generarBajaPDF />} />
           {/* FORMATOS/TRASLADOS */}
-          <Route path="/formatos/traslados/lista" element={<TrasladosLista/>} />
-          <Route path="/formatos/traslados/crear" element={<CrearTraslado/>} />
+          <Route path="/formatos/traslados/lista" element={<TrasladosLista />} />
+          <Route path="/formatos/traslados/crear" element={<CrearTraslado />} />
           {/* FORMATOS/TRASLADOSRETORNO */}
-          <Route path="/formatos/trasladosRetorno/crear" element={<CrearTrasladoRetorno/>} />
-          <Route path="/formatos/trasladosRetorno/lista" element={<TrasladosRetornoLista/>} />
+          <Route path="/formatos/trasladosRetorno/crear" element={<CrearTrasladoRetorno />} />
+          <Route path="/formatos/trasladosRetorno/lista" element={<TrasladosRetornoLista />} />
           {/* SUMINISTROS */}
-          <Route path="/suministros" element={<CrearSuministro/>} />
-          <Route path="/suministros/inventario" element={<InventarioSuministros/>} />
-          <Route path="/suministros/movimientos" element={<MovimientosForm/>} />
-          <Route path="/suministros/movimientos/historial" element={<HistorialMovimientos/>} />
-         </Route>
+          <Route path="/suministros"element={<ProtectedRoute requiredRole="Administrador"><Suministros /></ProtectedRoute>}/>
+          <Route path="/suministros/inventario"element={<ProtectedRoute requiredRole="Administrador"><SuministrosInventario /></ProtectedRoute>}/>
+          <Route path="/suministros/movimientos"element={<ProtectedRoute requiredRole="Administrador"><Movimientos /></ProtectedRoute>}/>
+        </Route>
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </BrowserRouter>

@@ -1,165 +1,137 @@
-import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
+import { useState, useEffect } from "react";
 import SuministrosService from "../../services/SuministrosService";
 import UbicacionesService from "../../services/UbicacionesServices";
 
-const CrearSuministro = () => {
-  const [form, setForm] = useState({
-    nombre: "",
-    descripcion: "",
-    categoria: "",
-    unidadMedida: "",
-    stockInicial: 0,
-    ubicacionId: "",
+export default function Suministros() {
+  const [formData, setFormData] = useState({
+    nombreProducto: "",
+    ubicacionProducto: "",
+    cantidadActual: "",
   });
 
   const [ubicaciones, setUbicaciones] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [mensaje, setMensaje] = useState("");
+  const [loadingUbicaciones, setLoadingUbicaciones] = useState(true);
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
 
   useEffect(() => {
+    const cargarUbicaciones = async () => {
+      try {
+        const response = await UbicacionesService.obtenerTodas();
+        setUbicaciones(response.data);
+      } catch (error) {
+        console.error("Error cargando ubicaciones", error);
+      } finally {
+        setLoadingUbicaciones(false);
+      }
+    };
+
     cargarUbicaciones();
   }, []);
 
-  const cargarUbicaciones = async () => {
-    try {
-      const res = await UbicacionesService.obtenerTodas();
-      setUbicaciones(res.data);
-    } catch (err) {
-      toast.error("Error al cargar ubicaciones");
-    }
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setMensaje("");
+
     try {
-      await SuministrosService.crear(form);
-      toast.success("Suministro creado correctamente");
-      setForm({
-        nombre: "",
-        descripcion: "",
-        categoria: "",
-        unidadMedida: "",
-        stockInicial: 0,
-        ubicacionId: "",
+      await SuministrosService.crear(formData);
+      setMensaje("Suministro creado exitosamente ✔️");
+
+      setFormData({
+        nombreProducto: "",
+        ubicacionProducto: "",
+        cantidadActual: ""
       });
-    } catch (err) {
-      toast.error("Error al crear suministro");
+    } catch (error) {
+      setMensaje("Error al crear el suministro ❌");
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-2xl bg-white shadow-lg rounded-2xl p-6 space-y-6"
-      >
-        <h2 className="text-2xl font-semibold text-gray-700 mb-4 text-center">
-          Registrar nuevo suministro
-        </h2>
+    <div className="max-w-lg mx-auto mt-10 bg-white shadow-lg p-6 rounded-xl">
+      <h2 className="text-2xl font-bold mb-4 text-gray-800">Crear Suministro</h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-gray-600 text-sm font-medium mb-1">
-              Nombre
-            </label>
-            <input
-              type="text"
-              name="nombre"
-              value={form.nombre}
-              onChange={handleChange}
-              required
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-              placeholder="Ej. Cable HDMI"
-            />
-          </div>
-          <div>
-            <label className="block text-gray-600 text-sm font-medium mb-1">
-              Categoría
-            </label>
-            <input
-              type="text"
-              name="categoria"
-              value={form.categoria}
-              onChange={handleChange}
-              placeholder="Ej. Cables, Energía..."
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-            />
-          </div>
-          <div>
-            <label className="block text-gray-600 text-sm font-medium mb-1">
-              Unidad de medida
-            </label>
-            <input
-              type="text"
-              name="unidadMedida"
-              value={form.unidadMedida}
-              onChange={handleChange}
-              placeholder="Ej. unidades, metros..."
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-            />
-          </div>
-          <div>
-            <label className="block text-gray-600 text-sm font-medium mb-1">
-              Stock inicial
-            </label>
-            <input
-              type="number"
-              name="stockInicial"
-              min={0}
-              value={form.stockInicial}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-            />
-          </div>
-          <div className="md:col-span-2">
-            <label className="block text-gray-600 text-sm font-medium mb-1">
-              Ubicación
-            </label>
+      {mensaje && (
+        <div
+          className={`p-3 mb-4 rounded-lg ${mensaje.includes("✔️")
+            ? "bg-green-100 text-green-700"
+            : "bg-red-100 text-red-700"
+            }`}
+        >
+          {mensaje}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block font-medium text-gray-700">Nombre del Producto</label>
+          <input
+            type="text"
+            name="nombreProducto"
+            value={formData.nombreProducto}
+            onChange={handleChange}
+            required
+            className="w-full mt-1 p-2 border rounded-lg focus:ring focus:ring-blue-300"
+            placeholder="Ejemplo: Tornillos de 1”"
+          />
+        </div>
+
+        <div>
+          <label className="block font-medium text-gray-700">Ubicación</label>
+
+          {loadingUbicaciones ? (
+            <p className="text-sm text-gray-500">Cargando ubicaciones...</p>
+          ) : (
             <select
-              name="ubicacionId"
-              value={form.ubicacionId}
+              name="ubicacionProducto"
+              value={formData.ubicacionProducto}
               onChange={handleChange}
               required
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              className="w-full mt-1 p-2 border rounded-lg bg-white focus:ring focus:ring-blue-300"
             >
-              <option value="">Seleccione ubicación</option>
+              <option value="">Seleccione una ubicación</option>
+
               {ubicaciones.map((u) => (
-                <option key={u.id} value={u.id}>
+                <option key={u.id} value={u.nombre}>
                   {u.nombre}
                 </option>
               ))}
             </select>
-          </div>
+          )}
         </div>
         <div>
-          <label className="block text-gray-600 text-sm font-medium mb-1">
-            Descripción
-          </label>
-          <textarea
-            name="descripcion"
-            value={form.descripcion}
+          <label className="block font-medium text-gray-700">Cantidad Inicial</label>
+          <input
+            type="number"
+            min="0"
+            name="cantidadActual"
+            value={formData.cantidadActual}
             onChange={handleChange}
-            rows="3"
-            placeholder="Detalles adicionales..."
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            required
+            className="w-full mt-1 p-2 border rounded-lg focus:ring focus:ring-blue-300"
+            placeholder="Ejemplo: 10"
           />
         </div>
 
-        <div className="text-center">
-          <button
-            type="submit"
-            className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition font-semibold"
-          >
-            Crear Suministro
-          </button>
-        </div>
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+        >
+          {loading ? "Guardando..." : "Crear Suministro"}
+        </button>
       </form>
     </div>
   );
-};
-
-export default CrearSuministro;
+}
