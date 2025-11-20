@@ -134,22 +134,16 @@ export default function Sidebar() {
                                 <FaPlus /> Crear Suministro
                             </Link>
                             <Link
-                                to="/suministros/movimientos"
-                                className="flex items-center gap-2 hover:text-blue-300"
-                            >
-                                <FaExchangeAlt /> Registrar Movimiento
-                            </Link>
-                            <Link
-                                to="/suministros/movimientos/historial"
-                                className="flex items-center gap-2 hover:text-blue-300"
-                            >
-                                <FaHistory /> Historial de Movimientos
-                            </Link>
-                            <Link
                                 to="/suministros/inventario"
                                 className="flex items-center gap-2 hover:text-blue-300"
                             >
-                                <FaClipboardList /> Inventario
+                                <FaClipboardList /> Inventario de suministros
+                            </Link>
+                            <Link
+                                to="/suministros/movimientos"
+                                className="flex items-center gap-2 hover:text-blue-300"
+                            >
+                                <FaUpload /> Movimientos de suministros
                             </Link>
                         </div>
                     </div>
