@@ -82,7 +82,7 @@ export default function Movimientos() {
       return;
     }
 
-    if (tipoMovimiento === "salida" && (!formData.destino || !formData.persona)) {
+    if (tipoMovimiento === "salida" && (!formData.destino || !formData.personaResponsable)) {
       setMensaje("Debe indicar el destino y la persona responsable ❌");
       setLoading(false);
       return;
