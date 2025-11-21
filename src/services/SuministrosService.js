@@ -11,5 +11,13 @@ export default {
 
   eliminar: (id) => apiClient.delete(`/suministros/${id}`),
 
-  recalcularInventario: (id) => apiClient.post(`/suministros/${id}/recalcular`)
+  recalcularInventario: (id) => apiClient.post(`/suministros/${id}/recalcular`),
+
+  obtenerConTotales: () => apiClient.get("/suministros/con-totales"),
+
+  exportarExcel: () =>
+  apiClient.get("/suministros/exportar-excel", {
+    responseType: "blob",
+  })
+
 };
