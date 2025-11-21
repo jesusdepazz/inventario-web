@@ -1,64 +1,195 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import SuministrosService from "../../services/SuministrosService";
-import { toast } from "react-toastify";
+import EntradaSuministroService from "../../services/EntradasSuministrosServices";
+import SalidaSuministroService from "../../services/SalidasSuministrosServices";
 
-export default function InventarioSuministros() {
-  const [suministros, setSuministros] = useState([]);
+export default function SuministrosInventario() {
+    const [suministros, setSuministros] = useState([]);
+    const [movimientos, setMovimientos] = useState([]);
+    const [tipoMovimientos, setTipoMovimientos] = useState("entrada");
 
-  const cargarSuministros = async () => {
-    try {
-      const res = await SuministrosService.obtenerTodos();
-      setSuministros(res.data);
-    } catch (err) {
-      console.error(err);
-      toast.error("Error al cargar los suministros");
-    }
-  };
+    const [loadingSuministros, setLoadingSuministros] = useState(true);
+    const [loadingMovimientos, setLoadingMovimientos] = useState(true);
+    const [errorSuministros, setErrorSuministros] = useState("");
+    const [errorMovimientos, setErrorMovimientos] = useState("");
 
-  useEffect(() => {
-    cargarSuministros();
-  }, []);
+    useEffect(() => {
+        const cargarSuministros = async () => {
+            try {
+                const response = await SuministrosService.obtenerConTotales();
+                setSuministros(response.data);
+            } catch (err) {
+                console.error(err);
+                setErrorSuministros("Error al cargar los suministros ❌");
+            } finally {
+                setLoadingSuministros(false);
+            }
+        };
+        cargarSuministros();
+    }, []);
 
-  return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4">Inventario de Suministros</h2>
+    useEffect(() => {
+        const cargarMovimientos = async () => {
+            setLoadingMovimientos(true);
+            setErrorMovimientos("");
 
-      <div className="overflow-x-auto bg-white shadow-md rounded-xl p-4">
-        <table className="w-full text-sm text-left border border-gray-200">
-          <thead className="bg-indigo-100">
-            <tr>
-              <th className="px-4 py-2 border">ID</th>
-              <th className="px-4 py-2 border">Nombre</th>
-              <th className="px-4 py-2 border">Descripción</th>
-              <th className="px-4 py-2 border">Unidad de Medida</th>
-              <th className="px-4 py-2 border">Stock Total</th>
-              <th className="px-4 py-2 border">Activo</th>
-            </tr>
-          </thead>
-          <tbody>
-            {suministros.length > 0 ? (
-              suministros.map((s) => (
-                <tr key={s.id} className="text-center">
-                  <td className="px-4 py-2 border">{s.id}</td>
-                  <td className="px-4 py-2 border">{s.nombre}</td>
-                  <td className="px-4 py-2 border">{s.descripcion ?? "-"}</td>
-                  <td className="px-4 py-2 border">{s.unidadMedida}</td>
-                  <td className="px-4 py-2 border">{s.stockTotal}</td>
-                  <td className={`px-4 py-2 border font-bold ${s.activo ? "text-green-600" : "text-red-600"}`}>
-                    {s.activo ? "Sí" : "No"}
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={6} className="text-center p-4 text-gray-600">
-                  No hay suministros registrados
-                </td>
-              </tr>
+            try {
+                let response;
+
+                if (tipoMovimientos === "entrada") {
+                    response = await EntradaSuministroService.obtenerTodas();
+                } else {
+                    response = await SalidaSuministroService.obtenerTodos();
+                }
+
+                const data = response.data.map((m) => {
+                    const productoMatch = suministros.find(s => s.id === m.suministroId);
+
+                    return {
+                        ...m,
+                        nombreProducto: productoMatch?.nombreProducto || "Desconocido",
+                        fecha: m.fecha || m.Fecha,
+                        destino: m.destino || "",
+                        personaResponsable: m.personaResponsable || "",
+                        departamentoResponsable: m.departamentoResponsable || "",
+                    };
+                });
+
+                setMovimientos(data);
+            } catch (err) {
+                console.error(err);
+                setErrorMovimientos("Error al cargar los movimientos ❌");
+            } finally {
+                setLoadingMovimientos(false);
+            }
+        };
+
+        if (!loadingSuministros) cargarMovimientos();
+
+    }, [tipoMovimientos, loadingSuministros, suministros]);
+
+    return (
+        <div className="max-w-6xl mx-auto mt-10 bg-white shadow-lg p-6 rounded-xl">
+            <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Inventario de Suministros</h2>
+            <div className="w-full flex justify-center mb-6">
+                <button
+                    className="px-4 py-2 bg-green-600 text-white rounded-lg shadow"
+                    onClick={async () => {
+                        const response = await SuministrosService.exportarExcel();
+                        const url = window.URL.createObjectURL(new Blob([response.data]));
+                        const link = document.createElement("a");
+                        link.href = url;
+                        link.download = "InventarioSuministros.xlsx";
+                        link.click();
+                    }}
+                >
+                    Exportar Excel
+                </button>
+            </div>
+
+            {loadingSuministros && <p className="text-gray-600">Cargando suministros...</p>}
+            {errorSuministros && <p className="text-red-600">{errorSuministros}</p>}
+
+            {!loadingSuministros && suministros.length === 0 && (
+                <p className="text-gray-500 text-center">No hay suministros registrados.</p>
             )}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
+
+            {!loadingSuministros && suministros.length > 0 && (
+                <div className="overflow-x-auto mb-8">
+                    <table className="w-full border-collapse">
+                        <thead>
+                            <tr className="bg-gray-100 text-left">
+                                <th className="p-3 border">ID</th>
+                                <th className="p-3 border">Producto</th>
+                                <th className="p-3 border">Entradas</th>
+                                <th className="p-3 border">Salidas</th>
+                                <th className="p-3 border">Existencia</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {suministros.map((s) => (
+                                <tr key={s.id} className="hover:bg-gray-50">
+                                    <td className="p-3 border">{s.id}</td>
+                                    <td className="p-3 border">{s.nombreProducto}</td>
+                                    <td className="p-3 border font-bold text-green-700">{s.totalEntradas}</td>
+                                    <td className="p-3 border font-bold text-red-700">{s.totalSalidas}</td>
+                                    <td className="p-3 border font-bold text-blue-700">{s.existenciaActual}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            )}
+
+            <div className="mb-4 flex gap-4 justify-center">
+                <button
+                    className={`px-4 py-2 rounded-lg ${tipoMovimientos === "entrada" ? "bg-blue-600 text-white" : "bg-gray-200"}`}
+                    onClick={() => setTipoMovimientos("entrada")}
+                >
+                    Entradas
+                </button>
+                <button
+                    className={`px-4 py-2 rounded-lg ${tipoMovimientos === "salida" ? "bg-blue-600 text-white" : "bg-gray-200"}`}
+                    onClick={() => setTipoMovimientos("salida")}
+                >
+                    Salidas
+                </button>
+            </div>
+
+            {loadingMovimientos && <p className="text-gray-600">Cargando movimientos...</p>}
+            {errorMovimientos && <p className="text-red-600">{errorMovimientos}</p>}
+
+            {!loadingMovimientos && movimientos.length === 0 && (
+                <p className="text-gray-500 text-center">No hay movimientos registrados.</p>
+            )}
+
+            {!loadingMovimientos && movimientos.length > 0 && (
+                <div className="overflow-x-auto">
+                    <table className="w-full border-collapse">
+                        <thead>
+                            <tr className="bg-gray-100 text-left">
+                                <th className="p-3 border">ID</th>
+                                <th className="p-3 border">Producto</th>
+                                <th className="p-3 border">Cantidad</th>
+
+                                {tipoMovimientos === "salida" && (
+                                    <>
+                                        <th className="p-3 border">Destino</th>
+                                        <th className="p-3 border">Responsable</th>
+                                        <th className="p-3 border">Departamento</th>
+                                    </>
+                                )}
+
+                                <th className="p-3 border">Fecha</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {movimientos.map((m) => (
+                                <tr key={m.id} className="hover:bg-gray-50">
+                                    <td className="p-3 border">{m.id}</td>
+
+                                    <td className="p-3 border">
+                                        {m.nombreProducto}
+                                    </td>
+
+                                    <td className="p-3 border font-bold text-blue-700">{m.cantidadProducto}</td>
+
+                                    {tipoMovimientos === "salida" && (
+                                        <>
+                                            <td className="p-3 border">{m.destino}</td>
+                                            <td className="p-3 border">{m.personaResponsable}</td>
+                                            <td className="p-3 border">{m.departamentoResponsable}</td>
+                                        </>
+                                    )}
+
+                                    <td className="p-3 border">{new Date(m.fecha).toLocaleDateString("es-GT")}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            )}
+        </div>
+    );
 }

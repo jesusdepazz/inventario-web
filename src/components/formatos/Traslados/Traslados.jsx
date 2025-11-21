@@ -8,29 +8,24 @@ import EquiposService from "../../../services/EquiposServices";
 export default function CrearTraslado() {
   const navigate = useNavigate();
 
-  const [ubicaciones, setUbicaciones] = useState([]);
-
-  // Form principal (solo guarda códigos, no nombres ni descripciones)
   const [form, setForm] = useState({
     No: "",
     FechaEmision: "",
-    SolicitanteCodigo: "",
-    ReceptorCodigo: "",
-    CodificacionEquipo: "",
+    PersonaEntrega: "",
+    PersonaRecibe: "",
+    Equipo: "",
     Motivo: "",
     UbicacionDesde: "",
     UbicacionHasta: "",
     Status: "Pendiente",
-    FechaLiquidacion: "",
-    Razon: ""
+    Observaciones: ""
   });
 
-  // Datos informativos (solo se muestran, no se guardan)
-  const [infoSolicitante, setInfoSolicitante] = useState(null);
-  const [infoReceptor, setInfoReceptor] = useState(null);
+  const [ubicaciones, setUbicaciones] = useState([]);
+  const [infoEntrega, setInfoEntrega] = useState(null);
+  const [infoRecibe, setInfoRecibe] = useState(null);
   const [infoEquipo, setInfoEquipo] = useState(null);
 
-  // Cargar ubicaciones
   useEffect(() => {
     const fetchUbicaciones = async () => {
       try {
@@ -43,49 +38,68 @@ export default function CrearTraslado() {
     fetchUbicaciones();
   }, []);
 
-  // Actualizar formulario
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Buscar empleado por código
   const buscarEmpleado = async (codigo, tipo) => {
-    if (!codigo) return;
+    if (!codigo) {
+      if (tipo === "entrega") setInfoEntrega(null);
+      else setInfoRecibe(null);
+      return;
+    }
     try {
       const res = await EmpleadosService.obtenerPorCodigo(codigo);
-      if (tipo === "solicitante") setInfoSolicitante(res.data);
-      else setInfoReceptor(res.data);
-    } catch {
-      if (tipo === "solicitante") setInfoSolicitante(null);
-      else setInfoReceptor(null);
+      if (tipo === "entrega") setInfoEntrega(res.data);
+      else setInfoRecibe(res.data);
+    } catch (err) {
+      if (tipo === "entrega") setInfoEntrega(null);
+      else setInfoRecibe(null);
       alert("Empleado no encontrado ❌");
     }
   };
 
-  // Buscar equipo por codificación
   const buscarEquipo = async (codificacion) => {
-    if (!codificacion) return;
+    if (!codificacion) {
+      setInfoEquipo(null);
+      setForm(prev => ({ ...prev, UbicacionDesde: "" }));
+      return;
+    }
+
     try {
       const res = await EquiposService.obtenerPorCodificacion(codificacion);
+
       setInfoEquipo(res.data);
-    } catch {
+
+      setForm(prev => ({
+        ...prev,
+        UbicacionDesde: res.data.ubicacion || ""
+      }));
+
+    } catch (err) {
       setInfoEquipo(null);
+      setForm(prev => ({ ...prev, UbicacionDesde: "" }));
       alert("Equipo no encontrado ❌");
     }
   };
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       const payload = {
-        ...form,
-        FechaEmision: form.FechaEmision
-          ? new Date(form.FechaEmision).toISOString()
-          : null,
-        FechaLiquidacion: form.FechaLiquidacion
-          ? new Date(form.FechaLiquidacion).toISOString()
-          : null
+        No: form.No,
+        FechaEmision: form.FechaEmision ? new Date(form.FechaEmision).toISOString() : null,
+        PersonaEntrega: form.PersonaEntrega,
+        PersonaRecibe: form.PersonaRecibe,
+        Equipo: form.Equipo,
+        Motivo: form.Motivo,
+        UbicacionDesde: form.UbicacionDesde,
+        UbicacionHasta: form.UbicacionHasta,
+        Status: form.Status,
+        Observaciones: form.Observaciones
       };
 
       await TrasladosServices.crear(payload);
@@ -94,19 +108,19 @@ export default function CrearTraslado() {
       setForm({
         No: "",
         FechaEmision: "",
-        SolicitanteCodigo: "",
-        ReceptorCodigo: "",
-        CodificacionEquipo: "",
+        PersonaEntrega: "",
+        PersonaRecibe: "",
+        Equipo: "",
         Motivo: "",
         UbicacionDesde: "",
         UbicacionHasta: "",
         Status: "Pendiente",
-        FechaLiquidacion: "",
-        Razon: ""
+        Observaciones: ""
       });
-      setInfoSolicitante(null);
-      setInfoReceptor(null);
+      setInfoEntrega(null);
+      setInfoRecibe(null);
       setInfoEquipo(null);
+
     } catch (err) {
       console.error("Error creando traslado:", err);
       alert("Error creando traslado ❌");
@@ -117,7 +131,6 @@ export default function CrearTraslado() {
     <div className="h-screen flex items-center justify-center px-4 py-8">
       <div className="bg-white w-full max-w-6xl p-6 rounded-xl shadow-lg overflow-auto max-h-[90vh]">
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* DATOS GENERALES */}
           <section>
             <h3 className="text-xl font-semibold mb-4 border-b border-indigo-300 pb-2">
               Datos Generales
@@ -134,10 +147,9 @@ export default function CrearTraslado() {
                   required
                 />
               </div>
+
               <div>
-                <label className="mb-1 font-medium text-gray-700">
-                  Fecha Emisión
-                </label>
+                <label className="mb-1 font-medium text-gray-700">Fecha Emisión</label>
                 <input
                   type="date"
                   name="FechaEmision"
@@ -147,97 +159,88 @@ export default function CrearTraslado() {
                   required
                 />
               </div>
+
+              <div>
+                <label className="mb-1 font-medium text-gray-700">Status</label>
+                <select
+                  name="Status"
+                  value={form.Status}
+                  onChange={handleChange}
+                  className="w-full border rounded-lg p-2"
+                >
+                  <option value="Pendiente">Pendiente</option>
+                  <option value="En Proceso">En Proceso</option>
+                  <option value="Completado">Completado</option>
+                </select>
+              </div>
             </div>
           </section>
-
-          {/* EMPLEADOS */}
           <section>
             <h3 className="text-xl font-semibold mb-4 border-b border-indigo-300 pb-2">
               Empleados
             </h3>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Quien entrega */}
               <div>
-                <label className="font-medium text-gray-700">
-                  Código Empleado (Entrega)
-                </label>
+                <label className="font-medium text-gray-700">Persona Entrega (código)</label>
                 <input
                   type="text"
-                  name="SolicitanteCodigo"
-                  value={form.SolicitanteCodigo}
+                  name="PersonaEntrega"
+                  value={form.PersonaEntrega}
                   onChange={handleChange}
-                  onBlur={() =>
-                    buscarEmpleado(form.SolicitanteCodigo, "solicitante")
-                  }
+                  onBlur={() => buscarEmpleado(form.PersonaEntrega, "entrega")}
                   className="w-full border rounded-lg p-2"
-                  placeholder="Ingrese código de empleado"
+                  placeholder="Código empleado que entrega"
                 />
-                {infoSolicitante && (
+                {infoEntrega && (
                   <div className="mt-2 text-sm text-gray-700">
-                    <p>
-                      <b>Nombre:</b> {infoSolicitante.nombre}
-                    </p>
-                    <p>
-                      <b>Departamento:</b> {infoSolicitante.departamento}
-                    </p>
-                    <p>
-                      <b>Cargo:</b> {infoSolicitante.cargo}
-                    </p>
+                    <p><b>Nombre:</b> {infoEntrega.nombre}</p>
+                    <p><b>Departamento:</b> {infoEntrega.departamento}</p>
+                    <p><b>Puesto:</b> {infoEntrega.puesto}</p>
                   </div>
                 )}
               </div>
 
-              {/* Quien recibe */}
               <div>
-                <label className="font-medium text-gray-700">
-                  Código Empleado (Recibe)
-                </label>
+                <label className="font-medium text-gray-700">Persona Recibe (código)</label>
                 <input
                   type="text"
-                  name="ReceptorCodigo"
-                  value={form.ReceptorCodigo}
+                  name="PersonaRecibe"
+                  value={form.PersonaRecibe}
                   onChange={handleChange}
-                  onBlur={() => buscarEmpleado(form.ReceptorCodigo, "receptor")}
+                  onBlur={() => buscarEmpleado(form.PersonaRecibe, "recibe")}
                   className="w-full border rounded-lg p-2"
-                  placeholder="Ingrese código de empleado"
+                  placeholder="Código empleado que recibe"
                 />
-                {infoReceptor && (
+                {infoRecibe && (
                   <div className="mt-2 text-sm text-gray-700">
-                    <p>
-                      <b>Nombre:</b> {infoReceptor.nombre}
-                    </p>
-                    <p>
-                      <b>Departamento:</b> {infoReceptor.departamento}
-                    </p>
-                    <p>
-                      <b>Cargo:</b> {infoReceptor.cargo}
-                    </p>
+                    <p><b>Nombre:</b> {infoRecibe.nombre}</p>
+                    <p><b>Departamento:</b> {infoRecibe.departamento}</p>
+                    <p><b>Puesto:</b> {infoRecibe.puesto}</p>
                   </div>
                 )}
               </div>
             </div>
           </section>
-
-          {/* EQUIPO */}
           <section>
             <h3 className="text-xl font-semibold mb-4 border-b border-indigo-300 pb-2">
               Equipo
             </h3>
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
-                <label className="font-medium text-gray-700">
-                  Codificación
-                </label>
+                <label className="font-medium text-gray-700">Equipo (codificación)</label>
                 <input
                   type="text"
-                  name="CodificacionEquipo"
-                  value={form.CodificacionEquipo}
+                  name="Equipo"
+                  value={form.Equipo}
                   onChange={handleChange}
-                  onBlur={() => buscarEquipo(form.CodificacionEquipo)}
+                  onBlur={() => buscarEquipo(form.Equipo)}
                   className="w-full border rounded-lg p-2"
-                  placeholder="Ingrese codificación del equipo"
+                  placeholder="Codificación del equipo"
                 />
               </div>
+
               {infoEquipo && (
                 <>
                   <div>
@@ -268,6 +271,7 @@ export default function CrearTraslado() {
             <h3 className="text-xl font-semibold mb-4 border-b border-indigo-300 pb-2">
               Motivo y Ubicaciones
             </h3>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="font-medium text-gray-700">Motivo</label>
@@ -276,18 +280,19 @@ export default function CrearTraslado() {
                   value={form.Motivo}
                   onChange={handleChange}
                   className="w-full border rounded-lg p-2 resize-none"
-                  rows={2}
+                  rows={3}
                   required
                 />
               </div>
+
               <div>
                 <label className="font-medium text-gray-700">Observaciones</label>
                 <textarea
-                  name="Razon"
-                  value={form.Razon}
+                  name="Observaciones"
+                  value={form.Observaciones}
                   onChange={handleChange}
                   className="w-full border rounded-lg p-2 resize-none"
-                  rows={2}
+                  rows={3}
                 />
               </div>
             </div>
@@ -295,21 +300,15 @@ export default function CrearTraslado() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
               <div>
                 <label className="font-medium text-gray-700">Ubicación Desde</label>
-                <select
+                <input
+                  type="text"
                   name="UbicacionDesde"
                   value={form.UbicacionDesde}
-                  onChange={handleChange}
-                  className="w-full border rounded-lg p-2"
-                  required
-                >
-                  <option value="">Seleccione...</option>
-                  {ubicaciones.map((u) => (
-                    <option key={u.id} value={u.nombre}>
-                      {u.nombre}
-                    </option>
-                  ))}
-                </select>
+                  readOnly
+                  className="w-full border rounded-lg p-2 bg-gray-100"
+                />
               </div>
+
               <div>
                 <label className="font-medium text-gray-700">Ubicación Hasta</label>
                 <select

@@ -7,7 +7,7 @@ export default function BajaActivosForm() {
   const [form, setForm] = useState({
     fechaBaja: new Date().toISOString().split("T")[0],
     codificacionEquipo: "",
-    motivoBaja: "",
+    motivoBaja: [],
     detallesBaja: "",
     ubicacionActual: "",
     ubicacionDestino: "",
@@ -17,14 +17,22 @@ export default function BajaActivosForm() {
   const [loading, setLoading] = useState(false);
   const [mensaje, setMensaje] = useState("");
 
-  // ✅ Cargar ubicaciones disponibles al montar
+
   useEffect(() => {
     UbicacionesService.obtenerTodas()
-      .then((res) => setUbicaciones(res.data))
+      .then((res) => {
+        const filtradas = res.data.filter(
+          (u) =>
+            u.nombre.toLowerCase() === "robado" ||
+            u.nombre.toLowerCase() === "donación"
+        );
+
+        setUbicaciones(filtradas);
+      })
       .catch(() => console.error("Error al cargar ubicaciones"));
   }, []);
 
-  // ✅ Buscar ubicación actual del equipo
+
   const buscarUbicacionActual = async (codificacion) => {
     if (!codificacion) return;
 
@@ -43,7 +51,6 @@ export default function BajaActivosForm() {
     }
   };
 
-  // ✅ Manejar cambios de inputs
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
@@ -53,29 +60,49 @@ export default function BajaActivosForm() {
     }
   };
 
-  // ✅ Enviar formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMensaje("");
 
     try {
-      await BajaActivosService.crear(form);
+      await BajaActivosService.crear({
+        ...form,
+        motivoBaja: form.motivoBaja.join(", ")
+      });
+
       setMensaje("✅ Baja registrada correctamente");
+
       setForm({
         fechaBaja: new Date().toISOString().split("T")[0],
         codificacionEquipo: "",
-        motivoBaja: "",
+        motivoBaja: [],
         detallesBaja: "",
         ubicacionActual: "",
         ubicacionDestino: "",
       });
+
     } catch (error) {
       console.error(error);
       setMensaje("❌ Error al registrar la baja");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCheckboxChange = (e) => {
+    const { value, checked } = e.target;
+
+    setForm((prev) => {
+      if (checked) {
+        return { ...prev, motivoBaja: [...prev.motivoBaja, value] };
+      } else {
+        return {
+          ...prev,
+          motivoBaja: prev.motivoBaja.filter((m) => m !== value),
+        };
+      }
+    });
   };
 
   return (
@@ -86,18 +113,15 @@ export default function BajaActivosForm() {
 
       {mensaje && (
         <div
-          className={`mb-4 p-3 rounded-lg text-center ${
-            mensaje.includes("✅")
-              ? "bg-green-100 text-green-700"
-              : "bg-red-100 text-red-700"
-          }`}
+          className={`mb-4 p-3 rounded-lg text-center ${mensaje.includes("✅")
+            ? "bg-green-100 text-green-700"
+            : "bg-red-100 text-red-700"
+            }`}
         >
           {mensaje}
         </div>
       )}
-
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Fecha Baja */}
         <div>
           <label className="block font-medium text-gray-700">Fecha de Baja</label>
           <input
@@ -108,8 +132,6 @@ export default function BajaActivosForm() {
             className="w-full border rounded-lg p-2 mt-1"
           />
         </div>
-
-        {/* Codificación Equipo */}
         <div>
           <label className="block font-medium text-gray-700">
             Codificación del Equipo
@@ -123,8 +145,6 @@ export default function BajaActivosForm() {
             placeholder="Ejemplo: EQ-00045"
           />
         </div>
-
-        {/* Ubicación Actual */}
         <div>
           <label className="block font-medium text-gray-700">
             Ubicación Actual
@@ -137,8 +157,6 @@ export default function BajaActivosForm() {
             className="w-full border bg-gray-100 rounded-lg p-2 mt-1"
           />
         </div>
-
-        {/* Ubicación Destino */}
         <div>
           <label className="block font-medium text-gray-700">
             Ubicación Destino
@@ -157,21 +175,22 @@ export default function BajaActivosForm() {
             ))}
           </select>
         </div>
-
-        {/* Motivo Baja */}
         <div>
-          <label className="block font-medium text-gray-700">Motivo de Baja</label>
-          <input
-            type="text"
-            name="motivoBaja"
-            value={form.motivoBaja}
-            onChange={handleChange}
-            className="w-full border rounded-lg p-2 mt-1"
-            placeholder="Ejemplo: Dañado, obsoleto, etc."
-          />
-        </div>
+          <label className="block font-medium text-gray-700 mb-1">Motivo de Baja</label>
 
-        {/* Detalles */}
+          {["Obsolencia", "Venta", "Robo", "Donación", "Otro"].map((motivo) => (
+            <label key={motivo} className="flex items-center gap-2 mb-1">
+              <input
+                type="checkbox"
+                name="motivoBaja"
+                value={motivo}
+                checked={form.motivoBaja.includes(motivo)}
+                onChange={handleCheckboxChange}
+              />
+              {motivo}
+            </label>
+          ))}
+        </div>
         <div>
           <label className="block font-medium text-gray-700">Detalles</label>
           <textarea
@@ -184,13 +203,11 @@ export default function BajaActivosForm() {
           />
         </div>
 
-        {/* Botón */}
         <button
           type="submit"
           disabled={loading}
-          className={`w-full py-2 mt-2 text-white rounded-lg ${
-            loading ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
-          }`}
+          className={`w-full py-2 mt-2 text-white rounded-lg ${loading ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
+            }`}
         >
           {loading ? "Guardando..." : "Registrar Baja"}
         </button>

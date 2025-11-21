@@ -38,7 +38,7 @@ export default function ListabajaAtivos() {
     return (
         <div className="max-w-6xl mx-auto p-6 bg-white shadow-md rounded-2xl mt-6">
             <h2 className="text-2xl font-semibold mb-4 text-gray-800">
-                Historial de Bajas de Activos
+                Bajas de Activos
             </h2>
 
             {bajas.length === 0 ? (
@@ -73,7 +73,16 @@ export default function ListabajaAtivos() {
                                     <td className="border p-2 font-medium text-gray-800">
                                         {baja.codificacionEquipo}
                                     </td>
-                                    <td className="border p-2">{baja.motivoBaja}</td>
+                                    <td className="border p-2">
+                                        {(() => {
+                                            try {
+                                                const motivos = JSON.parse(baja.motivoBaja);
+                                                return motivos.join(", ");
+                                            } catch {
+                                                return baja.motivoBaja;
+                                            }
+                                        })()}
+                                    </td>
                                     <td className="border p-2">{baja.detallesBaja}</td>
                                     <td className="border p-2">{baja.ubicacionActual}</td>
                                     <td className="border p-2 font-semibold text-blue-600">

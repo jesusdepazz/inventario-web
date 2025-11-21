@@ -36,24 +36,24 @@ const ListaEquipos = () => {
     const [filtros, setFiltros] = useState([]);
 
     useEffect(() => {
-    const cargarEquipos = async () => {
-        try {
-            const res = await EquiposService.obtenerEquipos();
-            let lista = [];
+        const cargarEquipos = async () => {
+            try {
+                const res = await EquiposService.obtenerEquipos();
+                let lista = [];
 
-            if (Array.isArray(res.data)) {
-                lista = res.data;
-            } else if (Array.isArray(res.data?.$values)) {
-                lista = res.data.$values;
+                if (Array.isArray(res.data)) {
+                    lista = res.data;
+                } else if (Array.isArray(res.data?.$values)) {
+                    lista = res.data.$values;
+                }
+                setEquipos(lista);
+            } catch (err) {
+                console.error("Error al obtener equipos:", err);
             }
-            setEquipos(lista);
-        } catch (err) {
-            console.error("Error al obtener equipos:", err);
-        }
-    };
+        };
 
-    cargarEquipos();
-}, []);
+        cargarEquipos();
+    }, []);
 
 
 
@@ -282,13 +282,13 @@ const ListaEquipos = () => {
                                 </th>
 
                                 <th
-                                    colSpan="2"
-                                    className="px-2 py-1 border whitespace-nowrap bg-blue-800 text-white"
+                                    colSpan="3"
+                                    className="px-1 py-0.5 border whitespace-nowrap bg-blue-800 text-white"
                                 >
                                     <div className="flex items-center justify-center gap-2">
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
-                                            className="w-5 h-5"
+                                            className="w-4 h-4"
                                             fill="none"
                                             viewBox="0 0 24 24"
                                             stroke="currentColor"
@@ -298,10 +298,9 @@ const ListaEquipos = () => {
                                             <line x1="12" y1="8" x2="12" y2="8" stroke="currentColor" strokeWidth="2" />
                                             <line x1="12" y1="11" x2="12" y2="16" stroke="currentColor" strokeWidth="2" />
                                         </svg>
-                                        <span className="font-semibold">INFORMACION DE TOMA DE INVENTARIO</span>
+                                        <span className="font-semibold text-sm">INFORMACION DE TOMA DE INVENTARIO</span>
                                     </div>
                                 </th>
-
                             </tr>
                             <tr className="text-center text-white">
                                 <th className="px-2 py-1 border whitespace-nowrap bg-blue-700">#</th>
@@ -322,6 +321,7 @@ const ListaEquipos = () => {
                                 <th className="px-2 py-1 border whitespace-nowrap bg-blue-600">Ubicacion</th>
                                 <th className="px-2 py-1 border whitespace-nowrap bg-blue-800">Comentarios</th>
                                 <th className="px-2 py-1 border whitespace-nowrap bg-blue-800">Observaciones</th>
+                                <th className="px-2 py-1 border whitespace-nowrap bg-blue-800">Estado</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -356,6 +356,14 @@ const ListaEquipos = () => {
                                         <td className="px-2 py-1 border whitespace-nowrap">{equipo.ubicacion}</td>
                                         <td className="px-2 py-1 border whitespace-nowrap">{equipo.comentarios}</td>
                                         <td className="px-2 py-1 border whitespace-nowrap">{equipo.observaciones}</td>
+                                        <td
+                                            className={`px-2 py-1 border whitespace-nowrap ${equipo.estado === "Obsoleto"
+                                                    ? "!bg-red-500 !text-white"
+                                                    : "!bg-green-500 !text-black"
+                                                }`}
+                                        >
+                                            {equipo.estado ?? "Buen estado"}
+                                        </td>
                                     </tr>
                                 ))
                             ) : (
