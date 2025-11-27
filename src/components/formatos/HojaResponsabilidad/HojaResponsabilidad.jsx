@@ -67,35 +67,55 @@ const HojaResponsabilidadForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        const accesoriosString =
+            Array.isArray(accesorios) && accesorios.length > 0
+                ? accesorios.join(", ")
+                : null;
+
+        const empleadosMapped =
+            Array.isArray(empleados) && empleados.length > 0
+                ? empleados.map((emp) => ({
+                    EmpleadoId: emp.codigoEmpleado,
+                    Nombre: emp.nombre,
+                    Puesto: emp.puesto,
+                    Departamento: emp.departamento,
+                }))
+                : [];
+
+        const equiposMapped =
+            Array.isArray(equipos) && equipos.length > 0
+                ? equipos.map((eq) => ({
+                    Codificacion: eq.codificacion,
+                    Marca: eq.marca,
+                    Modelo: eq.modelo,
+                    Serie: eq.serie,
+                    TipoEquipo: eq.tipoEquipo,
+                    Ubicacion: eq.ubicacion,
+                    FechaIngreso: eq.fechaIngreso,
+                    Estado: eq.estado,
+                }))
+                : [];
+
         const payload = {
-            hojaNo,
-            motivo,
-            comentarios,
-            estado,
-            observaciones,    
-            ...(estado === "Inactiva" && { solvenciaNo, fechaSolvencia }),
-            accesorios: accesorios.join(", "),
-            empleados: empleados.map((emp) => ({
-                empleadoId: emp.codigoEmpleado,
-                nombre: emp.nombre,
-                puesto: emp.puesto,
-                departamento: emp.departamento,
-            })),
-            equipos: equipos.map((eq) => ({
-                codificacion: eq.codificacion,
-                marca: eq.marca,
-                modelo: eq.modelo,
-                serie: eq.serie,
-                tipoEquipo: eq.tipoEquipo,
-                ubicacion: eq.ubicacion,
-                fechaIngreso: eq.fechaIngreso,
-            })),
+            HojaNo: hojaNo,
+            Motivo: motivo,
+            Comentarios: comentarios,
+            Estado: estado,
+            Observaciones: observaciones,
+            Accesorios: accesoriosString,
+            Empleados: empleadosMapped,
+            Equipos: equiposMapped,
+            ...(estado === "Inactiva" && {
+                SolvenciaNo: solvenciaNo,
+                FechaSolvencia: fechaSolvencia,
+            }),
         };
+
         console.log("Payload:", JSON.stringify(payload, null, 2));
 
         try {
             const res = await HojasService.crearHoja(payload);
-            window.alert("Hoja creada con éxito! ID: " + res.id);
+            window.alert("Hoja creada con éxito! ID: " + res.Id);
         } catch (error) {
             if (error.mensaje) {
                 window.alert("Error del servidor: " + error.mensaje);
