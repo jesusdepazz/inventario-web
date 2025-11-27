@@ -1,21 +1,23 @@
 import { useEffect, useState } from "react";
 import SolvenciasService from "../../../services/HojasSolvencias";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import HojaSolvenciaPDF from "./HojaSolvenciaPDF";
 
 export default function ListaHojaSolvencia() {
     const [historico, setHistorico] = useState([]);
 
-     useEffect(() => {
-    const fetchHistorico = async () => {
-      try {
-        const data = await SolvenciasService.listarHistorico();
-        setHistorico(data);
-      } catch (err) {
-        console.error("Error al obtener el histórico:", err);
-      }
-    };
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const data = await SolvenciasService.listarHistorico();
+                setHistorico(data);
+            } catch (error) {
+                console.error(error);
+            }
+        };
 
-    fetchHistorico();
-  }, []);
+        fetchData();
+    }, []);
 
     return (
         <div className="p-6 max-w-7xl mx-auto">
