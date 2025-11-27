@@ -7,6 +7,7 @@ export default function SuministrosInventario() {
     const [suministros, setSuministros] = useState([]);
     const [movimientos, setMovimientos] = useState([]);
     const [tipoMovimientos, setTipoMovimientos] = useState("entrada");
+
     const [loadingSuministros, setLoadingSuministros] = useState(true);
     const [loadingMovimientos, setLoadingMovimientos] = useState(true);
     const [errorSuministros, setErrorSuministros] = useState("");
@@ -15,7 +16,7 @@ export default function SuministrosInventario() {
     useEffect(() => {
         const cargarSuministros = async () => {
             try {
-                const response = await SuministrosService.obtenerTodos();
+                const response = await SuministrosService.obtenerConTotales();
                 setSuministros(response.data);
             } catch (err) {
                 console.error(err);
@@ -31,22 +32,28 @@ export default function SuministrosInventario() {
         const cargarMovimientos = async () => {
             setLoadingMovimientos(true);
             setErrorMovimientos("");
+
             try {
                 let response;
+
                 if (tipoMovimientos === "entrada") {
                     response = await EntradaSuministroService.obtenerTodas();
                 } else {
                     response = await SalidaSuministroService.obtenerTodos();
                 }
 
-                const data = response.data.map((m) => ({
-                    ...m,
-                    nombreProducto: m.suministro?.nombreProducto || "Desconocido",
-                    fecha: m.fecha || m.Fecha,
-                    destino: m.destino || "",
-                    personaResponsable: m.personaResponsable || "",
-                    departamentoResponsable: m.departamentoResponsable || "",
-                }));
+                const data = response.data.map((m) => {
+                    const productoMatch = suministros.find(s => s.id === m.suministroId);
+
+                    return {
+                        ...m,
+                        nombreProducto: productoMatch?.nombreProducto || "Desconocido",
+                        fecha: m.fecha || m.Fecha,
+                        destino: m.destino || "",
+                        personaResponsable: m.personaResponsable || "",
+                        departamentoResponsable: m.departamentoResponsable || "",
+                    };
+                });
 
                 setMovimientos(data);
             } catch (err) {
@@ -57,12 +64,28 @@ export default function SuministrosInventario() {
             }
         };
 
-        cargarMovimientos();
-    }, [tipoMovimientos]);
+        if (!loadingSuministros) cargarMovimientos();
+
+    }, [tipoMovimientos, loadingSuministros, suministros]);
 
     return (
         <div className="max-w-6xl mx-auto mt-10 bg-white shadow-lg p-6 rounded-xl">
             <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Inventario de Suministros</h2>
+            <div className="w-full flex justify-center mb-6">
+                <button
+                    className="px-4 py-2 bg-green-600 text-white rounded-lg shadow"
+                    onClick={async () => {
+                        const response = await SuministrosService.exportarExcel();
+                        const url = window.URL.createObjectURL(new Blob([response.data]));
+                        const link = document.createElement("a");
+                        link.href = url;
+                        link.download = "InventarioSuministros.xlsx";
+                        link.click();
+                    }}
+                >
+                    Exportar Excel
+                </button>
+            </div>
 
             {loadingSuministros && <p className="text-gray-600">Cargando suministros...</p>}
             {errorSuministros && <p className="text-red-600">{errorSuministros}</p>}
@@ -78,9 +101,9 @@ export default function SuministrosInventario() {
                             <tr className="bg-gray-100 text-left">
                                 <th className="p-3 border">ID</th>
                                 <th className="p-3 border">Producto</th>
-                                <th className="p-3 border">Ubicación</th>
-                                <th className="p-3 border">Cantidad Actual</th>
-                                <th className="p-3 border">Fecha Creación</th>
+                                <th className="p-3 border">Entradas</th>
+                                <th className="p-3 border">Salidas</th>
+                                <th className="p-3 border">Existencia</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -88,9 +111,9 @@ export default function SuministrosInventario() {
                                 <tr key={s.id} className="hover:bg-gray-50">
                                     <td className="p-3 border">{s.id}</td>
                                     <td className="p-3 border">{s.nombreProducto}</td>
-                                    <td className="p-3 border">{s.ubicacionProducto}</td>
-                                    <td className="p-3 border font-bold text-blue-700">{s.cantidadActual}</td>
-                                    <td className="p-3 border">{new Date(s.dateTime).toLocaleDateString("es-GT")}</td>
+                                    <td className="p-3 border font-bold text-green-700">{s.totalEntradas}</td>
+                                    <td className="p-3 border font-bold text-red-700">{s.totalSalidas}</td>
+                                    <td className="p-3 border font-bold text-blue-700">{s.existenciaActual}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -128,26 +151,30 @@ export default function SuministrosInventario() {
                                 <th className="p-3 border">ID</th>
                                 <th className="p-3 border">Producto</th>
                                 <th className="p-3 border">Cantidad</th>
+
                                 {tipoMovimientos === "salida" && (
                                     <>
                                         <th className="p-3 border">Destino</th>
-                                        <th className="p-3 border">Persona Responsable</th>
+                                        <th className="p-3 border">Responsable</th>
                                         <th className="p-3 border">Departamento</th>
                                     </>
                                 )}
+
                                 <th className="p-3 border">Fecha</th>
                             </tr>
                         </thead>
+
                         <tbody>
                             {movimientos.map((m) => (
                                 <tr key={m.id} className="hover:bg-gray-50">
                                     <td className="p-3 border">{m.id}</td>
+
                                     <td className="p-3 border">
-                                        {m.suministro?.nombreProducto ||
-                                            suministros.find(s => s.id === m.suministroId)?.nombreProducto ||
-                                            "Desconocido"}
+                                        {m.nombreProducto}
                                     </td>
+
                                     <td className="p-3 border font-bold text-blue-700">{m.cantidadProducto}</td>
+
                                     {tipoMovimientos === "salida" && (
                                         <>
                                             <td className="p-3 border">{m.destino}</td>
@@ -155,6 +182,7 @@ export default function SuministrosInventario() {
                                             <td className="p-3 border">{m.departamentoResponsable}</td>
                                         </>
                                     )}
+
                                     <td className="p-3 border">{new Date(m.fecha).toLocaleDateString("es-GT")}</td>
                                 </tr>
                             ))}

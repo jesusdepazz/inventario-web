@@ -219,7 +219,7 @@ export default function Movimientos() {
               />
               {sugerencias.length > 0 && (
                 <ul className="absolute border rounded-md mt-1 max-h-40 overflow-auto bg-white z-10 w-full">
-                  {sugerencias.map((emp) => (
+                  {sugerencias.map((emp) => (   
                     <li
                       key={emp.codigoEmpleado}
                       className="p-2 hover:bg-gray-100 cursor-pointer"
