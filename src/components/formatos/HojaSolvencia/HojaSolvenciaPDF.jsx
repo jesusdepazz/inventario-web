@@ -12,12 +12,12 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        marginBottom: 20,
+        marginBottom: 10,
         position: "relative",
     },
     logo: {
-        width: 100,
-        height: 90,
+        width: 125,
+        height: 125,
     },
     headerCenter: {
         position: "absolute",
@@ -88,15 +88,23 @@ const HojaSolvenciaPDF = ({ data }) => {
     return (
         <Document>
             <Page size="A4" style={styles.page}>
-                <View style={styles.header}>
-
+                <View
+                    style={{
+                        width: "100%",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        paddingHorizontal: 20,
+                        marginTop: -35,
+                    }}
+                >
                     <Image
                         src="/logo_guandy.png"
                         style={{
-                            width: 55,
-                            height: 75,
+                            width: 90,
+                            height: 135,
                             objectFit: "contain",
-                            marginTop: -5
+                            marginTop: -10,
                         }}
                     />
 
@@ -105,39 +113,44 @@ const HojaSolvenciaPDF = ({ data }) => {
                             flex: 1,
                             alignItems: "center",
                             justifyContent: "center",
-                            marginTop: -5
+                            marginTop: -15,
                         }}
                     >
-                        <Text style={{ fontSize: 12, fontWeight: "bold" }}>
+                        <Text style={{ fontSize: 12, fontWeight: "bold", marginVertical: 3 }}>
                             Guatemalan Candies, S.A.
                         </Text>
-                        <Text style={{ fontSize: 10 }}>
+
+                        <Text style={{ fontSize: 10, marginVertical: 2 }}>
                             Administración de Activos Fijos
                         </Text>
-                        <Text style={{ fontSize: 10 }}>
+
+                        <Text style={{ fontSize: 10, marginVertical: 2 }}>
                             Solvencia de Equipo de Cómputo
                         </Text>
+
                     </View>
 
                     <View
                         style={{
                             alignItems: "flex-end",
-                            marginTop: -5
+                            marginTop: -15,
                         }}
                     >
                         <Text style={{ fontSize: 10 }}>Solvencia No:</Text>
+
                         <Text
                             style={{
                                 fontSize: 12,
-                                fontWeight: "bold"
+                                fontWeight: "bold",
+                                marginTop: 2,
+                                color: "red"
                             }}
                         >
                             {data.solvenciaNo}
                         </Text>
                     </View>
-
                 </View>
-                <View style={styles.section}>
+                <View style={[styles.section, { marginTop: -15 }]}>
                     <Text
                         style={{
                             textAlign: "center",
@@ -174,7 +187,7 @@ const HojaSolvenciaPDF = ({ data }) => {
                     style={{
                         width: "100%",
                         alignItems: "center",
-                        marginTop: 20,
+                        marginTop: -10,
                         marginBottom: 20,
                     }}
                 >
@@ -188,10 +201,11 @@ const HojaSolvenciaPDF = ({ data }) => {
                     >
                         <Text
                             style={{
-                                width: "40%",
+                                width: "35%",
                                 textAlign: "right",
                                 fontSize: 11,
                                 fontWeight: "bold",
+                                paddingRight: 4,
                             }}
                         >
                             Nombre del empleado:
@@ -204,7 +218,7 @@ const HojaSolvenciaPDF = ({ data }) => {
                                 fontSize: 11,
                                 color: "blue",
                                 fontWeight: "bold",
-                                borderBottom: "1px solid blue",
+                                borderBottom: "1px dotted black",
                             }}
                         >
                             {data.nombreEmpleado}
@@ -220,10 +234,11 @@ const HojaSolvenciaPDF = ({ data }) => {
                     >
                         <Text
                             style={{
-                                width: "40%",
+                                width: "35%",
                                 textAlign: "right",
                                 fontSize: 11,
                                 fontWeight: "bold",
+                                paddingRight: 4,
                             }}
                         >
                             Código del empleado:
@@ -236,7 +251,7 @@ const HojaSolvenciaPDF = ({ data }) => {
                                 fontSize: 11,
                                 color: "blue",
                                 fontWeight: "bold",
-                                borderBottom: "1px solid blue",
+                                borderBottom: "1px dotted black",
                             }}
                         >
                             {data.codigoEmpleado}
@@ -252,15 +267,15 @@ const HojaSolvenciaPDF = ({ data }) => {
                     >
                         <Text
                             style={{
-                                width: "40%",
+                                width: "35%",
                                 textAlign: "right",
                                 fontSize: 11,
                                 fontWeight: "bold",
+                                paddingRight: 4,
                             }}
                         >
                             Quien se desempeñó como:
                         </Text>
-
                         <Text
                             style={{
                                 width: "45%",
@@ -268,10 +283,15 @@ const HojaSolvenciaPDF = ({ data }) => {
                                 fontSize: 11,
                                 color: "blue",
                                 fontWeight: "bold",
-                                borderBottom: "1px solid blue",
+                                borderBottom: "1px dotted black",
                             }}
                         >
-                            {data.puestoEmpleado}
+                            {
+                                data.puestoEmpleado
+                                    ? data.puestoEmpleado.charAt(0).toUpperCase() +
+                                    data.puestoEmpleado.slice(1).toLowerCase()
+                                    : ""
+                            }
                         </Text>
                     </View>
                     <View
@@ -284,10 +304,11 @@ const HojaSolvenciaPDF = ({ data }) => {
                     >
                         <Text
                             style={{
-                                width: "40%",
+                                width: "35%",
                                 textAlign: "right",
                                 fontSize: 11,
                                 fontWeight: "bold",
+                                paddingRight: 4,
                             }}
                         >
                             En el departamento:
@@ -300,10 +321,15 @@ const HojaSolvenciaPDF = ({ data }) => {
                                 fontSize: 11,
                                 color: "blue",
                                 fontWeight: "bold",
-                                borderBottom: "1px solid blue",
+                                borderBottom: "1px dotted black",
                             }}
                         >
-                            {data.departamentoEmpleado}
+                            {
+                                data.departamentoEmpleado
+                                    ? data.departamentoEmpleado.charAt(0).toUpperCase() +
+                                    data.departamentoEmpleado.slice(1).toLowerCase()
+                                    : ""
+                            }
                         </Text>
                     </View>
                 </View>
@@ -325,7 +351,7 @@ const HojaSolvenciaPDF = ({ data }) => {
                         flexDirection: "row",
                         alignItems: "center",
                         justifyContent: "center",
-                        marginTop: 15,
+                        marginTop: -5,
                         marginBottom: 15,
                         gap: 12
                     }}
@@ -342,29 +368,58 @@ const HojaSolvenciaPDF = ({ data }) => {
                     <Text style={{ fontSize: 13, fontWeight: "bold", textAlign: "center" }}>
                         Está solvente ante el departamento de activos fijos
                     </Text>
-
                 </View>
                 <View
                     style={{
                         marginTop: 15,
-                        alignItems: "center",
-                        textAlign: "center"
+                        width: "100%",
+                        alignItems: "center"
                     }}
                 >
-                    <Text style={{ fontSize: 11, fontWeight: "bold", marginBottom: 10 }}>
-                        En este caso NO esté solvente, indique los motivos y cuantificación:
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            width: "100%",
+                            justifyContent: "center",
+                            marginBottom: 6
+                        }}
+                    >
+                        <Text
+                            style={{
+                                fontSize: 11,
+                                fontWeight: "bold",
+                                maxWidth: "80%"
+                            }}
+                        >
+                            En este caso NO esté solvente, indique los motivos y cuantificación:
+                        </Text>
+
+                        <Text
+                            style={{
+                                marginLeft: 6
+                            }}
+                        >
+                            _______________________
+                        </Text>
+                    </View>
+                    <Text
+                        style={{
+                            width: "90%",
+                            marginBottom: 6,
+                            alignSelf: "flex-start"
+                        }}
+                    >
+                        ________________________________________________________________________________
                     </Text>
 
-                    <Text style={{ width: "80%", textAlign: "center", marginBottom: 6 }}>
-                        ________________________________________________
-                    </Text>
-
-                    <Text style={{ width: "80%", textAlign: "center", marginBottom: 6 }}>
-                        ________________________________________________
-                    </Text>
-
-                    <Text style={{ width: "80%", textAlign: "center" }}>
-                        ________________________________________________
+                    <Text
+                        style={{
+                            width: "90%",
+                            alignSelf: "flex-start"
+                        }}
+                    >
+                        ________________________________________________________________________________
                     </Text>
                 </View>
                 <View
@@ -375,18 +430,21 @@ const HojaSolvenciaPDF = ({ data }) => {
                         flexDirection: "row",
                     }}
                 >
-                    <View style={{ flex: 1, borderRight: "1px solid #000" }}>
+                    <View style={{ flex: 0.6, borderRight: "1px solid #000" }}>
                         <Text
                             style={{
-                                fontSize: 12,
+                                fontSize: 10,
                                 fontWeight: "bold",
                                 textAlign: "center",
                                 padding: 4,
                                 borderBottom: "1px solid #000",
+                                color: "blue",
+                                backgroundColor: "#E6F3FF",
                             }}
                         >
                             Estado
                         </Text>
+
                         {["Bueno", "Regular", "Malo"].map((item, index) => (
                             <View
                                 key={index}
@@ -399,28 +457,29 @@ const HojaSolvenciaPDF = ({ data }) => {
                             >
                                 <View
                                     style={{
-                                        width: 14,
-                                        height: 14,
+                                        width: 12,
+                                        height: 12,
                                         border: "1px solid #000",
                                     }}
                                 />
-                                <Text style={{ fontSize: 11 }}>{item}</Text>
+                                <Text style={{ fontSize: 10 }}>{item}</Text>
                             </View>
                         ))}
                     </View>
-                    <View style={{ flex: 1, borderRight: "1px solid #000" }}>
+                    <View style={{ flex: 0.6, borderRight: "1px solid #000" }}>
                         <Text
                             style={{
-                                fontSize: 12,
+                                fontSize: 10,
                                 fontWeight: "bold",
                                 textAlign: "center",
                                 padding: 4,
                                 borderBottom: "1px solid #000",
+                                color: "blue",
+                                backgroundColor: "#E6F3FF",
                             }}
                         >
                             Accesorios
                         </Text>
-
                         {["Completo", "Incompleto", "Otro"].map((item, index) => (
                             <View
                                 key={index}
@@ -433,23 +492,25 @@ const HojaSolvenciaPDF = ({ data }) => {
                             >
                                 <View
                                     style={{
-                                        width: 14,
-                                        height: 14,
+                                        width: 12,
+                                        height: 12,
                                         border: "1px solid #000",
                                     }}
                                 />
-                                <Text style={{ fontSize: 11 }}>{item}</Text>
+                                <Text style={{ fontSize: 10 }}>{item}</Text>
                             </View>
                         ))}
                     </View>
-                    <View style={{ flex: 1.2 }}>
+                    <View style={{ flex: 1.8 }}>
                         <Text
                             style={{
-                                fontSize: 12,
+                                fontSize: 10,
                                 fontWeight: "bold",
                                 textAlign: "center",
                                 padding: 4,
                                 borderBottom: "1px solid #000",
+                                color: "blue",
+                                backgroundColor: "#E6F3FF",
                             }}
                         >
                             Comentarios adicionales de recepción de equipos
@@ -460,13 +521,12 @@ const HojaSolvenciaPDF = ({ data }) => {
                                 key={line}
                                 style={{
                                     padding: 10,
-                                    fontSize: 11,
+                                    fontSize: 10,
                                     textAlign: "left",
                                     borderBottom: line !== 3 ? "1px solid #ccc" : "none",
-                                    minHeight: 22,
+                                    minHeight: 20,
                                 }}
-                            >
-                            </Text>
+                            ></Text>
                         ))}
                     </View>
                 </View>

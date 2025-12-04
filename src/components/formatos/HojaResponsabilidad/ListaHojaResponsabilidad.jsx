@@ -79,7 +79,9 @@ const ListaHojasResponsabilidad = () => {
                                     <td className="px-4 py-2">
                                         {hoja.empleados?.[0]?.departamento ?? "—"}
                                     </td>
-                                    <td className="px-4 py-2"></td>
+                                    <td className="px-4 py-2">
+                                        {hoja.jefeInmediato ?? "—"}
+                                    </td>
                                     <td className="px-4 py-2">
                                         {hoja.equipos?.[0]?.ubicacion ?? "—"}
                                     </td>

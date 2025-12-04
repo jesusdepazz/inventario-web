@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import HojasService from "../../../services/HojasServices";
 import EquiposService from "../../../services/EquiposServices";
 import EmpleadosService from "../../../services/EmpleadosServices";
@@ -12,6 +12,11 @@ const HojaResponsabilidadForm = () => {
     const [fechaSolvencia, SetFechaSolvencia] = useState("");
     const [observaciones, SetObservaciones] = useState("");
     const [empleados, setEmpleados] = useState([]);
+    const [jefeInmediato, setJefeInmediato] = useState("");
+    const [jefeData, setJefeData] = useState(null);
+    const [jefeSuggestions, setJefeSuggestions] = useState([]);
+    const [isTypingJefe, setIsTypingJefe] = useState(false);
+    const [jefeSeleccionado, setJefeSeleccionado] = useState(null);
     const [equipos, setEquipos] = useState([]);
     const [empleadoCodigo, setEmpleadoCodigo] = useState("");
     const [equipoCodificacion, setEquipoCodificacion] = useState("");
@@ -28,6 +33,39 @@ const HojaResponsabilidadForm = () => {
         } catch (err) {
             window.alert("Empleado no encontrado");
         }
+    };
+
+    useEffect(() => {
+        const delay = setTimeout(async () => {
+            if (jefeInmediato.trim().length < 2) {
+                setJefeSuggestions([]);
+                return;
+            }
+
+            try {
+                const res = await EmpleadosService.buscarPorNombre(jefeInmediato);
+
+                if (res?.data && Array.isArray(res.data)) {
+                    setJefeSuggestions(res.data);
+                    setIsTypingJefe(true);
+                } else {
+                    setJefeSuggestions([]);
+                }
+            } catch (err) {
+                console.error(err);
+                setJefeSuggestions([]);
+            }
+        }, 300);
+
+        return () => clearTimeout(delay);
+    }, [jefeInmediato]);
+
+
+    const selectJefe = (jefe) => {
+        setJefeData(jefe);
+        setJefeSeleccionado(jefe);
+        setJefeInmediato(jefe.nombre);
+        setJefeSuggestions([]);
     };
 
     const eliminarEmpleado = (index) => {
@@ -103,6 +141,9 @@ const HojaResponsabilidadForm = () => {
             Estado: estado,
             Observaciones: observaciones,
             Accesorios: accesoriosString,
+            JefeInmediato: jefeSeleccionado
+                ? `${jefeSeleccionado.nombre} - ${jefeSeleccionado.puesto}`
+                : "",
             Empleados: empleadosMapped,
             Equipos: equiposMapped,
             ...(estado === "Inactiva" && {
@@ -111,7 +152,20 @@ const HojaResponsabilidadForm = () => {
             }),
         };
 
-        console.log("Payload:", JSON.stringify(payload, null, 2));
+        // 🔥🔥🔥 DEBUG
+        console.log("====== DEBUG HOJA RESPONSABILIDAD ======");
+        console.log("Jefe seleccionado:", jefeSeleccionado);
+        console.log(
+            "Valor enviado como JefeInmediato:",
+            jefeSeleccionado
+                ? `${jefeSeleccionado.nombre} - ${jefeSeleccionado.puesto}`
+                : ""
+        );
+        console.log("Empleados mapeados:", empleadosMapped);
+        console.log("Equipos mapeados:", equiposMapped);
+        console.log("Accesorios:", accesoriosString);
+        console.log("Payload final:", JSON.stringify(payload, null, 2));
+        console.log("========================================");
 
         try {
             const res = await HojasService.crearHoja(payload);
@@ -268,6 +322,53 @@ const HojaResponsabilidadForm = () => {
                             ))}
                         </ul>
                     </div>
+                    <div className="flex flex-col mb-3 relative">
+                        <input
+                            placeholder="Ingrese nombre del jefe inmediato"
+                            value={jefeInmediato}
+                            onChange={(e) => {
+                                const val = e.target.value;
+                                setJefeInmediato(val);
+                                setIsTypingJefe(val.trim().length > 0);
+
+                                if (val.trim().length < 2) {
+                                    setJefeSuggestions([]);
+                                }
+                            }}
+                            className="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+                        />
+                        {isTypingJefe && jefeSuggestions.length > 0 && (
+                            <ul className="absolute top-full mt-1 w-full bg-white border rounded-lg shadow-lg z-20 max-h-48 overflow-auto">
+                                {jefeSuggestions.map((j, i) => (
+                                    <li
+                                        key={i}
+                                        className="px-3 py-2 hover:bg-gray-200 cursor-pointer"
+                                        onClick={() => {
+                                            selectJefe(j);
+                                            setIsTypingJefe(false);
+                                        }}
+                                    >
+                                        <strong>{j.nombre}</strong> — {j.puesto}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
+                    {jefeData && (
+                        <div className="bg-white p-2 border rounded-lg shadow-sm flex justify-between items-center mt-2">
+                            <span>{jefeData.nombre} - {jefeData.puesto}</span>
+                            <button
+                                className="text-red-500 font-bold"
+                                onClick={() => {
+                                    setJefeData(null);
+                                    setJefeInmediato("");
+                                    setIsTypingJefe(false);
+                                }}
+                            >
+                                ✕
+                            </button>
+                        </div>
+                    )}
 
                     <div className="bg-gray-50 p-4 rounded-xl shadow-inner border border-gray-200">
                         <h3 className="text-lg font-semibold mb-4 text-gray-700">
