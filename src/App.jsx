@@ -30,6 +30,7 @@ import TrasladosLista from "./components/formatos/Traslados/ListaTraslados";
 import Suministros from "./components/suministros/Suministro"
 import SuministrosInventario from "./components/suministros/InventarioSuministros";
 import Movimientos from "./components/suministros/MovimientoSuministro";
+import EliminarSuministros from "./components/suministros/EliminarMovimientos";
 import CrearTrasladoRetorno from "./components/formatos/TrasladosRetorno/TrasladosRetorno";
 import TrasladosRetornoLista from "./components/formatos/TrasladosRetorno/TrasladosRetornoLista";
 import ProtectedRoute from "./components/ProtectedRout";
@@ -106,6 +107,7 @@ function AppRoutes() {
           <Route path="/suministros"element={<ProtectedRoute requiredRole="Administrador"><Suministros /></ProtectedRoute>}/>
           <Route path="/suministros/inventario"element={<ProtectedRoute requiredRole="Administrador"><SuministrosInventario /></ProtectedRoute>}/>
           <Route path="/suministros/movimientos"element={<ProtectedRoute requiredRole="Administrador"><Movimientos /></ProtectedRoute>}/>
+          <Route path="/suministros/eliminarMovimientos"element={<ProtectedRoute requiredRole="Administrador"><EliminarSuministros /></ProtectedRoute>}/>
         </Route>
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>

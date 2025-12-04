@@ -146,6 +146,10 @@ export default function Sidebar() {
                             >
                                 <FaUpload /> Movimientos de suministros
                             </Link>
+                            <Link to="/suministros/eliminarMovimientos"
+                                className="flex items-center gap-2 hover:text-blue-300">
+                                <FaTrash /> Eliminar Movimientos
+                            </Link>
                         </div>
                     </div>
                     <div>
