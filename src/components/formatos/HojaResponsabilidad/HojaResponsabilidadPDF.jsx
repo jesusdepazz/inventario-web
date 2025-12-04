@@ -165,6 +165,7 @@ const generarPDFHoja = async (hoja) => {
     eq.marca ?? "—",
     eq.modelo ?? "—",
     eq.serie ?? "—",
+    eq.estado ?? "-",
   ]);
 
   autoTable(doc, {

@@ -230,7 +230,7 @@ const ListaEquipos = () => {
                                 </th>
 
                                 <th
-                                    colSpan="7"
+                                    colSpan="8"
                                     className="px-2 py-1 border whitespace-nowrap bg-blue-900 text-white"
                                 >
                                     <div className="flex items-center justify-center gap-2">
@@ -312,6 +312,7 @@ const ListaEquipos = () => {
                                 <th className="px-2 py-1 border whitespace-nowrap bg-blue-800">Fecha Actualizacion</th>
                                 <th className="px-2 py-1 border whitespace-nowrap bg-blue-800">Asignado a</th>
                                 <th className="px-2 py-1 border whitespace-nowrap bg-blue-900">Codificación</th>
+                                <th className="px-2 py-1 border whitespace-nowrap bg-blue-900">Estado</th>
                                 <th className="px-2 py-1 border whitespace-nowrap bg-blue-900">Equipo</th>
                                 <th className="px-2 py-1 border whitespace-nowrap bg-blue-900">Marca</th>
                                 <th className="px-2 py-1 border whitespace-nowrap bg-blue-900">Modelo</th>
@@ -321,7 +322,6 @@ const ListaEquipos = () => {
                                 <th className="px-2 py-1 border whitespace-nowrap bg-blue-600">Ubicacion</th>
                                 <th className="px-2 py-1 border whitespace-nowrap bg-blue-800">Comentarios</th>
                                 <th className="px-2 py-1 border whitespace-nowrap bg-blue-800">Observaciones</th>
-                                <th className="px-2 py-1 border whitespace-nowrap bg-blue-800">Estado</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -347,6 +347,7 @@ const ListaEquipos = () => {
                                             )}
                                         </td>
                                         <td className="px-2 py-1 border whitespace-nowrap font-bold text-blue-800">{equipo.codificacion}</td>
+                                        <td className="px-2 py-1 border whitespace-nowrap">{equipo.estado}</td>
                                         <td className="px-2 py-1 border whitespace-nowrap">{equipo.tipoEquipo}</td>
                                         <td className="px-2 py-1 border whitespace-nowrap">{equipo.marca}</td>
                                         <td className="px-2 py-1 border whitespace-nowrap">{equipo.modelo}</td>
@@ -356,14 +357,6 @@ const ListaEquipos = () => {
                                         <td className="px-2 py-1 border whitespace-nowrap">{equipo.ubicacion}</td>
                                         <td className="px-2 py-1 border whitespace-nowrap">{equipo.comentarios}</td>
                                         <td className="px-2 py-1 border whitespace-nowrap">{equipo.observaciones}</td>
-                                        <td
-                                            className={`px-2 py-1 border whitespace-nowrap ${equipo.estado === "Obsoleto"
-                                                    ? "!bg-red-500 !text-white"
-                                                    : "!bg-green-500 !text-black"
-                                                }`}
-                                        >
-                                            {equipo.estado ?? "Buen estado"}
-                                        </td>
                                     </tr>
                                 ))
                             ) : (

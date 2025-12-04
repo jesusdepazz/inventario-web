@@ -13,7 +13,6 @@ export default function Movimientos() {
   const [formData, setFormData] = useState({
     suministroId: "",
     cantidad: "",
-    destino: "",
     personaResponsable: "",
     departamentoResponsable: "",
   });
@@ -82,8 +81,8 @@ export default function Movimientos() {
       return;
     }
 
-    if (tipoMovimiento === "salida" && (!formData.destino || !formData.personaResponsable)) {
-      setMensaje("Debe indicar el destino y la persona responsable ❌");
+    if (tipoMovimiento === "salida" && (!formData.personaResponsable)) {
+      setMensaje("Debe indicar la persona responsable ❌");
       setLoading(false);
       return;
     }
@@ -98,7 +97,6 @@ export default function Movimientos() {
         await EntradaSuministroService.crear(payload);
         setMensaje("Entrada registrada correctamente ✔️");
       } else {
-        payload.destino = formData.destino;
         payload.personaResponsable = formData.personaResponsable;
         payload.departamentoResponsable = formData.departamentoResponsable;
         await SalidaSuministroService.crear(payload);
@@ -108,7 +106,6 @@ export default function Movimientos() {
       setFormData({
         suministroId: "",
         cantidad: "",
-        destino: "",
         persona: "",
         departamentoResponsable: "",
       });
@@ -188,24 +185,6 @@ export default function Movimientos() {
 
         {tipoMovimiento === "salida" && (
           <>
-            <div>
-              <label className="block font-medium text-gray-700">Destino</label>
-              <select
-                name="destino"
-                value={formData.destino}
-                onChange={handleChange}
-                required
-                className="w-full mt-1 p-2 border rounded-lg focus:ring focus:ring-blue-300"
-              >
-                <option value="">Seleccione destino</option>
-                {ubicaciones.map((ubic) => (
-                  <option key={ubic.id} value={ubic.nombre}>
-                    {ubic.nombre}
-                  </option>
-                ))}
-              </select>
-            </div>
-
             <div className="relative">
               <label className="block font-medium text-gray-700">Persona Responsable</label>
               <input
@@ -219,7 +198,7 @@ export default function Movimientos() {
               />
               {sugerencias.length > 0 && (
                 <ul className="absolute border rounded-md mt-1 max-h-40 overflow-auto bg-white z-10 w-full">
-                  {sugerencias.map((emp) => (
+                  {sugerencias.map((emp) => (   
                     <li
                       key={emp.codigoEmpleado}
                       className="p-2 hover:bg-gray-100 cursor-pointer"

@@ -49,7 +49,6 @@ export default function SuministrosInventario() {
                         ...m,
                         nombreProducto: productoMatch?.nombreProducto || "Desconocido",
                         fecha: m.fecha || m.Fecha,
-                        destino: m.destino || "",
                         personaResponsable: m.personaResponsable || "",
                         departamentoResponsable: m.departamentoResponsable || "",
                     };
@@ -154,7 +153,6 @@ export default function SuministrosInventario() {
 
                                 {tipoMovimientos === "salida" && (
                                     <>
-                                        <th className="p-3 border">Destino</th>
                                         <th className="p-3 border">Responsable</th>
                                         <th className="p-3 border">Departamento</th>
                                     </>
@@ -177,7 +175,6 @@ export default function SuministrosInventario() {
 
                                     {tipoMovimientos === "salida" && (
                                         <>
-                                            <td className="p-3 border">{m.destino}</td>
                                             <td className="p-3 border">{m.personaResponsable}</td>
                                             <td className="p-3 border">{m.departamentoResponsable}</td>
                                         </>

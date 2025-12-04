@@ -37,9 +37,18 @@ export default function ListabajaAtivos() {
 
     return (
         <div className="max-w-6xl mx-auto p-6 bg-white shadow-md rounded-2xl mt-6">
-            <h2 className="text-2xl font-semibold mb-4 text-gray-800">
-                Bajas de Activos
-            </h2>
+           <div className="text-center mb-4">
+                    <p className="font-bold text-lg">Guatemalan Candies, S.A.</p>
+                    <p className="font-bold text-lg text-blue-500">Listado de Bajas - Equipo de cómputo</p>
+                    <p className="font-bold text-lg">
+                        {new Date().toLocaleDateString("es-ES", {
+                            weekday: "long",
+                            day: "numeric",
+                            month: "long",
+                            year: "numeric"
+                        })}
+                    </p>
+                </div>
 
             {bajas.length === 0 ? (
                 <p className="text-gray-600 text-center py-10">
@@ -48,7 +57,7 @@ export default function ListabajaAtivos() {
             ) : (
                 <div className="overflow-x-auto">
                     <table className="w-full border-collapse border border-gray-200 text-sm">
-                        <thead className="bg-gray-100 text-gray-700 uppercase text-xs">
+                        <thead className="bg-blue-800 text-white uppercase text-xs">
                             <tr>
                                 <th className="border p-2">#</th>
                                 <th className="border p-2">Fecha Baja</th>

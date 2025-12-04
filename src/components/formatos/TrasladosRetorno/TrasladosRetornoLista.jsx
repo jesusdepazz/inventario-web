@@ -40,13 +40,19 @@ const TrasladosRetornoLista = () => {
 
   return (
     <div className="p-6 bg-white rounded-2xl shadow max-w-7xl mx-auto">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold text-gray-700">
-          Historial de Traslados con Retorno
-        </h2>
+      <div className="text-center mb-4">
+        <p className="font-bold text-lg">Guatemalan Candies, S.A.</p>
+        <p className="font-bold text-lg text-blue-500">Listado de Traslados con retorno - Equipo de cómputo</p>
+        <p className="font-bold text-lg">
+          {new Date().toLocaleDateString("es-ES", {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+          })}
+        </p>
       </div>
 
-      {/* Barra de búsqueda */}
       <div className="mb-4">
         <input
           type="text"
@@ -57,10 +63,9 @@ const TrasladosRetornoLista = () => {
         />
       </div>
 
-      {/* Tabla */}
       <div className="overflow-x-auto">
         <table className="min-w-full border border-gray-200 rounded-lg">
-          <thead className="bg-gray-100 text-gray-700">
+          <thead className="bg-blue-800 text-white">
             <tr>
               <th className="p-2 border">No.</th>
               <th className="p-2 border">Fecha Pase</th>
@@ -71,6 +76,7 @@ const TrasladosRetornoLista = () => {
               <th className="p-2 border">Ubicación Retorno</th>
               <th className="p-2 border">Fecha Retorno</th>
               <th className="p-2 border">Status</th>
+              <th className="p-2 border">Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -105,16 +111,16 @@ const TrasladosRetornoLista = () => {
                     {formatearFecha(t.fechaRetorno)}
                   </td>
                   <td
-                    className={`p-2 border text-center font-semibold ${
-                      t.status?.toLowerCase() === "pendiente"
+                    className={`p-2 border text-center font-semibold ${t.status?.toLowerCase() === "pendiente"
                         ? "text-yellow-600"
                         : t.status?.toLowerCase() === "completado"
-                        ? "text-green-600"
-                        : "text-gray-700"
-                    }`}
+                          ? "text-green-600"
+                          : "text-gray-700"
+                      }`}
                   >
                     {t.status}
                   </td>
+                  <td className="p-2 border">{t.motivoSalida}</td>
                 </tr>
               ))
             )}
