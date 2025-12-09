@@ -265,8 +265,6 @@ export default function CrearTraslado() {
               )}
             </div>
           </section>
-
-          {/* MOTIVO / UBICACIONES */}
           <section>
             <h3 className="text-xl font-semibold mb-4 border-b border-indigo-300 pb-2">
               Motivo y Ubicaciones
@@ -328,8 +326,6 @@ export default function CrearTraslado() {
               </div>
             </div>
           </section>
-
-          {/* BOTONES */}
           <div className="flex justify-center gap-4 pt-6">
             <button
               type="submit"
