@@ -44,8 +44,6 @@ const HojaSolvenciaPDF = ({ data }) => {
     return (
         <Document>
             <Page size="A4" style={styles.page}>
-
-                {/* HEADER */}
                 <View style={{
                     width: "100%",
                     flexDirection: "row",
@@ -165,7 +163,7 @@ const HojaSolvenciaPDF = ({ data }) => {
                         paddingHorizontal: 12,
                         borderRadius: 4,
                         marginBottom: 10,
-                        alignSelf: "center", // ⬅️ centra el bloque
+                        alignSelf: "center",
                     }}
                 >
                     <Text style={{ fontSize: 10, fontWeight: "bold", textAlign: "center" }}>
