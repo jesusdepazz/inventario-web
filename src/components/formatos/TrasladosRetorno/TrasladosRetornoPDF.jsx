@@ -144,6 +144,30 @@ const styles = StyleSheet.create({
         borderTop: "1px solid #000",
         padding: 4,
     },
+
+    gridCellSplit: {
+        width: "12.5%",
+        borderRight: "1px solid #000",
+        borderTop: "1px solid #000",
+        display: "flex",
+        flexDirection: "column",
+    },
+
+    topHalf: {
+        borderBottom: "1px solid #000",
+        padding: 2,
+        fontSize: 8,
+        textAlign: "center",
+        backgroundColor: "#e9e9e9",
+        fontWeight: "bold",
+    },
+
+    bottomHalf: {
+        padding: 2,
+        fontSize: 8,
+        textAlign: "center",
+    },
+
 });
 
 const formatSpanishDate = (dateString) => {
@@ -249,14 +273,155 @@ const PdfTraslados = ({ data = {} }) => (
                     3) DETALLES DEL EQUIPO
                 </Text>
             </View>
-
             <View style={styles.tableGrid}>
                 <View style={styles.gridRow}>
-                    <Text style={[styles.gridCell, { width: "50%" }]}>
+                    <Text
+                        style={[
+                            styles.gridCell,
+                            {
+                                width: "12.5%",
+                                backgroundColor: "#003366",
+                                color: "white",
+                                fontWeight: "bold",
+                                textAlign: "center",
+                                paddingVertical: 3,
+                            },
+                        ]}
+                    >
+                        Cantidad
                     </Text>
-                    <Text style={[styles.gridCellWide, { width: "50%" }]}>
+                    <View style={{ width: "62.5%", borderWidth: 1, borderColor: "#000" }}>
+                        <Text
+                            style={{
+                                textAlign: "center",
+                                fontWeight: "bold",
+                                borderBottomWidth: 1,
+                                paddingVertical: 3,
+                                backgroundColor: "#003366",
+                                color: "white",
+                            }}
+                        >
+                            DESCRIPCIÓN
+                        </Text>
+
+                        <View style={{ flexDirection: "row", width: "100%" }}>
+                            {["Código", "Equipo", "Marca", "Modelo", "Serie"].map((t, i) => (
+                                <View
+                                    key={i}
+                                    style={{
+                                        width: "20%",
+                                        borderRightWidth: i === 4 ? 0 : 1,
+                                        borderColor: "#000",
+                                        backgroundColor: "#4A90E2",
+                                    }}
+                                >
+                                    <Text
+                                        style={{
+                                            textAlign: "center",
+                                            fontSize: 9,
+                                            paddingVertical: 3,
+                                            color: "white",
+                                            fontWeight: "bold",
+                                        }}
+                                    >
+                                        {t}
+                                    </Text>
+                                </View>
+                            ))}
+                        </View>
+                    </View>
+                    <Text
+                        style={[
+                            styles.gridCell,
+                            {
+                                width: "12.5%",
+                                backgroundColor: "#003366",
+                                color: "white",
+                                fontWeight: "bold",
+                                textAlign: "center",
+                                paddingVertical: 3,
+                            },
+                        ]}
+                    >
+                        Fecha de retorno
+                    </Text>
+                    <Text
+                        style={[
+                            styles.gridCell,
+                            {
+                                width: "12.5%",
+                                backgroundColor: "#003366",
+                                color: "white",
+                                fontWeight: "bold",
+                                textAlign: "center",
+                                paddingVertical: 3,
+                            },
+                        ]}
+                    >
+                        Ubicación a retornar
                     </Text>
                 </View>
+                <View style={styles.gridRow}>
+                    <Text
+                        style={[
+                            styles.gridCell,
+                            {
+                                width: "12.5%",
+                                textAlign: "center",
+                                paddingVertical: 4,
+                            },
+                        ]}
+                    >
+                        1
+                    </Text>
+                    <View style={{ width: "62.5%", borderWidth: 1, borderColor: "#000", flexDirection: "row" }}>
+                        {["T04909", "Laptop", "Dell", "XPS 15", "SN-99887"].map((t, i) => (
+                            <View
+                                key={i}
+                                style={{
+                                    width: "20%",
+                                    borderRightWidth: i === 4 ? 0 : 1,
+                                    borderColor: "#000",
+                                }}
+                            >
+                                <Text
+                                    style={{
+                                        textAlign: "center",
+                                        fontSize: 9,
+                                        paddingVertical: 4,
+                                    }}
+                                >
+                                    {t}
+                                </Text>
+                            </View>
+                        ))}
+                    </View>
+                    <Text
+                        style={[
+                            styles.gridCell,
+                            {
+                                width: "12.5%",
+                                textAlign: "center",
+                                paddingVertical: 4,
+                            },
+                        ]}
+                    >
+                        12/12/2024
+                    </Text>
+                    <Text
+                        style={[
+                            styles.gridCell,
+                            {
+                                width: "12.5%",
+                                textAlign: "center",
+                                paddingVertical: 4,
+                            },
+                        ]}
+                    >
+                        Bodega A-12
+                    </Text>
+                </View>
+
             </View>
             <View style={styles.tableHeaderFull}>
                 <Text style={styles.tableHeaderText}>
@@ -328,10 +493,8 @@ const PdfTraslados = ({ data = {} }) => (
                             </View>
                         ))}
                     </View>
-
                 </View>
             </View>
-
         </Page>
     </Document>
 );
