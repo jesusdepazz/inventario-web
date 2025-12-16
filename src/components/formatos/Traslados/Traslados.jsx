@@ -14,6 +14,10 @@ export default function CrearTraslado() {
     PersonaEntrega: "",
     PersonaRecibe: "",
     Equipo: "",
+    DescripcionEquipo: "",
+    Marca: "",
+    Modelo: "",
+    Serie: "",
     Motivo: "",
     UbicacionDesde: "",
     UbicacionHasta: "",
@@ -43,47 +47,48 @@ export default function CrearTraslado() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const buscarEmpleado = async (codigo, tipo) => {
-    if (!codigo) {
-      if (tipo === "entrega") setInfoEntrega(null);
-      else setInfoRecibe(null);
-      return;
-    }
-    try {
-      const res = await EmpleadosService.obtenerPorCodigo(codigo);
-      if (tipo === "entrega") setInfoEntrega(res.data);
-      else setInfoRecibe(res.data);
-    } catch (err) {
-      if (tipo === "entrega") setInfoEntrega(null);
-      else setInfoRecibe(null);
-      alert("Empleado no encontrado ❌");
-    }
-  };
-
   const buscarEquipo = async (codificacion) => {
     if (!codificacion) {
       setInfoEquipo(null);
-      setForm(prev => ({ ...prev, UbicacionDesde: "" }));
+      setForm(prev => ({
+        ...prev,
+        DescripcionEquipo: "",
+        Marca: "",
+        Modelo: "",
+        Serie: "",
+        UbicacionDesde: ""
+      }));
       return;
     }
 
     try {
       const res = await EquiposService.obtenerPorCodificacion(codificacion);
+      const eq = res.data;
 
-      setInfoEquipo(res.data);
+      setInfoEquipo(eq);
 
       setForm(prev => ({
         ...prev,
-        UbicacionDesde: res.data.ubicacion || ""
+        DescripcionEquipo: eq.tipoEquipo || "",
+        Marca: eq.marca || "",
+        Modelo: eq.modelo || "",
+        Serie: eq.serie || "",
+        UbicacionDesde: eq.ubicacion || ""
       }));
 
     } catch (err) {
       setInfoEquipo(null);
-      setForm(prev => ({ ...prev, UbicacionDesde: "" }));
+      setForm(prev => ({
+        ...prev,
+        DescripcionEquipo: "",
+        Marca: "",
+        Modelo: "",
+        Serie: "",
+        UbicacionDesde: ""
+      }));
       alert("Equipo no encontrado ❌");
     }
   };
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -91,10 +96,16 @@ export default function CrearTraslado() {
     try {
       const payload = {
         No: form.No,
-        FechaEmision: form.FechaEmision ? new Date(form.FechaEmision).toISOString() : null,
+        FechaEmision: form.FechaEmision
+          ? new Date(form.FechaEmision).toISOString()
+          : null,
         PersonaEntrega: form.PersonaEntrega,
         PersonaRecibe: form.PersonaRecibe,
         Equipo: form.Equipo,
+        DescripcionEquipo: form.DescripcionEquipo,
+        Marca: form.Marca,
+        Modelo: form.Modelo,
+        Serie: form.Serie,
         Motivo: form.Motivo,
         UbicacionDesde: form.UbicacionDesde,
         UbicacionHasta: form.UbicacionHasta,
@@ -253,10 +264,40 @@ export default function CrearTraslado() {
                     />
                   </div>
                   <div>
+                    <label className="font-medium text-gray-700">Descripción</label>
+                    <input
+                      type="text"
+                      value={form.DescripcionEquipo}
+                      readOnly
+                      className="w-full border rounded-lg p-2 bg-gray-100"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="font-medium text-gray-700">Marca</label>
+                    <input
+                      type="text"
+                      value={form.Marca}
+                      readOnly
+                      className="w-full border rounded-lg p-2 bg-gray-100"
+                    />
+                  </div>
+
+                  <div>
                     <label className="font-medium text-gray-700">Modelo</label>
                     <input
                       type="text"
-                      value={infoEquipo.modelo}
+                      value={form.Modelo}
+                      readOnly
+                      className="w-full border rounded-lg p-2 bg-gray-100"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="font-medium text-gray-700">Serie</label>
+                    <input
+                      type="text"
+                      value={form.Serie}
                       readOnly
                       className="w-full border rounded-lg p-2 bg-gray-100"
                     />

@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     },
 
     logo: {
-        width: 80,
+        width: 120,
         height: 80,
     },
 
@@ -44,16 +44,16 @@ const styles = StyleSheet.create({
     },
 
     registro: {
-        fontSize: 12,
-        textAlign: "center",
+        fontSize: 14,
         fontWeight: "bold",
+        textAlign: "center",
         color: "black",
     },
 
     paseSalida: {
-        fontSize: 12,
-        textAlign: "center",
+        fontSize: 14,
         fontWeight: "bold",
+        textAlign: "center",
         color: "black",
     },
 
@@ -374,8 +374,21 @@ const PdfTraslados = ({ data = {} }) => (
                     >
                         1
                     </Text>
-                    <View style={{ width: "62.5%", borderWidth: 1, borderColor: "#000", flexDirection: "row" }}>
-                        {["T04909", "Laptop", "Dell", "XPS 15", "SN-99887"].map((t, i) => (
+                    <View
+                        style={{
+                            width: "62.5%",
+                            borderWidth: 1,
+                            borderColor: "#000",
+                            flexDirection: "row",
+                        }}
+                    >
+                        {[
+                            data.equipo,
+                            data.descripcionEquipo,
+                            data.marca,
+                            data.modelo,
+                            data.serie,
+                        ].map((t, i) => (
                             <View
                                 key={i}
                                 style={{
@@ -385,13 +398,15 @@ const PdfTraslados = ({ data = {} }) => (
                                 }}
                             >
                                 <Text
+                                    wrap
                                     style={{
                                         textAlign: "center",
-                                        fontSize: 9,
+                                        fontSize: 7,
                                         paddingVertical: 4,
+                                        wordBreak: i === 0 ? "break-all" : "normal",
                                     }}
                                 >
-                                    {t}
+                                    {t || "-"}
                                 </Text>
                             </View>
                         ))}
@@ -406,7 +421,9 @@ const PdfTraslados = ({ data = {} }) => (
                             },
                         ]}
                     >
-                        12/12/2024
+                        {data.fechaRetorno
+                            ? new Date(data.fechaRetorno).toLocaleDateString("es-GT")
+                            : "-"}
                     </Text>
                     <Text
                         style={[
@@ -418,10 +435,9 @@ const PdfTraslados = ({ data = {} }) => (
                             },
                         ]}
                     >
-                        Bodega A-12
+                        {data.ubicacionRetorno || "-"}
                     </Text>
                 </View>
-
             </View>
             <View style={styles.tableHeaderFull}>
                 <Text style={styles.tableHeaderText}>
@@ -435,9 +451,18 @@ const PdfTraslados = ({ data = {} }) => (
                         borderTop: "1px solid #000",
                         minHeight: 45,
                         padding: 6,
+                        justifyContent: "center",
                     }}
                 >
-                    <Text></Text>
+                    <Text
+                        wrap
+                        style={{
+                            fontSize: 9,
+                            textAlign: "center",
+                        }}
+                    >
+                        {data.equipo || "-"}
+                    </Text>
                 </View>
             </View>
 
@@ -471,25 +496,227 @@ const PdfTraslados = ({ data = {} }) => (
                                 key={i}
                                 style={{
                                     borderBottom: "1px solid #000",
-                                    minHeight: 20,
-                                    padding: 4
+                                    minHeight: 40,
+                                    padding: 6,
                                 }}
                             >
-                                <Text></Text>
+                                {i === 1 && (
+                                    <>
+                                        <Text
+                                            style={{
+                                                fontSize: 9,
+                                                textDecoration: "underline",
+                                                fontWeight: "bold",
+                                            }}
+                                        >
+                                            AUTORIZADO POR:
+                                        </Text>
+                                        <Text style={{ fontSize: 9 }}>° Gerardo Araneda</Text>
+                                        <Text style={{ fontSize: 9 }}>° Vanessa Santiago</Text>
+                                        <Text style={{ fontSize: 9 }}>° Rodrigo Araneda</Text>
+                                        <Text style={{ fontSize: 9 }}>° Julio Cajas</Text>
+                                    </>
+                                )}
+
+                                {i === 2 && (
+                                    <Text
+                                        style={{
+                                            fontSize: 9,
+                                            textDecoration: "underline",
+                                            fontWeight: "bold",
+                                        }}
+                                    >
+                                        SOLICITADO:
+                                    </Text>
+                                )}
+
+                                {i === 3 && (
+                                    <Text
+                                        style={{
+                                            fontSize: 9,
+                                            textDecoration: "underline",
+                                            fontWeight: "bold",
+                                        }}
+                                    >
+                                        PERSONA QUIEN RETIRA:
+                                    </Text>
+                                )}
+
+                                {i === 4 && (
+                                    <Text
+                                        style={{
+                                            fontSize: 9,
+                                            textDecoration: "underline",
+                                            fontWeight: "bold",
+                                        }}
+                                    >
+                                        ENTERADO:
+                                    </Text>
+                                )}
+
+                                {i === 5 && (
+                                    <Text
+                                        style={{
+                                            fontSize: 9,
+                                            textDecoration: "underline",
+                                            fontWeight: "bold",
+                                        }}
+                                    >
+                                        ACTIVOS FIJOS:
+                                    </Text>
+                                )}
+
+                                {i === 6 && (
+                                    <View style={{ flexDirection: "row", width: "100%" }}>
+                                        <View style={{ width: "65%" }}>
+                                            <Text
+                                                style={{
+                                                    fontSize: 9,
+                                                    fontWeight: "bold",
+                                                    textDecoration: "underline",
+                                                }}
+                                            >
+                                                GUARDIA DE
+                                            </Text>
+                                            <Text
+                                                style={{
+                                                    fontSize: 9,
+                                                    fontWeight: "bold",
+                                                    textDecoration: "underline",
+                                                }}
+                                            >
+                                                SEGURIDAD:
+                                            </Text>
+                                        </View>
+                                        <View
+                                            style={{
+                                                width: "35%",
+                                                flexDirection: "row",
+                                                alignItems: "flex-end",
+                                                justifyContent: "flex-end",
+                                            }}
+                                        >
+                                            <Text
+                                                style={{
+                                                    fontSize: 9,
+                                                    fontWeight: "bold",
+                                                    textDecoration: "underline",
+                                                    marginRight: 4,
+                                                }}
+                                            >
+                                                FECHA:
+                                            </Text>
+                                            <Text
+                                                style={{
+                                                    fontSize: 9,
+                                                    textDecoration: "underline",
+                                                    width: 60,
+                                                }}
+                                            >
+                                                {" "}
+                                            </Text>
+                                        </View>
+                                    </View>
+                                )}
                             </View>
                         ))}
                     </View>
                     <View style={{ width: "50%" }}>
-                        {[1, 2, 3, 4, 5].map((i) => (
+                        {[1, 2, 3, 4].map((i) => (
                             <View
                                 key={i}
                                 style={{
                                     borderBottom: "1px solid #000",
-                                    minHeight: 24,
-                                    padding: 4
+                                    minHeight: 65.5,
+                                    padding: 6,
+                                    justifyContent: "center",
                                 }}
                             >
-                                <Text></Text>
+                                {i === 1 && (
+                                    <View style={{ flexDirection: "row", width: "100%" }}>
+                                        <View style={{ width: "65%" }}>
+                                            <Text
+                                                style={{
+                                                    fontSize: 9,
+                                                    fontWeight: "bold",
+                                                    textDecoration: "underline",
+                                                }}
+                                            >
+                                                GUARDIA DE
+                                            </Text>
+                                            <Text
+                                                style={{
+                                                    fontSize: 9,
+                                                    fontWeight: "bold",
+                                                    textDecoration: "underline",
+                                                }}
+                                            >
+                                                SEGURIDAD:
+                                            </Text>
+                                        </View>
+                                        <View
+                                            style={{
+                                                width: "35%",
+                                                flexDirection: "row",
+                                                alignItems: "flex-end",
+                                                justifyContent: "flex-end",
+                                            }}
+                                        >
+                                            <Text
+                                                style={{
+                                                    fontSize: 9,
+                                                    fontWeight: "bold",
+                                                    textDecoration: "underline",
+                                                    marginRight: 4,
+                                                }}
+                                            >
+                                                FECHA:
+                                            </Text>
+                                            <Text
+                                                style={{
+                                                    fontSize: 9,
+                                                    textDecoration: "underline",
+                                                    width: 60,
+                                                }}
+                                            >
+                                                {" "}
+                                            </Text>
+                                        </View>
+                                    </View>
+                                )}
+                                {i === 2 && (
+                                    <Text
+                                        style={{
+                                            fontSize: 9,
+                                            fontWeight: "bold",
+                                            textDecoration: "underline",
+                                        }}
+                                    >
+                                        PERSONA QUE RECIBE CONFORME:
+                                    </Text>
+                                )}
+                                {i === 3 && (
+                                    <Text
+                                        style={{
+                                            fontSize: 9,
+                                            fontWeight: "bold",
+                                            textDecoration: "underline",
+                                        }}
+                                    >
+                                        ENTERADO:
+                                    </Text>
+                                )}
+                                {i === 4 && (
+                                    <Text
+                                        style={{
+                                            fontSize: 9,
+                                            fontWeight: "bold",
+                                            textDecoration: "underline",
+                                        }}
+                                    >
+                                        ACTIVOS FIJOS:
+                                    </Text>
+                                )}
                             </View>
                         ))}
                     </View>
