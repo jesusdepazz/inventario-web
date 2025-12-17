@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import TrasladosServices from "../../../services/TrasladosServices";
+import PdfTraslados from "./TrasladosPDF";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 
 export default function TrasladosLista() {
     const [traslados, setTraslados] = useState([]);
@@ -82,8 +84,8 @@ export default function TrasladosLista() {
                                         <td className="border p-2">
                                             {new Date(t.fechaEmision).toLocaleDateString()}
                                         </td>
-                                        <td className="border p-2">{t.personaEntrega}</td>
-                                        <td className="border p-2">{t.personaRecibe}</td>
+                                        <td className="border p-2">{t.codigoEntrega}</td>
+                                        <td className="border p-2">{t.codigoRecibe}</td>
                                         <td className="border p-2">{t.equipo}</td>
                                         <td className="border p-2">{t.motivo}</td>
                                         <td className="border p-2">{t.ubicacionDesde}</td>
@@ -91,16 +93,24 @@ export default function TrasladosLista() {
                                         <td className="border p-2 text-center">
                                             <span
                                                 className={`px-2 py-1 rounded-lg text-xs font-semibold ${t.status === "Pendiente"
-                                                        ? "bg-yellow-200 text-yellow-800"
-                                                        : t.status === "Completado"
-                                                            ? "bg-green-200 text-green-800"
-                                                            : "bg-gray-200 text-gray-800"
+                                                    ? "bg-yellow-200 text-yellow-800"
+                                                    : t.status === "Completado"
+                                                        ? "bg-green-200 text-green-800"
+                                                        : "bg-gray-200 text-gray-800"
                                                     }`}
                                             >
                                                 {t.status}
                                             </span>
                                         </td>
                                         <td className="border p-2">{t.observaciones}</td>
+                                        <td className="border p-2">
+                                            <PDFDownloadLink
+                                                document={<PdfTraslados data={t} />}
+                                                fileName={`Traslado-${t.id}.pdf`}
+                                            >
+                                                {({ loading }) => loading ? "Generando..." : "Descargar PDF"}
+                                            </PDFDownloadLink>
+                                        </td>
                                     </tr>
                                 ))
                             )}

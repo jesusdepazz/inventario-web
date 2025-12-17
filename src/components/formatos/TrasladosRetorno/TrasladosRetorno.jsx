@@ -12,6 +12,9 @@ const CrearTrasladoRetorno = () => {
     solicitante: "",
     equipo: "",
     descripcionEquipo: "",
+    marca: "",
+    modelo: "",
+    serie: "",
     motivoSalida: "",
     ubicacionRetorno: "",
     fechaRetorno: "",
@@ -28,8 +31,12 @@ const CrearTrasladoRetorno = () => {
       .catch(() => toast.error("Error al cargar ubicaciones"));
   }, []);
 
+  /* =========================
+     BUSCAR EMPLEADO
+  ========================== */
   const handleBuscarEmpleado = () => {
     if (!formData.solicitante.trim()) return;
+
     EmpleadosService.obtenerPorCodigo(formData.solicitante)
       .then((res) => setEmpleadoInfo(res.data))
       .catch(() => {
@@ -38,29 +45,47 @@ const CrearTrasladoRetorno = () => {
       });
   };
 
+  /* =========================
+     BUSCAR EQUIPO
+  ========================== */
   const handleBuscarEquipo = () => {
     if (!formData.equipo.trim()) return;
 
     EquiposService.obtenerPorCodificacion(formData.equipo)
       .then((res) => {
-        setFormData({
-          ...formData,
+        setFormData((prev) => ({
+          ...prev,
           descripcionEquipo: res.data.tipoEquipo || "",
-          ubicacionRetorno: res.data.ubicacion || ""
-        });
+          marca: res.data.marca || "",
+          modelo: res.data.modelo || "",
+          serie: res.data.serie || "",
+          ubicacionRetorno: res.data.ubicacion || "",
+        }));
       })
       .catch(() => {
-        setFormData({ ...formData, descripcionEquipo: "", ubicacionRetorno: "" });
+        setFormData((prev) => ({
+          ...prev,
+          descripcionEquipo: "",
+          marca: "",
+          modelo: "",
+          serie: "",
+          ubicacionRetorno: "",
+        }));
         toast.error("Equipo no encontrado");
       });
   };
 
-
+  /* =========================
+     MANEJO INPUTS
+  ========================== */
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
+  /* =========================
+     GUARDAR
+  ========================== */
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -73,6 +98,9 @@ const CrearTrasladoRetorno = () => {
           solicitante: "",
           equipo: "",
           descripcionEquipo: "",
+          marca: "",
+          modelo: "",
+          serie: "",
           motivoSalida: "",
           ubicacionRetorno: "",
           fechaRetorno: "",
@@ -91,6 +119,7 @@ const CrearTrasladoRetorno = () => {
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        {/* No y Fecha */}
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block font-medium">No.</label>
@@ -113,6 +142,8 @@ const CrearTrasladoRetorno = () => {
             />
           </div>
         </div>
+
+        {/* Solicitante */}
         <div>
           <label className="block font-medium">Solicitante (Código)</label>
           <div className="flex gap-2">
@@ -130,6 +161,7 @@ const CrearTrasladoRetorno = () => {
               Buscar
             </button>
           </div>
+
           {empleadoInfo && (
             <div className="mt-2 text-sm text-gray-600">
               <p>Nombre: {empleadoInfo.nombre}</p>
@@ -138,6 +170,8 @@ const CrearTrasladoRetorno = () => {
             </div>
           )}
         </div>
+
+        {/* Equipo */}
         <div>
           <label className="block font-medium">Equipo (Codificación)</label>
           <div className="flex gap-2">
@@ -156,15 +190,48 @@ const CrearTrasladoRetorno = () => {
             </button>
           </div>
         </div>
+
+        {/* Descripción */}
         <div>
           <label className="block font-medium">Descripción Equipo</label>
           <input
-            name="descripcionEquipo"
             value={formData.descripcionEquipo}
             readOnly
             className="border p-2 w-full rounded bg-gray-100"
           />
         </div>
+
+        {/* Marca / Modelo / Serie */}
+        <div className="grid grid-cols-3 gap-4">
+          <div>
+            <label className="block font-medium">Marca</label>
+            <input
+              value={formData.marca}
+              readOnly
+              className="border p-2 w-full rounded bg-gray-100"
+            />
+          </div>
+
+          <div>
+            <label className="block font-medium">Modelo</label>
+            <input
+              value={formData.modelo}
+              readOnly
+              className="border p-2 w-full rounded bg-gray-100"
+            />
+          </div>
+
+          <div>
+            <label className="block font-medium">Serie</label>
+            <input
+              value={formData.serie}
+              readOnly
+              className="border p-2 w-full rounded bg-gray-100"
+            />
+          </div>
+        </div>
+
+        {/* Motivo */}
         <div>
           <label className="block font-medium">Motivo de Salida</label>
           <input
@@ -174,24 +241,18 @@ const CrearTrasladoRetorno = () => {
             className="border p-2 w-full rounded"
           />
         </div>
+
+        {/* Ubicación */}
         <div>
           <label className="block font-medium">Ubicación de Retorno</label>
-          <select
-            name="ubicacionRetorno"
+          <input
             value={formData.ubicacionRetorno}
-            onChange={handleChange}
+            readOnly
             className="border p-2 w-full rounded bg-gray-100"
-            disabled
-          >
-            {formData.ubicacionRetorno ? (
-              <option value={formData.ubicacionRetorno}>
-                {formData.ubicacionRetorno}
-              </option>
-            ) : (
-              <option value="">Buscar equipo primero...</option>
-            )}
-          </select>
+          />
         </div>
+
+        {/* Fecha Retorno */}
         <div>
           <label className="block font-medium">Fecha Retorno</label>
           <input
@@ -202,6 +263,8 @@ const CrearTrasladoRetorno = () => {
             className="border p-2 w-full rounded"
           />
         </div>
+
+        {/* Status */}
         <div>
           <label className="block font-medium">Status</label>
           <input
@@ -211,6 +274,8 @@ const CrearTrasladoRetorno = () => {
             className="border p-2 w-full rounded"
           />
         </div>
+
+        {/* Razón */}
         <div>
           <label className="block font-medium">Razón No Liquidada</label>
           <input

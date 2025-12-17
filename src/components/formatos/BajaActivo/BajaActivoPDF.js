@@ -21,31 +21,48 @@ export const generarBajaPDF = async (bajaId) => {
     const cellHeight = 8;
     const cellPadding = 4;
 
-    const numeroPDF = 'No. ' + String(Math.floor(100000 + Math.random() * 900000));
+    const formatearFechaLarga = (fecha) => {
+      const opciones = {
+        weekday: "long",
+        day: "2-digit",
+        month: "long",
+        year: "numeric"
+      };
+
+      return new Date(fecha).toLocaleDateString("es-ES", opciones)
+        .replace(/^\w/, c => c.toUpperCase());
+    };
+
+
+    const numeroPDF = 'No. 001';
 
     doc.addImage('/logo_guandy.png', 'PNG', marginX, headerY, logoWidth, logoHeight);
 
-    const centroX = marginX + logoWidth + 50;
+    const centerX = pageWidth / 2;
     doc.setFontSize(10);
     doc.setFont('helvetica', 'bold');
-    doc.text('Guatemala Candies, S.A.', centroX, headerY + 5);
+    doc.text('Guatemala Candies, S.A.', centerX, headerY + 5, { align: 'center' });
     doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
-    doc.text('Administracion de Activos Fijos', centroX, headerY + 11);
-    doc.text('Baja de Equipo de Computo', centroX, headerY + 17);
+    doc.text('Administración de Activos Fijos', centerX, headerY + 11, { align: 'center' });
+    doc.text('Baja de Equipo de Cómputo', centerX, headerY + 17, { align: 'center' });
 
     doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.setTextColor(180, 0, 0);
     const numeroX = marginX + availableFooterWidth - 20;
+    doc.text(numeroPDF, numeroX, headerY + 5);
+
+    doc.setTextColor(0, 0, 0);
+
     doc.text(numeroPDF, numeroX, headerY + 5);
 
     const lineaY = headerY + logoHeight + 2;
     doc.setDrawColor(0);
     doc.setLineWidth(0.2);
-    doc.line(marginX, lineaY, marginX + availableFooterWidth, lineaY);
 
     let y = lineaY + 2;
 
-    // Bloque de justificación de la baja (sin motivo marcado)
     const motivosNombres = {
       obsolencia: "Obsolescencia",
       venta: "Venta",
@@ -60,6 +77,26 @@ export const generarBajaPDF = async (bajaId) => {
     const cellWidth = availableWidth / colCount;
     const checkboxSize = 4;
 
+    const fechaBajaTexto = formatearFechaLarga(baja.fechaBaja);
+    const fechaLabelWidth = 25;
+    const fechaValueWidth = availableWidth - fechaLabelWidth;
+    const fechaRowHeight = cellHeight;
+
+    doc.setFont("helvetica", "bold");
+    doc.rect(marginX, y, fechaLabelWidth, fechaRowHeight);
+    doc.text("FECHA:", marginX + 2, y + fechaRowHeight / 2 + 2);
+
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(0, 0, 180);
+    doc.rect(marginX + fechaLabelWidth, y, fechaValueWidth, fechaRowHeight);
+    doc.text(
+      fechaBajaTexto,
+      marginX + fechaLabelWidth + 2,
+      y + fechaRowHeight / 2 + 2
+    );
+
+    y += fechaRowHeight;
+
     doc.setDrawColor(0);
     doc.setFillColor(200, 200, 200);
     doc.rect(marginX, y, availableWidth, cellHeight, "FD");
@@ -72,7 +109,6 @@ export const generarBajaPDF = async (bajaId) => {
     doc.text(titulo, titleX, y + cellHeight / 2 + 2);
     y += cellHeight;
 
-    // Dibujar los 5 motivos (sin marcar)
     let x = marginX;
     motivos.forEach((motivoVisible, index) => {
       doc.setDrawColor(0);
@@ -81,7 +117,6 @@ export const generarBajaPDF = async (bajaId) => {
       const checkboxX = x + 3;
       const checkboxY = y + cellHeight / 2 - checkboxSize / 2;
 
-      // Cajita vacía sin X
       doc.rect(checkboxX, checkboxY, checkboxSize, checkboxSize);
       doc.text(motivoVisible, checkboxX + checkboxSize + 3, checkboxY + checkboxSize - 0.5);
 
@@ -110,8 +145,21 @@ export const generarBajaPDF = async (bajaId) => {
     autoTable(doc, {
       startY: y,
       head: [
-        [{ content: 'INFORMACIÓN GENERAL', colSpan: 5, styles: { halign: 'center', fillColor: [200, 200, 200], fontStyle: 'bold', fontSize: 10, lineColor: [0, 0, 0], lineWidth: 0.2 } }],
-        ['Codificación', 'Equipo', 'Marca', 'Modelo', 'Serie',]
+        [
+          {
+            content: 'INFORMACIÓN GENERAL',
+            colSpan: 5,
+            styles: {
+              halign: 'center',
+              fillColor: [200, 200, 200],
+              fontStyle: 'bold',
+              fontSize: 10,
+              lineColor: [0, 0, 0],
+              lineWidth: 0.2,
+            },
+          },
+        ],
+        ['Codificación', 'Equipo', 'Marca', 'Modelo', 'Serie'],
       ],
       body: [
         [
@@ -119,40 +167,225 @@ export const generarBajaPDF = async (bajaId) => {
           equipo.tipoEquipo,
           equipo.marca,
           equipo.modelo || '',
-          equipo.serie || ''
+          equipo.serie || '',
         ],
-        [{ content: "Ubicación Actual", styles: { fontStyle: "bold" } }, { content: ubicacionActualNombre, colSpan: 5 }],
-        [{ content: "Destino", styles: { fontStyle: "bold" } }, { content: destinoNombre, colSpan: 5 }],
-        [{ content: "Observaciones", styles: { fontStyle: "bold" } }, { content: baja.detallesBaja || '', colSpan: 5 }]
+        [
+          { content: "Ubicación Actual", styles: { fontStyle: "bold", textColor: [0, 0, 0] } },
+          { content: ubicacionActualNombre, colSpan: 5 },
+        ],
+        [
+          { content: "Destino", styles: { fontStyle: "bold", textColor: [0, 0, 0] } },
+          { content: destinoNombre, colSpan: 5 },
+        ],
       ],
       margin: { left: marginX, right: marginX },
-      styles: { fontSize: 8, lineColor: [0, 0, 0], lineWidth: 0.2 },
-      headStyles: { fillColor: [200, 200, 200], textColor: 0 },
-      bodyStyles: { lineColor: [0, 0, 0], lineWidth: 0.2 }
+      styles: {
+        fontSize: 9,
+        lineColor: [0, 0, 0],
+        lineWidth: 0.2,
+      },
+      headStyles: {
+        fillColor: [200, 200, 200],
+        textColor: 0,
+        fontStyle: "bold",
+        fontSize: 9,
+      },
+      bodyStyles: {
+        fontSize: 9,
+        fontStyle: "bold",
+        textColor: [0, 0, 180],
+        lineColor: [0, 0, 0],
+        lineWidth: 0.2,
+      },
     });
 
-    y = doc.lastAutoTable.finalY + 5;
+    y = doc.lastAutoTable.finalY;
+
+    const sectionTitleHeight = cellHeight;
+
+    doc.setDrawColor(0);
+    doc.setFillColor(200, 200, 200);
+    doc.rect(marginX, y, availableWidth, sectionTitleHeight, "FD");
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(9);
+
+    const sectionTitle =
+      "DETALLES DE BAJA DE ACTIVOS POR VENTA Y O DONACION";
+
+    const sectionTextWidth = doc.getTextWidth(sectionTitle);
+    const sectionTitleX = marginX + (availableWidth - sectionTextWidth) / 2;
+
+    doc.text(
+      sectionTitle,
+      sectionTitleX,
+      y + sectionTitleHeight / 2 + 2
+    );
+
+    y += sectionTitleHeight;
+
+    const leftColWidth = 45;
+    const rightColWidth = availableWidth - leftColWidth;
+    const rowHeight = cellHeight;
+
+    const filasDetalle = [
+      "Pase de salida SR",
+      "Factura",
+      "Depósito",
+      "Recibo",
+      "Otros",
+    ];
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8);
+
+    filasDetalle.forEach((texto) => {
+      doc.rect(marginX, y, leftColWidth, rowHeight);
+      doc.text(texto, marginX + 2, y + rowHeight / 2 + 2);
+      doc.rect(marginX + leftColWidth, y, rightColWidth, rowHeight);
+
+      y += rowHeight;
+    });
 
     autoTable(doc, {
       startY: y,
       head: [
-        [{ content: 'NOMBRES Y FIRMAS', colSpan: 3, styles: { halign: 'center', fillColor: [200, 200, 200], fontStyle: 'bold', fontSize: 10 } }]
+        [
+          {
+            content: 'NOMBRES Y FIRMAS',
+            colSpan: 3,
+            styles: {
+              halign: 'center',
+              fillColor: [200, 200, 200],
+              fontStyle: 'bold',
+              fontSize: 10,
+              textColor: 0
+            }
+          }
+        ]
       ],
       body: [
         [
-          'Nombre y firma solicitante\n\n\n\nAmparo Castellanos',
-          'Enterado jefe inmediato',
-          'Vo.Co. Contador General\n\n\n\nErick Pacajoj'
+          {
+            content: 'Nombre y firma solicitante',
+            styles: {
+              fillColor: [200, 200, 200],
+              fontStyle: 'bold',
+              halign: 'center'
+            }
+          },
+          {
+            content: 'Enterado jefe inmediato',
+            styles: {
+              fillColor: [200, 200, 200],
+              fontStyle: 'bold',
+              halign: 'center'
+            }
+          },
+          {
+            content: 'Vo.Co. Contador General',
+            styles: {
+              fillColor: [200, 200, 200],
+              fontStyle: 'bold',
+              halign: 'center'
+            }
+          }
         ],
         [
-          'Vo.Bo. Activos Fijos\n\n\n\nKelin Blanco',
-          'Recibido\n\n\n\nGabriela Martinez/ Vanessa Aguilar',
-          'Autorización\n\n\n\nGerrardo Araneda/ Vanessa Santiago'
+          {
+            content: '\n\n\nAmparo Castellanos',
+            styles: {
+              minCellHeight: 26,
+              valign: 'bottom',
+              halign: 'center',
+              textColor: [0, 0, 180],
+              fontStyle: 'bold'
+            }
+          },
+          {
+            content: '\n\n\n',
+            styles: {
+              minCellHeight: 26,
+              valign: 'bottom'
+            }
+          },
+          {
+            content: '\n\n\nErick Pacajoj',
+            styles: {
+              minCellHeight: 26,
+              valign: 'bottom',
+              halign: 'center',
+              textColor: [0, 0, 180],
+              fontStyle: 'bold'
+            }
+          }
+        ],
+        [
+          {
+            content: 'Vo.Bo. Activos Fijos',
+            styles: {
+              fillColor: [200, 200, 200],
+              fontStyle: 'bold',
+              halign: 'center'
+            }
+          },
+          {
+            content: 'Recibido',
+            styles: {
+              fillColor: [200, 200, 200],
+              fontStyle: 'bold',
+              halign: 'center'
+            }
+          },
+          {
+            content: 'Autorización',
+            styles: {
+              fillColor: [200, 200, 200],
+              fontStyle: 'bold',
+              halign: 'center'
+            }
+          }
+        ],
+        [
+          {
+            content: '\n\n\nKelin Blanco',
+            styles: {
+              minCellHeight: 26,
+              valign: 'bottom',
+              halign: 'center',
+              textColor: [0, 0, 180],
+              fontStyle: 'bold'
+            }
+          },
+          {
+            content: '\n\n\nGabriela Martinez / Vanessa Aguilar',
+            styles: {
+              minCellHeight: 26,
+              valign: 'bottom',
+              halign: 'center',
+              textColor: [0, 0, 180],
+              fontStyle: 'bold'
+            }
+          },
+          {
+            content: '\n\n\nGerrardo Araneda / Vanessa Santiago',
+            styles: {
+              minCellHeight: 26,
+              valign: 'bottom',
+              halign: 'center',
+              textColor: [0, 0, 180],
+              fontStyle: 'bold'
+            }
+          }
         ]
       ],
       margin: { left: marginX, right: marginX },
-      styles: { fontSize: 8, lineColor: [0, 0, 0], lineWidth: 0.2, minCellHeight: 10 },
-      headStyles: { textColor: 0, fillColor: [200, 200, 200] },
+      styles: {
+        fontSize: 10,
+        lineColor: [0, 0, 0],
+        lineWidth: 0.2,
+        cellPadding: 4
+      },
       theme: 'grid'
     });
 
