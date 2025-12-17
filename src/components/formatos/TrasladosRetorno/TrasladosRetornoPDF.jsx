@@ -198,7 +198,7 @@ const capitalizeFirstWord = (text = "") => {
     return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
 };
 
-const PdfTraslados = ({ data = {} }) => (
+const PdfTrasladosRetorno = ({ data = {} }) => (
     <Document>
         <Page size="A4" style={styles.page}>
             <View style={styles.headerContainer}>
@@ -726,4 +726,4 @@ const PdfTraslados = ({ data = {} }) => (
     </Document>
 );
 
-export default PdfTraslados;
+export default PdfTrasladosRetorno;

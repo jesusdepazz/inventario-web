@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import TrasladosRetornoService from "../../../services/TrasladosRetornoService";
-import PdfTraslados from "./TrasladosRetornoPDF";
+import PdfTrasladosRetorno from "./TrasladosRetornoPDF";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 
 const TrasladosRetornoLista = () => {
@@ -124,7 +124,7 @@ const TrasladosRetornoLista = () => {
                   </td>
                   <td className="border p-2">
                     <PDFDownloadLink
-                      document={<PdfTraslados data={t} />}
+                      document={<PdfTrasladosRetorno data={t} />}
                       fileName={`TrasladoRetorno-${t.id}.pdf`}
                     >
                       {({ loading }) => loading ? "Generando..." : "Descargar PDF"}
