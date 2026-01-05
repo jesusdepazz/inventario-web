@@ -10,6 +10,8 @@ const TrasladosRetornoService = {
   actualizar: (id, traslado) => apiClient.put(`/trasladoRetornos/${id}`, traslado),
 
   eliminar: (id) => apiClient.delete(`/trasladoRetornos/${id}`),
+
+  obtenerDetalle: (id) => apiClient.get(`/trasladoRetornos/detalle/${id}`),
 };
 
 export default TrasladosRetornoService;

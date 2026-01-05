@@ -71,43 +71,227 @@ function AppRoutes() {
         >
           <Route path="/dashboard" element={<Dashboard />} />
           {/* EQUIPOS */}
-          <Route path="/equipos/crear" element={<CrearEquipo />} />
+          <Route
+            path="/equipos/crear"
+            element={
+              <ProtectedRoute requiredRole="Administrador">
+                <CrearEquipo />
+              </ProtectedRoute>
+            }
+          />
+          {/* ESTE SE QUEDA SIN PROTECCIÓN */}
           <Route path="/equipos/inventario" element={<ListaEquipos />} />
-          <Route path="/equipos/editar" element={<EditarEquipo />} />
-          <Route path="/equipos/eliminar" element={<EliminarEquipos />} />
+
+          <Route
+            path="/equipos/editar"
+            element={
+              <ProtectedRoute requiredRole="Administrador">
+                <EditarEquipo />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/equipos/eliminar"
+            element={
+              <ProtectedRoute requiredRole="Administrador">
+                <EliminarEquipos />
+              </ProtectedRoute>
+            }
+          />
           {/* ASIGNACIONES */}
-          <Route path="/asignaciones/crear" element={<CrearAsignacion />} />
-          <Route path="asignaciones/lista" element={<ListaAsignaciones />} />
-          <Route path="asignaciones/eliminar" element={<EliminarAsignacion />} />
+          <Route
+            path="/asignaciones/crear"
+            element={
+              <ProtectedRoute requiredRole="Administrador">
+                <CrearAsignacion />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/asignaciones/lista"
+            element={
+              <ProtectedRoute requiredRole="Administrador">
+                <ListaAsignaciones />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/asignaciones/eliminar"
+            element={
+              <ProtectedRoute requiredRole="Administrador">
+                <EliminarAsignacion />
+              </ProtectedRoute>
+            }
+          />
           {/* MANTENIMIENTOS */}
-          <Route path="/mantenimientos/crear" element={<CrearMantenimiento />} />
-          <Route path="/mantenimientos/lista" element={<ListaMantenimientos />} />
-          <Route path="/mantenimientos/eliminar" element={<EliminarMantenimientos />} />
+          <Route
+            path="/mantenimientos/crear"
+            element={
+              <ProtectedRoute requiredRole="Administrador">
+                <CrearMantenimiento />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/mantenimientos/lista"
+            element={
+              <ProtectedRoute requiredRole="Administrador">
+                <ListaMantenimientos />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/mantenimientos/eliminar"
+            element={
+              <ProtectedRoute requiredRole="Administrador">
+                <EliminarMantenimientos />
+              </ProtectedRoute>
+            }
+          />
           {/* SOLICITUDES */}
-          <Route path="/solicitudes/crear" element={<CrearSolicitud />} />
-          <Route path="/solicitudes/lista" element={<ListaSolicitud />} />
-          <Route path="/solicitudes/eliminar" element={<EliminarSolicitud />} />
-          {/* FORMATOS/RESPONSABILIDAD */}
-          <Route path="/formatos/hojaderesponsabilidad" element={<HojaResponsabilidad />} />
-          <Route path="/formatos/listahojasresponsabilidad" element={<ListaHojasResponsabilidad />} />
-          {/* FORMATOS/SOLVENCIAS */}
-          <Route path="/formatos/listahojasSolvencias" element={<ListaHojaSolvencia />} />
-          <Route path="/formatos/hojasSolvencias" element={<HojaSolvencia />} />
-          {/* FORMATOS/BAJADEACTIVOS */}
-          <Route path="/formatos/bajaAtivos" element={<BajaActivosForm />} />
-          <Route path="/formatos/ListabajaAtivos" element={<ListabajaAtivos />} />
+          <Route
+            path="/solicitudes/crear"
+            element={
+              <ProtectedRoute requiredRole="Administrador">
+                <CrearSolicitud />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/solicitudes/lista"
+            element={
+              <ProtectedRoute requiredRole="Administrador">
+                <ListaSolicitud />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/solicitudes/eliminar"
+            element={
+              <ProtectedRoute requiredRole="Administrador">
+                <EliminarSolicitud />
+              </ProtectedRoute>
+            }
+          />
+          {/* FORMATOS / RESPONSABILIDAD */}
+          <Route
+            path="/formatos/hojaderesponsabilidad"
+            element={
+              <ProtectedRoute requiredRole="Administrador">
+                <HojaResponsabilidad />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/formatos/listahojasresponsabilidad"
+            element={
+              <ProtectedRoute requiredRole="Administrador">
+                <ListaHojasResponsabilidad />
+              </ProtectedRoute>
+            }
+          />
+          {/* FORMATOS / SOLVENCIAS */}
+          <Route
+            path="/formatos/listahojasSolvencias"
+            element={
+              <ProtectedRoute requiredRole="Administrador">
+                <ListaHojaSolvencia />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/formatos/hojasSolvencias"
+            element={
+              <ProtectedRoute requiredRole="Administrador">
+                <HojaSolvencia />
+              </ProtectedRoute>
+            }
+          />
+          {/* FORMATOS / BAJA ACTIVOS */}
+          <Route
+            path="/formatos/bajaAtivos"
+            element={
+              <ProtectedRoute requiredRole="Administrador">
+                <BajaActivosForm />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/formatos/ListabajaAtivos"
+            element={
+              <ProtectedRoute requiredRole="Administrador">
+                <ListabajaAtivos />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/formatos/BajaActivo/BajaActivoPDF" element={<generarBajaPDF />} />
-          {/* FORMATOS/TRASLADOS */}
-          <Route path="/formatos/traslados/lista" element={<TrasladosLista />} />
-          <Route path="/formatos/traslados/crear" element={<CrearTraslado />} />
-          {/* FORMATOS/TRASLADOSRETORNO */}
-          <Route path="/formatos/trasladosRetorno/crear" element={<CrearTrasladoRetorno />} />
-          <Route path="/formatos/trasladosRetorno/lista" element={<TrasladosRetornoLista />} />
+          {/* FORMATOS / TRASLADOS */}
+          <Route
+            path="/formatos/traslados/lista"
+            element={
+              <ProtectedRoute requiredRole="Administrador">
+                <TrasladosLista />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/formatos/traslados/crear"
+            element={
+              <ProtectedRoute requiredRole="Administrador">
+                <CrearTraslado />
+              </ProtectedRoute>
+            }
+          />
+          {/* FORMATOS / TRASLADOS RETORNO */}
+          <Route
+            path="/formatos/trasladosRetorno/crear"
+            element={
+              <ProtectedRoute requiredRole="Administrador">
+                <CrearTrasladoRetorno />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/formatos/trasladosRetorno/lista"
+            element={
+              <ProtectedRoute requiredRole="Administrador">
+                <TrasladosRetornoLista />
+              </ProtectedRoute>
+            }
+          />
           {/* SUMINISTROS */}
-          <Route path="/suministros"element={<ProtectedRoute requiredRole="Administrador"><Suministros /></ProtectedRoute>}/>
-          <Route path="/suministros/inventario"element={<ProtectedRoute requiredRole="Administrador"><SuministrosInventario /></ProtectedRoute>}/>
-          <Route path="/suministros/movimientos"element={<ProtectedRoute requiredRole="Administrador"><Movimientos /></ProtectedRoute>}/>
-          <Route path="/suministros/eliminarMovimientos"element={<ProtectedRoute requiredRole="Administrador"><EliminarSuministros /></ProtectedRoute>}/>
+          <Route
+            path="/suministros"
+            element={
+              <ProtectedRoute requiredRole="Administrador">
+                <Suministros />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/suministros/inventario"
+            element={
+              <ProtectedRoute requiredRole="Administrador">
+                <SuministrosInventario />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/suministros/movimientos"
+            element={
+              <ProtectedRoute requiredRole="Administrador">
+                <Movimientos />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/suministros/eliminarMovimientos"
+            element={
+              <ProtectedRoute requiredRole="Administrador">
+                <EliminarSuministros />
+              </ProtectedRoute>
+            }
+          />
         </Route>
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
