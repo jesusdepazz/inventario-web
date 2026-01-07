@@ -38,12 +38,13 @@ import ProtectedRoute from "./components/ProtectedRout";
 function RequireAuth({ children }) {
   const isAuthenticated = useIsAuthenticated();
   const tokenApp = localStorage.getItem("tokenApp");
+
   if (!isAuthenticated && !tokenApp) {
     return <Navigate to="/login" replace />;
   }
+
   return children;
 }
-
 
 function AppRoutes() {
   return (
@@ -79,9 +80,14 @@ function AppRoutes() {
               </ProtectedRoute>
             }
           />
-          {/* ESTE SE QUEDA SIN PROTECCIÓN */}
-          <Route path="/equipos/inventario" element={<ListaEquipos />} />
-
+          <Route
+            path="/equipos/inventario"
+            element={
+              <ProtectedRoute allowedRoles={["Administrador", "Inventario"]}>
+                <ListaEquipos />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/equipos/editar"
             element={
@@ -110,7 +116,7 @@ function AppRoutes() {
           <Route
             path="/asignaciones/lista"
             element={
-              <ProtectedRoute requiredRole="Administrador">
+              <ProtectedRoute allowedRoles={["Administrador", "Inventario"]}>
                 <ListaAsignaciones />
               </ProtectedRoute>
             }
@@ -135,7 +141,7 @@ function AppRoutes() {
           <Route
             path="/mantenimientos/lista"
             element={
-              <ProtectedRoute requiredRole="Administrador">
+              <ProtectedRoute allowedRoles={["Administrador", "Inventario"]}>
                 <ListaMantenimientos />
               </ProtectedRoute>
             }
@@ -160,7 +166,7 @@ function AppRoutes() {
           <Route
             path="/solicitudes/lista"
             element={
-              <ProtectedRoute requiredRole="Administrador">
+              <ProtectedRoute allowedRoles={["Administrador", "Inventario"]}>
                 <ListaSolicitud />
               </ProtectedRoute>
             }
@@ -185,7 +191,7 @@ function AppRoutes() {
           <Route
             path="/formatos/listahojasresponsabilidad"
             element={
-              <ProtectedRoute requiredRole="Administrador">
+              <ProtectedRoute allowedRoles={["Administrador", "Inventario"]}>
                 <ListaHojasResponsabilidad />
               </ProtectedRoute>
             }
@@ -194,7 +200,7 @@ function AppRoutes() {
           <Route
             path="/formatos/listahojasSolvencias"
             element={
-              <ProtectedRoute requiredRole="Administrador">
+              <ProtectedRoute allowedRoles={["Administrador", "Inventario"]}>
                 <ListaHojaSolvencia />
               </ProtectedRoute>
             }
@@ -219,7 +225,7 @@ function AppRoutes() {
           <Route
             path="/formatos/ListabajaAtivos"
             element={
-              <ProtectedRoute requiredRole="Administrador">
+              <ProtectedRoute allowedRoles={["Administrador", "Inventario"]}>
                 <ListabajaAtivos />
               </ProtectedRoute>
             }
@@ -229,7 +235,7 @@ function AppRoutes() {
           <Route
             path="/formatos/traslados/lista"
             element={
-              <ProtectedRoute requiredRole="Administrador">
+              <ProtectedRoute allowedRoles={["Administrador", "Inventario"]}>
                 <TrasladosLista />
               </ProtectedRoute>
             }
@@ -254,7 +260,7 @@ function AppRoutes() {
           <Route
             path="/formatos/trasladosRetorno/lista"
             element={
-              <ProtectedRoute requiredRole="Administrador">
+              <ProtectedRoute allowedRoles={["Administrador", "Inventario"]}>
                 <TrasladosRetornoLista />
               </ProtectedRoute>
             }
