@@ -1,7 +1,7 @@
 import React from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 
-const ProtectedRoute = ({ children, requiredRole }) => {
+const ProtectedRoute = ({ children, allowedRoles }) => {
   const rol = localStorage.getItem("rol");
   const navigate = useNavigate();
 
@@ -9,7 +9,7 @@ const ProtectedRoute = ({ children, requiredRole }) => {
     return <Navigate to="/login" replace />;
   }
 
-  if (rol !== requiredRole) {
+  if (!allowedRoles.includes(rol)) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
         <h1 className="text-5xl font-bold text-red-600 mb-6 text-center">
