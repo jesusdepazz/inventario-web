@@ -5,12 +5,10 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   const rol = localStorage.getItem("rol");
   const navigate = useNavigate();
 
-  // No hay sesión
   if (!rol) {
     return <Navigate to="/login" replace />;
   }
 
-  // Rol no autorizado
   if (!allowedRoles.includes(rol)) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
