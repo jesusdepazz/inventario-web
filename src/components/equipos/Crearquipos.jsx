@@ -473,7 +473,7 @@ const CrearEquipo = () => {
                     </section>
                     <div className="flex justify-end gap-4">
                         <button
-                            type="submit"
+                             type="submit"
                             className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 font-semibold transition"
                         >
                             Crear Equipo

@@ -1,17 +1,19 @@
 import React from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 
-const ProtectedRoute = ({ children, allowedRoles }) => {
+const ProtectedRoute = ({ children, allowedRoles = [], requiredRole }) => {
   const rol = localStorage.getItem("rol");
   const navigate = useNavigate();
 
-  // No hay sesión
   if (!rol) {
     return <Navigate to="/login" replace />;
   }
 
-  // Rol no autorizado
-  if (!allowedRoles.includes(rol)) {
+  const rolesPermitidos = requiredRole
+    ? [requiredRole]
+    : allowedRoles;
+
+  if (rolesPermitidos.length > 0 && !rolesPermitidos.includes(rol)) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
         <h1 className="text-5xl font-bold text-red-600 mb-6 text-center">
@@ -32,5 +34,6 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 
   return children;
 };
+
 
 export default ProtectedRoute;
