@@ -24,7 +24,7 @@ const CrearEquipo = () => {
         estado: "",
         ubicacion: "",
         comentarios: "",
-        obsevacion: "",
+        observaciones: "",
     });
 
     const [ubicaciones, setUbicaciones] = useState([]);
