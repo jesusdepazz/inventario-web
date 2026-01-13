@@ -15,8 +15,8 @@ const EquiposService = {
       },
     }),
 
-  editar: (id, formData) =>
-    apiClient.put(`/equipos/${id}`, formData),
+  editar: (id, data) =>
+    apiClient.put(`/equipos/${id}`, data),
 
   eliminar: (id) => apiClient.delete(`/equipos/${id}`),
 };

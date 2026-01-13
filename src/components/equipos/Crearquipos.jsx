@@ -24,7 +24,7 @@ const CrearEquipo = () => {
         estado: "",
         ubicacion: "",
         comentarios: "",
-        obsevacion: "",
+        observaciones: "",
     });
 
     const [ubicaciones, setUbicaciones] = useState([]);
@@ -447,7 +447,6 @@ const CrearEquipo = () => {
                                     value={form.comentarios}
                                     onChange={handleChange}
                                     placeholder="Comentarios"
-                                    required
                                     className="input-field"
                                 />
                             </div>
@@ -465,7 +464,6 @@ const CrearEquipo = () => {
                                     value={form.observaciones}
                                     onChange={handleChange}
                                     placeholder="Observaciones"
-                                    required
                                     className="input-field"
                                 />
                             </div>
