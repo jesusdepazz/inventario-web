@@ -86,7 +86,6 @@ const EditarEquipo = () => {
           </div>
         )}
 
-        {/* FORMULARIO */}
         {equipo && (
           <div className="bg-white rounded-2xl shadow-lg p-8 space-y-8">
             <div className="flex justify-between items-center">
@@ -99,7 +98,6 @@ const EditarEquipo = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Codificación */}
               <div>
                 <label className="block text-sm font-medium text-gray-600 mb-1">
                   Codificación
@@ -112,7 +110,6 @@ const EditarEquipo = () => {
                 />
               </div>
 
-              {/* Marca */}
               <div>
                 <label className="block text-sm font-medium text-gray-600 mb-1">
                   Marca
@@ -126,7 +123,6 @@ const EditarEquipo = () => {
                 />
               </div>
 
-              {/* Modelo */}
               <div>
                 <label className="block text-sm font-medium text-gray-600 mb-1">
                   Modelo
@@ -140,7 +136,6 @@ const EditarEquipo = () => {
                 />
               </div>
 
-              {/* Serie */}
               <div>
                 <label className="block text-sm font-medium text-gray-600 mb-1">
                   Serie
@@ -154,7 +149,6 @@ const EditarEquipo = () => {
                 />
               </div>
 
-              {/* Ubicación */}
               <div>
                 <label className="block text-sm font-medium text-gray-600 mb-1">
                   Ubicación
@@ -175,7 +169,6 @@ const EditarEquipo = () => {
                 </select>
               </div>
 
-              {/* Estado */}
               <div>
                 <label className="block text-sm font-medium text-gray-600 mb-1">
                   Estado
@@ -190,7 +183,6 @@ const EditarEquipo = () => {
               </div>
             </div>
 
-            {/* BOTONES */}
             <div className="flex justify-center gap-6 pt-6">
               <button
                 onClick={guardarCambios}
