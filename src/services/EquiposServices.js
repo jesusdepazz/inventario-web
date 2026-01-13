@@ -16,11 +16,7 @@ const EquiposService = {
     }),
 
   editar: (id, formData) =>
-    apiClient.put(`/equipos/${id}`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    }),
+    apiClient.put(`/equipos/${id}`, formData),
 
   eliminar: (id) => apiClient.delete(`/equipos/${id}`),
 };
