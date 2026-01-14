@@ -256,7 +256,6 @@ const CrearEquipo = () => {
                                     className="input-field"
                                 />
                             </div>
-
                             <div className="flex flex-col">
                                 <label
                                     htmlFor="tipoEquipo"
@@ -274,7 +273,6 @@ const CrearEquipo = () => {
                                     className="input-field"
                                 />
                             </div>
-
                             <div className="flex flex-col">
                                 <label htmlFor="marca" className="mb-1 font-medium text-gray-700">
                                     Marca <span className="text-red-500">*</span>
@@ -290,7 +288,6 @@ const CrearEquipo = () => {
                                     className="input-field"
                                 />
                             </div>
-
                             <div className="flex flex-col">
                                 <label htmlFor="modelo" className="mb-1 font-medium text-gray-700">
                                     Modelo <span className="text-red-500">*</span>
@@ -306,7 +303,6 @@ const CrearEquipo = () => {
                                     className="input-field"
                                 />
                             </div>
-
                             <div className="flex flex-col">
                                 <label htmlFor="serie" className="mb-1 font-medium text-gray-700">
                                     Serie
@@ -340,7 +336,6 @@ const CrearEquipo = () => {
                                             className="input-field"
                                         />
                                     </div>
-
                                     <div className="flex flex-col">
                                         <label htmlFor="extension" className="mb-1 font-medium text-gray-700">
                                             Extensión
@@ -357,7 +352,6 @@ const CrearEquipo = () => {
                                     </div>
                                 </>
                             )}
-
                             <div className="flex flex-col">
                                 <label
                                     htmlFor="estado"
@@ -379,7 +373,6 @@ const CrearEquipo = () => {
                                     <option value="Obsoleto" className="text-red-500">Obsoleto</option>
                                 </select>
                             </div>
-
                             <div className="flex flex-col">
                                 <label htmlFor="tipo" className="mb-1 font-medium text-gray-700">
                                     Tipo <span className="text-red-500">*</span>
@@ -398,7 +391,6 @@ const CrearEquipo = () => {
                                     <option value="Equipo comunal">Equipo comunal</option>
                                 </select>
                             </div>
-
                             <div className="flex flex-col">
                                 <label htmlFor="responsableAnterior" className="mb-1 font-medium text-gray-700">
                                     Responsable Anterior
