@@ -44,7 +44,6 @@ function RequireAuth({ children }) {
   return children;
 }
 
-
 function AppRoutes() {
   return (
     <BrowserRouter>
