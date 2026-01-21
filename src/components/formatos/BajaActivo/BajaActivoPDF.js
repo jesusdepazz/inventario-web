@@ -7,8 +7,12 @@ import UbicacionesService from "../../../services/UbicacionesServices";
 export const generarBajaPDF = async (bajaId) => {
   try {
     const { data: baja } = await BajaActivosService.obtenerPorId(bajaId);
-    const { data: equipo } = await EquiposService.obtenerPorCodificacion(baja.codificacionEquipo);
-    const { data: ubicaciones } = await UbicacionesService.obtenerTodas();
+
+    const { data: equipo } =
+      await EquiposService.obtenerPorCodificacion(baja.codificacionEquipo);
+      
+    const { data: ubicaciones } =
+      await UbicacionesService.obtenerTodas();
 
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();

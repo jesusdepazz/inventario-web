@@ -17,7 +17,6 @@ export default function BajaActivosForm() {
   const [loading, setLoading] = useState(false);
   const [mensaje, setMensaje] = useState("");
 
-
   useEffect(() => {
     UbicacionesService.obtenerTodas()
       .then((res) => {
@@ -31,7 +30,6 @@ export default function BajaActivosForm() {
       })
       .catch(() => console.error("Error al cargar ubicaciones"));
   }, []);
-
 
   const buscarUbicacionActual = async (codificacion) => {
     if (!codificacion) return;
@@ -192,17 +190,16 @@ export default function BajaActivosForm() {
           ))}
         </div>
         <div>
-          <label className="block font-medium text-gray-700">Detalles</label>
+          <label className="block font-medium text-gray-700">Justificacion de la baja</label>
           <textarea
             name="detallesBaja"
             value={form.detallesBaja}
             onChange={handleChange}
             className="w-full border rounded-lg p-2 mt-1"
             rows="3"
-            placeholder="Detalles adicionales de la baja..."
+            placeholder="Justificacion adicional de la baja..."
           />
         </div>
-
         <button
           type="submit"
           disabled={loading}

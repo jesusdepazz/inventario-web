@@ -6,7 +6,9 @@ const EquiposService = {
   obtenerPorId: (id) => apiClient.get(`/equipos/${id}`),
 
   obtenerPorCodificacion: (codificacion) =>
-    apiClient.get(`/equipos/por-codificacion/${codificacion}`),
+    apiClient.get("/equipos/por-codificacion", {
+      params: { codificacion }
+    }),
 
   crear: (formData) =>
     apiClient.post("/equipos", formData, {
