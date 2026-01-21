@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getRol } from "../services/auth";
 import {
     FaHome,
     FaLaptop,
@@ -31,6 +32,12 @@ export default function Sidebar() {
     const [modalBajasActivoOpen, setModalBajasActivoOpen] = useState(false);
     const [modalTrasladoRetornoOpen, setModalTrasladoRetornoOpen] = useState(false);
 
+    const [rol, setRol] = useState(null);
+
+    useEffect(() => {
+        const storedRol = localStorage.getItem("rol");
+        setRol(storedRol);
+    }, []);
 
     const handleLogout = () => {
         localStorage.removeItem("token");
@@ -100,18 +107,37 @@ export default function Sidebar() {
                         <div
                             className={`ml-6 mt-1 flex flex-col gap-2 overflow-hidden transition-all duration-500 ${equiposOpen ? "max-h-40" : "max-h-0"}`}
                         >
-                            <Link to="/equipos/inventario" className="flex items-center gap-2 hover:text-blue-300">
+                            <Link
+                                to="/equipos/inventario"
+                                className="flex items-center gap-2 hover:text-blue-300"
+                            >
                                 <FaClipboardList /> Inventario
                             </Link>
-                            <Link to="/equipos/crear" className="flex items-center gap-2 hover:text-blue-300">
-                                <FaUpload /> Ingresar
-                            </Link>
-                            <Link to="/equipos/editar" className="flex items-center gap-2 hover:text-blue-300">
-                                <FaEdit /> Editar
-                            </Link>
-                            <Link to="/equipos/eliminar" className="flex items-center gap-2 hover:text-blue-300">
-                                <FaTrash /> Eliminar
-                            </Link>
+
+                            {rol === "Administrador" && (
+                                <>
+                                    <Link
+                                        to="/equipos/crear"
+                                        className="flex items-center gap-2 hover:text-blue-300"
+                                    >
+                                        <FaUpload /> Ingresar
+                                    </Link>
+
+                                    <Link
+                                        to="/equipos/editar"
+                                        className="flex items-center gap-2 hover:text-blue-300"
+                                    >
+                                        <FaEdit /> Editar
+                                    </Link>
+
+                                    <Link
+                                        to="/equipos/eliminar"
+                                        className="flex items-center gap-2 hover:text-blue-300"
+                                    >
+                                        <FaTrash /> Eliminar
+                                    </Link>
+                                </>
+                            )}
                         </div>
                     </div>
                     <div>
@@ -128,28 +154,37 @@ export default function Sidebar() {
                         <div
                             className={`ml-6 mt-1 flex flex-col gap-2 overflow-hidden transition-all duration-500 ${suministrosOpen ? "max-h-48" : "max-h-0"}`}
                         >
-                            <Link
-                                to="/suministros"
-                                className="flex items-center gap-2 hover:text-blue-300"
-                            >
-                                <FaPlus /> Crear Suministro
-                            </Link>
-                            <Link
-                                to="/suministros/inventario"
-                                className="flex items-center gap-2 hover:text-blue-300"
-                            >
-                                <FaClipboardList /> Inventario de suministros
-                            </Link>
-                            <Link
-                                to="/suministros/movimientos"
-                                className="flex items-center gap-2 hover:text-blue-300"
-                            >
-                                <FaUpload /> Movimientos de suministros
-                            </Link>
-                            <Link to="/suministros/eliminarMovimientos"
-                                className="flex items-center gap-2 hover:text-blue-300">
-                                <FaTrash /> Eliminar Movimientos
-                            </Link>
+                            {rol === "Administrador" && (
+                                <>
+                                    <Link
+                                        to="/suministros"
+                                        className="flex items-center gap-2 hover:text-blue-300"
+                                    >
+                                        <FaPlus /> Crear Suministro
+                                    </Link>
+
+                                    <Link
+                                        to="/suministros/inventario"
+                                        className="flex items-center gap-2 hover:text-blue-300"
+                                    >
+                                        <FaClipboardList /> Inventario de suministros
+                                    </Link>
+
+                                    <Link
+                                        to="/suministros/movimientos"
+                                        className="flex items-center gap-2 hover:text-blue-300"
+                                    >
+                                        <FaUpload /> Movimientos de suministros
+                                    </Link>
+
+                                    <Link
+                                        to="/suministros/eliminarMovimientos"
+                                        className="flex items-center gap-2 hover:text-blue-300"
+                                    >
+                                        <FaTrash /> Eliminar Movimientos
+                                    </Link>
+                                </>
+                            )}
                         </div>
                     </div>
                     <div>
@@ -165,14 +200,28 @@ export default function Sidebar() {
                         <div
                             className={`ml-6 mt-1 flex flex-col gap-2 overflow-hidden transition-all duration-500 ${asignacionesOpen ? "max-h-32" : "max-h-0"}`}
                         >
-                            <Link to="/asignaciones/crear" className="flex items-center gap-2 hover:text-blue-300">
-                                <FaUpload /> Asignar
-                            </Link>
-                            <Link to="/asignaciones/lista" className="flex items-center gap-2 hover:text-blue-300">
+                            {rol === "Administrador" && (
+                                <>
+                                    <Link
+                                        to="/asignaciones/crear"
+                                        className="flex items-center gap-2 hover:text-blue-300"
+                                    >
+                                        <FaUpload /> Asignar
+                                    </Link>
+
+                                    <Link
+                                        to="/asignaciones/eliminar"
+                                        className="flex items-center gap-2 hover:text-blue-300"
+                                    >
+                                        <FaTrash /> Desasignar
+                                    </Link>
+                                </>
+                            )}
+                            <Link
+                                to="/asignaciones/lista"
+                                className="flex items-center gap-2 hover:text-blue-300"
+                            >
                                 <FaClipboardList /> Historial
-                            </Link>
-                            <Link to="/asignaciones/eliminar" className="flex items-center gap-2 hover:text-blue-300">
-                                <FaTrash /> Desasignar
                             </Link>
                         </div>
                     </div>
@@ -189,14 +238,28 @@ export default function Sidebar() {
                         <div
                             className={`ml-6 mt-1 flex flex-col gap-2 overflow-hidden transition-all duration-500 ${mantenimientosOpen ? "max-h-32" : "max-h-0"}`}
                         >
-                            <Link to="/solicitudes/crear" className="flex items-center gap-2 hover:text-blue-300">
-                                <FaUpload /> Crear
-                            </Link>
-                            <Link to="/solicitudes/lista" className="flex items-center gap-2 hover:text-blue-300">
+                            {rol === "Administrador" && (
+                                <>
+                                    <Link
+                                        to="/solicitudes/crear"
+                                        className="flex items-center gap-2 hover:text-blue-300"
+                                    >
+                                        <FaUpload /> Crear
+                                    </Link>
+
+                                    <Link
+                                        to="/solicitudes/eliminar"
+                                        className="flex items-center gap-2 hover:text-blue-300"
+                                    >
+                                        <FaTrash /> Eliminar
+                                    </Link>
+                                </>
+                            )}
+                            <Link
+                                to="/solicitudes/lista"
+                                className="flex items-center gap-2 hover:text-blue-300"
+                            >
                                 <FaClipboardList /> Historial
-                            </Link>
-                            <Link to="/solicitudes/eliminar" className="flex items-center gap-2 hover:text-blue-300">
-                                <FaTrash /> Eliminar
                             </Link>
                         </div>
                     </div>
@@ -249,7 +312,7 @@ export default function Sidebar() {
                 <div className="bg-white rounded-2xl shadow-2xl p-6 w-96">
                     <h2 className="text-xl font-bold mb-6 text-gray-800 text-center"> Selecciona una opción </h2>
                     <div className="flex flex-col gap-3">
-                        <button onClick={() => handleHojaOption("/formatos/hojaderesponsabilidad")} className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700" > Crear </button>
+                        {rol === "Administrador" && (<button onClick={() => handleHojaOption("/formatos/hojaderesponsabilidad")} className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700" > Crear </button>)}
                         <button onClick={() => handleHojaOption("/formatos/listahojasresponsabilidad")} className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700" > Ver Historial </button>
                         <button onClick={closeHojaModal} className="w-full bg-gray-400 text-white py-2 px-4 rounded-lg hover:bg-gray-500" > Cancelar </button>
                     </div>
@@ -259,17 +322,26 @@ export default function Sidebar() {
                 <div className="bg-white rounded-2xl shadow-2xl p-6 w-96">
                     <h2 className="text-xl font-bold mb-6 text-gray-800 text-center"> Solvencias </h2>
                     <div className="flex flex-col gap-3">
-                        <button onClick={() => handleSolvenciaOption("/formatos/hojasSolvencias")}
+                        {rol === "Administrador" && (
+                            <button
+                                onClick={() => handleSolvenciaOption("/formatos/hojasSolvencias")}
+                                className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+                            >
+                                Crear
+                            </button>
+                        )}
+                        <button
+                            onClick={() => handleSolvenciaOption("/formatos/listahojasSolvencias")}
                             className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
-                        > Crear
+                        >
+                            Ver Historial
                         </button>
-                        <button onClick={() => handleSolvenciaOption("/formatos/listahojasSolvencias")}
-                            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
-                        > Ver Historial
-                        </button>
-                        <button onClick={closeSolvenciaModal}
+
+                        <button
+                            onClick={closeSolvenciaModal}
                             className="w-full bg-gray-400 text-white py-2 px-4 rounded-lg hover:bg-gray-500"
-                        > Cancelar
+                        >
+                            Cancelar
                         </button>
                     </div>
                 </div>
@@ -281,12 +353,14 @@ export default function Sidebar() {
                             Traslados
                         </h2>
                         <div className="flex flex-col gap-3">
-                            <button
-                                onClick={() => handleTrasladoOption("/formatos/traslados/crear")}
-                                className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
-                            >
-                                Crear
-                            </button>
+                            {rol === "Administrador" && (
+                                <button
+                                    onClick={() => handleTrasladoOption("/formatos/traslados/crear")}
+                                    className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+                                >
+                                    Crear
+                                </button>
+                            )}
                             <button
                                 onClick={() => handleTrasladoOption("/formatos/traslados/lista")}
                                 className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
@@ -308,12 +382,14 @@ export default function Sidebar() {
                     <div className="bg-white rounded-2xl shadow-2xl p-6 w-96">
                         <h2 className="text-xl font-bold mb-6 text-gray-800 text-center"> Bajas de Activos </h2>
                         <div className="flex flex-col gap-3">
-                            <button
-                                onClick={() => handleBajasActivoOption("/formatos/bajaAtivos")}
-                                className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
-                            >
-                                Crear Baja
-                            </button>
+                            {rol === "Administrador" && (
+                                <button
+                                    onClick={() => handleBajasActivoOption("/formatos/bajaAtivos")}
+                                    className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+                                >
+                                    Crear Baja
+                                </button>
+                            )}
                             <button
                                 onClick={() => handleBajasActivoOption("/formatos/ListabajaAtivos")}
                                 className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
@@ -338,15 +414,16 @@ export default function Sidebar() {
                         </h2>
 
                         <div className="flex flex-col gap-3">
-                            <button
-                                onClick={() =>
-                                    handleTrasladoRetornoOption("/formatos/trasladosRetorno/crear")
-                                }
-                                className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
-                            >
-                                Crear Traslado Retorno
-                            </button>
-
+                            {rol === "Administrador" && (
+                                <button
+                                    onClick={() =>
+                                        handleTrasladoRetornoOption("/formatos/trasladosRetorno/crear")
+                                    }
+                                    className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+                                >
+                                    Crear Traslado Retorno
+                                </button>
+                            )}
                             <button
                                 onClick={() =>
                                     handleTrasladoRetornoOption("/formatos/trasladosRetorno/lista")
