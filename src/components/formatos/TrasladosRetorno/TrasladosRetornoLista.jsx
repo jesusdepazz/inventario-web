@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import TrasladosRetornoService from "../../../services/TrasladosRetornoService";
 import PdfTrasladosRetorno from "./TrasladosRetornoPDF";
-import { PDFDownloadLink } from "@react-pdf/renderer";
+import { pdf } from "@react-pdf/renderer";
+
 
 const TrasladosRetornoLista = () => {
   const [traslados, setTraslados] = useState([]);
@@ -26,6 +27,27 @@ const TrasladosRetornoLista = () => {
       t.no?.toLowerCase().includes(busqueda.toLowerCase()) ||
       t.solicitante?.toLowerCase().includes(busqueda.toLowerCase())
   );
+
+  const descargarPDF = async (id) => {
+    try {
+      const res = await TrasladosRetornoService.obtenerDetalle(id);
+
+      const blob = await pdf(
+        <PdfTrasladosRetorno data={res.data} />
+      ).toBlob();
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `TrasladoRetorno-${id}.pdf`;
+      link.click();
+
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error(error);
+      toast.error("Error al generar el PDF");
+    }
+  };
 
   const formatearFecha = (fecha) => {
     if (!fecha) return "";
@@ -73,11 +95,9 @@ const TrasladosRetornoLista = () => {
               <th className="p-2 border">Fecha Pase</th>
               <th className="p-2 border">Solicitante</th>
               <th className="p-2 border">Equipo</th>
-              <th className="p-2 border">Descripción</th>
               <th className="p-2 border">Motivo</th>
               <th className="p-2 border">Ubicación Retorno</th>
               <th className="p-2 border">Fecha Retorno</th>
-              <th className="p-2 border">Status</th>
               <th className="p-2 border">Acciones</th>
             </tr>
           </thead>
@@ -104,31 +124,37 @@ const TrasladosRetornoLista = () => {
                   <td className="p-2 border text-center">
                     {formatearFecha(t.fechaPase)}
                   </td>
-                  <td className="p-2 border">{t.solicitante}</td>
-                  <td className="p-2 border">{t.equipo}</td>
-                  <td className="p-2 border">{t.descripcionEquipo}</td>
+                  <td className="p-2 border">
+                    {t.empleado?.empleadoId || "-"}
+                  </td>
+                  <td className="p-2 border max-w-xs">
+                    <div className="flex flex-wrap gap-1">
+                      {t.equipos?.length ? (
+                        t.equipos.map((e, i) => (
+                          <span
+                            key={i}
+                            className="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full"
+                          >
+                            {e.equipo}
+                          </span>
+                        ))
+                      ) : (
+                        "-"
+                      )}
+                    </div>
+                  </td>
                   <td className="p-2 border">{t.motivoSalida}</td>
                   <td className="p-2 border">{t.ubicacionRetorno}</td>
                   <td className="p-2 border text-center">
                     {formatearFecha(t.fechaRetorno)}
                   </td>
-                  <td
-                    className={`p-2 border text-center font-semibold ${t.status?.toLowerCase() === "pendiente"
-                      ? "text-yellow-600"
-                      : t.status?.toLowerCase() === "completado"
-                        ? "text-green-600"
-                        : "text-gray-700"
-                      }`}
-                  >
-                    {t.status}
-                  </td>
                   <td className="border p-2">
-                    <PDFDownloadLink
-                      document={<PdfTrasladosRetorno data={t} />}
-                      fileName={`TrasladoRetorno-${t.id}.pdf`}
+                    <button
+                      onClick={() => descargarPDF(t.id)}
+                      className="text-blue-600 hover:underline"
                     >
-                      {({ loading }) => loading ? "Generando..." : "Descargar PDF"}
-                    </PDFDownloadLink>
+                      Descargar PDF
+                    </button>
                   </td>
                 </tr>
               ))

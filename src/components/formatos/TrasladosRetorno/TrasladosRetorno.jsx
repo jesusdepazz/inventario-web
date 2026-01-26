@@ -9,25 +9,26 @@ const CrearTrasladoRetorno = () => {
   const [formData, setFormData] = useState({
     no: "",
     fechaPase: "",
-    solicitante: "",
-    equipo: "",
-    descripcionEquipo: "",
-    marca: "",
-    modelo: "",
-    serie: "",
     motivoSalida: "",
     ubicacionRetorno: "",
     fechaRetorno: "",
-    status: "",
-    razonNoLiquidada: "",
+    codigoProveedor: "",
+    telefonoProveedor: "",
+    personaRetira: "",
+    nombreProveedor: "",
+    nombreContacto: "",
+    identificacion: "",
+    empleado: null,
+    equipos: []
   });
 
-  const [empleadoInfo, setEmpleadoInfo] = useState(null);
+  const [empleadoCodigo, setEmpleadoCodigo] = useState("");
+  const [equipoCodigo, setEquipoCodigo] = useState("");
   const [ubicaciones, setUbicaciones] = useState([]);
 
   useEffect(() => {
     UbicacionesService.obtenerTodas()
-      .then((res) => setUbicaciones(res.data))
+      .then(res => setUbicaciones(res.data))
       .catch(() => toast.error("Error al cargar ubicaciones"));
   }, []);
 
@@ -35,261 +36,312 @@ const CrearTrasladoRetorno = () => {
      BUSCAR EMPLEADO
   ========================== */
   const handleBuscarEmpleado = () => {
-    if (!formData.solicitante.trim()) return;
+    if (!empleadoCodigo.trim()) return;
 
-    EmpleadosService.obtenerPorCodigo(formData.solicitante)
-      .then((res) => setEmpleadoInfo(res.data))
-      .catch(() => {
-        setEmpleadoInfo(null);
-        toast.error("Empleado no encontrado");
-      });
-  };
-
-  /* =========================
-     BUSCAR EQUIPO
-  ========================== */
-  const handleBuscarEquipo = () => {
-    if (!formData.equipo.trim()) return;
-
-    EquiposService.obtenerPorCodificacion(formData.equipo)
-      .then((res) => {
-        setFormData((prev) => ({
+    EmpleadosService.obtenerPorCodigo(empleadoCodigo)
+      .then(res => {
+        setFormData(prev => ({
           ...prev,
-          descripcionEquipo: res.data.tipoEquipo || "",
-          marca: res.data.marca || "",
-          modelo: res.data.modelo || "",
-          serie: res.data.serie || "",
-          ubicacionRetorno: res.data.ubicacion || "",
+          empleado: {
+            empleadoId: empleadoCodigo,
+            nombre: res.data.nombre,
+            puesto: res.data.puesto,
+            departamento: res.data.departamento
+          }
         }));
       })
-      .catch(() => {
-        setFormData((prev) => ({
+      .catch(() => toast.error("Empleado no encontrado"));
+  };
+
+  const handleAgregarEquipo = () => {
+    if (!equipoCodigo.trim()) return;
+
+    EquiposService.obtenerPorCodificacion(equipoCodigo)
+      .then(res => {
+        const existe = formData.equipos.some(e => e.equipo === res.data.codificacion);
+        if (existe) {
+          toast.warning("Equipo ya agregado");
+          return;
+        }
+
+        setFormData(prev => ({
           ...prev,
-          descripcionEquipo: "",
-          marca: "",
-          modelo: "",
-          serie: "",
-          ubicacionRetorno: "",
+          equipos: [
+            ...prev.equipos,
+            {
+              equipo: res.data.codificacion,
+              descripcionEquipo: res.data.tipoEquipo,
+              marca: res.data.marca,
+              modelo: res.data.modelo,
+              serie: res.data.serie
+            }
+          ]
         }));
-        toast.error("Equipo no encontrado");
-      });
+
+        setEquipoCodigo("");
+      })
+      .catch(() => toast.error("Equipo no encontrado"));
   };
 
-  /* =========================
-     MANEJO INPUTS
-  ========================== */
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+  const handleQuitarEquipo = (index) => {
+    setFormData(prev => ({
+      ...prev,
+      equipos: prev.equipos.filter((_, i) => i !== index)
+    }));
   };
 
-  /* =========================
-     GUARDAR
-  ========================== */
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (!formData.empleado)
+      return toast.error("Debe seleccionar un empleado");
+
+    if (formData.equipos.length === 0)
+      return toast.error("Debe agregar al menos un equipo");
+
+    console.log("PAYLOAD:", JSON.stringify(formData, null, 2));
 
     TrasladosRetornoService.crear(formData)
       .then(() => {
         toast.success("Traslado registrado correctamente");
+
         setFormData({
           no: "",
           fechaPase: "",
-          solicitante: "",
-          equipo: "",
-          descripcionEquipo: "",
-          marca: "",
-          modelo: "",
-          serie: "",
           motivoSalida: "",
           ubicacionRetorno: "",
           fechaRetorno: "",
-          status: "",
-          razonNoLiquidada: "",
+          codigoProveedor: "",
+          telefonoProveedor: "",
+          personaRetira: "",
+          nombreProveedor: "",
+          nombreContacto: "",
+          identificacion: "",
+          empleado: null,
+          equipos: []
         });
-        setEmpleadoInfo(null);
+
+        setEmpleadoCodigo("");
+        setEquipoCodigo("");
       })
-      .catch(() => toast.error("Error al registrar traslado"));
+      .catch(err => {
+        console.error(err.response?.data);
+        toast.error("Error al registrar traslado");
+      });
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white rounded-2xl shadow">
-      <h2 className="text-xl font-semibold mb-4 text-gray-700">
+    <div className="max-w-4xl mx-auto p-6 bg-white rounded-2xl shadow">
+      <h2 className="text-xl font-semibold mb-6 text-gray-700">
         Crear Traslado Retorno
       </h2>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* No y Fecha */}
+      <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block font-medium">No.</label>
+            <label>No.</label>
             <input
-              name="no"
-              value={formData.no}
-              onChange={handleChange}
               className="border p-2 w-full rounded"
+              value={formData.no}
+              onChange={e => setFormData({ ...formData, no: e.target.value })}
             />
           </div>
 
           <div>
-            <label className="block font-medium">Fecha Pase</label>
+            <label>Fecha Pase</label>
             <input
               type="date"
-              name="fechaPase"
-              value={formData.fechaPase}
-              onChange={handleChange}
               className="border p-2 w-full rounded"
+              value={formData.fechaPase}
+              onChange={e => setFormData({ ...formData, fechaPase: e.target.value })}
             />
           </div>
-        </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label>Código Proveedor</label>
+              <input
+                className="border p-2 w-full rounded"
+                value={formData.codigoProveedor}
+                onChange={e =>
+                  setFormData({ ...formData, codigoProveedor: e.target.value })
+                }
+              />
+            </div>
 
-        {/* Solicitante */}
+            <div>
+              <label>Teléfono Proveedor</label>
+              <input
+                className="border p-2 w-full rounded"
+                value={formData.telefonoProveedor}
+                onChange={e =>
+                  setFormData({ ...formData, telefonoProveedor: e.target.value })
+                }
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label>Nombre Proveedor</label>
+              <input
+                className="border p-2 w-full rounded"
+                value={formData.nombreProveedor}
+                onChange={e =>
+                  setFormData({ ...formData, nombreProveedor: e.target.value })
+                }
+              />
+            </div>
+
+            <div>
+              <label>Nombre Contacto</label>
+              <input
+                className="border p-2 w-full rounded"
+                value={formData.nombreContacto}
+                onChange={e =>
+                  setFormData({ ...formData, nombreContacto: e.target.value })
+                }
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label>Persona que Retira</label>
+              <input
+                className="border p-2 w-full rounded"
+                value={formData.personaRetira}
+                onChange={e =>
+                  setFormData({ ...formData, personaRetira: e.target.value })
+                }
+              />
+            </div>
+
+            <div>
+              <label>Identificación</label>
+              <input
+                className="border p-2 w-full rounded"
+                value={formData.identificacion}
+                onChange={e =>
+                  setFormData({ ...formData, identificacion: e.target.value })
+                }
+              />
+            </div>
+          </div>
+        </div>
         <div>
-          <label className="block font-medium">Solicitante (Código)</label>
+          <label>Empleado (Código)</label>
           <div className="flex gap-2">
             <input
-              name="solicitante"
-              value={formData.solicitante}
-              onChange={handleChange}
               className="border p-2 w-full rounded"
+              value={empleadoCodigo}
+              onChange={e => setEmpleadoCodigo(e.target.value)}
             />
             <button
               type="button"
               onClick={handleBuscarEmpleado}
-              className="bg-blue-600 text-white px-4 rounded hover:bg-blue-700"
+              className="bg-blue-600 text-white px-4 rounded"
             >
               Buscar
             </button>
           </div>
-
-          {empleadoInfo && (
+          {formData.empleado && (
             <div className="mt-2 text-sm text-gray-600">
-              <p>Nombre: {empleadoInfo.nombre}</p>
-              <p>Puesto: {empleadoInfo.puesto}</p>
-              <p>Departamento: {empleadoInfo.departamento}</p>
+              <p><b>Codigo:</b> {formData.empleado.empleadoId}</p>
+              <p><b>Nombre:</b> {formData.empleado.nombre}</p>
+              <p><b>Puesto:</b> {formData.empleado.puesto}</p>
+              <p><b>Departamento:</b> {formData.empleado.departamento}</p>
             </div>
           )}
         </div>
-
-        {/* Equipo */}
         <div>
-          <label className="block font-medium">Equipo (Codificación)</label>
+          <label>Equipo (Codificación)</label>
           <div className="flex gap-2">
             <input
-              name="equipo"
-              value={formData.equipo}
-              onChange={handleChange}
               className="border p-2 w-full rounded"
+              value={equipoCodigo}
+              onChange={e => setEquipoCodigo(e.target.value)}
             />
             <button
               type="button"
-              onClick={handleBuscarEquipo}
-              className="bg-blue-600 text-white px-4 rounded hover:bg-blue-700"
+              onClick={handleAgregarEquipo}
+              className="bg-blue-600 text-white px-4 rounded"
             >
-              Buscar
+              Agregar
             </button>
           </div>
         </div>
-
-        {/* Descripción */}
+        {formData.equipos.length > 0 && (
+          <table className="w-full border text-sm">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="border p-2">Equipo</th>
+                <th className="border p-2">Descripción</th>
+                <th className="border p-2">Marca</th>
+                <th className="border p-2">Modelo</th>
+                <th className="border p-2">Serie</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {formData.equipos.map((eq, i) => (
+                <tr key={i}>
+                  <td className="border p-2">{eq.equipo}</td>
+                  <td className="border p-2">{eq.descripcionEquipo}</td>
+                  <td className="border p-2">{eq.marca}</td>
+                  <td className="border p-2">{eq.modelo}</td>
+                  <td className="border p-2">{eq.serie}</td>
+                  <td className="border p-2 text-center">
+                    <button
+                      type="button"
+                      onClick={() => handleQuitarEquipo(i)}
+                      className="text-red-600"
+                    >
+                      Quitar
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
         <div>
-          <label className="block font-medium">Descripción Equipo</label>
+          <label>Motivo de Salida</label>
           <input
-            value={formData.descripcionEquipo}
-            readOnly
-            className="border p-2 w-full rounded bg-gray-100"
-          />
-        </div>
-
-        {/* Marca / Modelo / Serie */}
-        <div className="grid grid-cols-3 gap-4">
-          <div>
-            <label className="block font-medium">Marca</label>
-            <input
-              value={formData.marca}
-              readOnly
-              className="border p-2 w-full rounded bg-gray-100"
-            />
-          </div>
-
-          <div>
-            <label className="block font-medium">Modelo</label>
-            <input
-              value={formData.modelo}
-              readOnly
-              className="border p-2 w-full rounded bg-gray-100"
-            />
-          </div>
-
-          <div>
-            <label className="block font-medium">Serie</label>
-            <input
-              value={formData.serie}
-              readOnly
-              className="border p-2 w-full rounded bg-gray-100"
-            />
-          </div>
-        </div>
-
-        {/* Motivo */}
-        <div>
-          <label className="block font-medium">Motivo de Salida</label>
-          <input
-            name="motivoSalida"
-            value={formData.motivoSalida}
-            onChange={handleChange}
             className="border p-2 w-full rounded"
+            value={formData.motivoSalida}
+            onChange={e => setFormData({ ...formData, motivoSalida: e.target.value })}
           />
         </div>
-
-        {/* Ubicación */}
         <div>
-          <label className="block font-medium">Ubicación de Retorno</label>
-          <input
+          <label>Ubicación Retorno</label>
+          <select
+            className="border p-2 w-full rounded"
             value={formData.ubicacionRetorno}
-            readOnly
-            className="border p-2 w-full rounded bg-gray-100"
-          />
-        </div>
+            onChange={e =>
+              setFormData({ ...formData, ubicacionRetorno: e.target.value })
+            }
+          >
+            <option value="">Seleccione una ubicación</option>
 
-        {/* Fecha Retorno */}
+            {ubicaciones.map((u) => (
+              <option key={u.id} value={u.nombre}>
+                {u.nombre}
+              </option>
+            ))}
+          </select>
+
+        </div>
         <div>
-          <label className="block font-medium">Fecha Retorno</label>
+          <label>Fecha Retorno</label>
           <input
             type="date"
-            name="fechaRetorno"
+            className="border p-2 w-full rounded"
             value={formData.fechaRetorno}
-            onChange={handleChange}
-            className="border p-2 w-full rounded"
+            onChange={e => setFormData({ ...formData, fechaRetorno: e.target.value })}
           />
         </div>
 
-        {/* Status */}
-        <div>
-          <label className="block font-medium">Status</label>
-          <input
-            name="status"
-            value={formData.status}
-            onChange={handleChange}
-            className="border p-2 w-full rounded"
-          />
-        </div>
-
-        {/* Razón */}
-        <div>
-          <label className="block font-medium">Razón No Liquidada</label>
-          <input
-            name="razonNoLiquidada"
-            value={formData.razonNoLiquidada}
-            onChange={handleChange}
-            className="border p-2 w-full rounded"
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700"
-        >
+        <button className="bg-green-600 text-white px-6 py-2 rounded">
           Guardar Traslado
         </button>
       </form>

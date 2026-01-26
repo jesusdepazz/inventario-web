@@ -151,22 +151,7 @@ const HojaResponsabilidadForm = () => {
                 FechaSolvencia: fechaSolvencia,
             }),
         };
-
-        // 🔥🔥🔥 DEBUG
-        console.log("====== DEBUG HOJA RESPONSABILIDAD ======");
-        console.log("Jefe seleccionado:", jefeSeleccionado);
-        console.log(
-            "Valor enviado como JefeInmediato:",
-            jefeSeleccionado
-                ? `${jefeSeleccionado.nombre} - ${jefeSeleccionado.puesto}`
-                : ""
-        );
-        console.log("Empleados mapeados:", empleadosMapped);
-        console.log("Equipos mapeados:", equiposMapped);
-        console.log("Accesorios:", accesoriosString);
-        console.log("Payload final:", JSON.stringify(payload, null, 2));
-        console.log("========================================");
-
+        
         try {
             const res = await HojasService.crearHoja(payload);
             window.alert("Hoja creada con éxito! ID: " + res.Id);
