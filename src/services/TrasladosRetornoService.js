@@ -5,13 +5,10 @@ const TrasladosRetornoService = {
 
   obtenerTodos: () => apiClient.get("/trasladoRetornos"),
 
-  obtenerPorId: (id) => apiClient.get(`/trasladoRetornos/${id}`),
-
-  actualizar: (id, traslado) => apiClient.put(`/trasladoRetornos/${id}`, traslado),
+  obtenerDetalle: (id) =>
+    apiClient.get(`/trasladoRetornos/detalle/${id}`),
 
   eliminar: (id) => apiClient.delete(`/trasladoRetornos/${id}`),
-
-  obtenerDetalle: (id) => apiClient.get(`/trasladoRetornos/detalle/${id}`),
 };
 
 export default TrasladosRetornoService;

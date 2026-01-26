@@ -258,13 +258,13 @@ const PdfTrasladosRetorno = ({ data = {} }) => (
                     2) DETALLES DEL TRABAJO
                 </Text>
             </View>
-
             <View style={styles.tableGrid}>
                 <View style={styles.gridRow}>
                     <Text style={[styles.autoCell]}>
                         Descripción del trabajo a realizar:
                     </Text>
                     <Text style={[styles.fillCell]}>
+                        {data.motivoSalida || "-"}
                     </Text>
                 </View>
             </View>
@@ -361,89 +361,97 @@ const PdfTrasladosRetorno = ({ data = {} }) => (
                         Ubicación a retornar
                     </Text>
                 </View>
-                <View style={styles.gridRow}>
-                    <Text
-                        style={[
-                            styles.gridCell,
-                            {
-                                width: "12.5%",
-                                textAlign: "center",
-                                paddingVertical: 4,
-                            },
-                        ]}
-                    >
-                        1
-                    </Text>
-                    <View
-                        style={{
-                            width: "62.5%",
-                            borderWidth: 1,
-                            borderColor: "#000",
-                            flexDirection: "row",
-                        }}
-                    >
-                        {[
-                            data.equipo,
-                            data.descripcionEquipo,
-                            data.marca,
-                            data.modelo,
-                            data.serie,
-                        ].map((t, i) => (
-                            <View
-                                key={i}
-                                style={{
-                                    width: "20%",
-                                    borderRightWidth: i === 4 ? 0 : 1,
-                                    borderColor: "#000",
-                                }}
-                            >
-                                <Text
-                                    wrap
+                {(data.equipos && data.equipos.length > 0 ? data.equipos : [{}]).map((eq, index) => (
+                    <View style={styles.gridRow} key={index}>
+                        <Text
+                            style={[
+                                styles.gridCell,
+                                {
+                                    width: "12.5%",
+                                    textAlign: "center",
+                                    paddingVertical: 4,
+                                },
+                            ]}
+                        >
+                            {index + 1}
+                        </Text>
+
+                        <View
+                            style={{
+                                width: "62.5%",
+                                borderWidth: 1,
+                                borderColor: "#000",
+                                flexDirection: "row",
+                            }}
+                        >
+                            {[
+                                eq.equipo,
+                                eq.descripcionEquipo,
+                                eq.marca,
+                                eq.modelo,
+                                eq.serie,
+                            ].map((t, i) => (
+                                <View
+                                    key={i}
                                     style={{
-                                        textAlign: "center",
-                                        fontSize: 7,
-                                        paddingVertical: 4,
-                                        wordBreak: i === 0 ? "break-all" : "normal",
+                                        width: "20%",
+                                        borderRightWidth: i === 4 ? 0 : 1,
+                                        borderColor: "#000",
                                     }}
                                 >
-                                    {t || "-"}
-                                </Text>
-                            </View>
-                        ))}
+                                    <Text
+                                        wrap
+                                        style={{
+                                            textAlign: "center",
+                                            fontSize: 7,
+                                            paddingVertical: 4,
+                                        }}
+                                    >
+                                        {t || "-"}
+                                    </Text>
+                                </View>
+                            ))}
+                        </View>
+
+                        <Text
+                            style={[
+                                styles.gridCell,
+                                {
+                                    width: "12.5%",
+                                    textAlign: "center",
+                                    paddingVertical: 4,
+                                },
+                            ]}
+                        >
+                            {data.fechaRetorno
+                                ? new Date(data.fechaRetorno).toLocaleDateString("es-GT")
+                                : "-"}
+                        </Text>
+                        <Text
+                            wrap={false}
+                            numberOfLines={1}
+                            ellipsizeMode="tail"
+                            style={[
+                                styles.gridCell,
+                                {
+                                    width: "12.5%",
+                                    fontSize: 7,
+                                    textAlign: "center",
+                                    paddingVertical: 4,
+                                },
+                            ]}
+                        >
+                            {data.ubicacionRetorno || "-"}
+                        </Text>
                     </View>
-                    <Text
-                        style={[
-                            styles.gridCell,
-                            {
-                                width: "12.5%",
-                                textAlign: "center",
-                                paddingVertical: 4,
-                            },
-                        ]}
-                    >
-                        {data.fechaRetorno
-                            ? new Date(data.fechaRetorno).toLocaleDateString("es-GT")
-                            : "-"}
-                    </Text>
-                    <Text
-                        style={[
-                            styles.gridCell,
-                            {
-                                width: "12.5%",
-                                textAlign: "center",
-                                paddingVertical: 4,
-                            },
-                        ]}
-                    >
-                        {data.ubicacionRetorno || "-"}
-                    </Text>
-                </View>
+                ))}
             </View>
             <View style={styles.tableHeaderFull}>
                 <Text style={styles.tableHeaderText}>
                     4) OBSERVACIONES
                 </Text>
             </View>
+
             <View style={styles.tableGrid}>
                 <View
                     style={{
@@ -455,17 +463,23 @@ const PdfTrasladosRetorno = ({ data = {} }) => (
                     }}
                 >
                     <Text
-                        wrap
                         style={{
                             fontSize: 9,
-                            textAlign: "center",
+                            textAlign: "left",
+                            lineHeight: 1.4,
                         }}
                     >
-                        {data.equipo || "-"}
+                        {data.equipos && data.equipos.length > 0
+                            ? data.equipos.map((e, index) => (
+                                <Text key={index}>
+                                    {index + 1}. {e.equipo}
+                                    {"\n"}
+                                </Text>
+                            ))
+                            : "-"}
                     </Text>
                 </View>
             </View>
-
             <View style={styles.tableGrid}>
                 <View style={[styles.gridRow, { borderTop: "1px solid #000" }]}>
                     <Text style={[styles.gridCell, {

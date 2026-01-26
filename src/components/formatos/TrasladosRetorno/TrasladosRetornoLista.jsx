@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import TrasladosRetornoService from "../../../services/TrasladosRetornoService";
 import PdfTrasladosRetorno from "./TrasladosRetornoPDF";
-import { PDFDownloadLink } from "@react-pdf/renderer";
+import { pdf } from "@react-pdf/renderer";
+
 
 const TrasladosRetornoLista = () => {
   const [traslados, setTraslados] = useState([]);
@@ -26,6 +27,27 @@ const TrasladosRetornoLista = () => {
       t.no?.toLowerCase().includes(busqueda.toLowerCase()) ||
       t.solicitante?.toLowerCase().includes(busqueda.toLowerCase())
   );
+
+  const descargarPDF = async (id) => {
+    try {
+      const res = await TrasladosRetornoService.obtenerDetalle(id);
+
+      const blob = await pdf(
+        <PdfTrasladosRetorno data={res.data} />
+      ).toBlob();
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `TrasladoRetorno-${id}.pdf`;
+      link.click();
+
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error(error);
+      toast.error("Error al generar el PDF");
+    }
+  };
 
   const formatearFecha = (fecha) => {
     if (!fecha) return "";
@@ -73,7 +95,6 @@ const TrasladosRetornoLista = () => {
               <th className="p-2 border">Fecha Pase</th>
               <th className="p-2 border">Solicitante</th>
               <th className="p-2 border">Equipo</th>
-              <th className="p-2 border">Descripción</th>
               <th className="p-2 border">Motivo</th>
               <th className="p-2 border">Ubicación Retorno</th>
               <th className="p-2 border">Fecha Retorno</th>
@@ -106,7 +127,6 @@ const TrasladosRetornoLista = () => {
                   </td>
                   <td className="p-2 border">{t.solicitante}</td>
                   <td className="p-2 border">{t.equipo}</td>
-                  <td className="p-2 border">{t.descripcionEquipo}</td>
                   <td className="p-2 border">{t.motivoSalida}</td>
                   <td className="p-2 border">{t.ubicacionRetorno}</td>
                   <td className="p-2 border text-center">
@@ -123,12 +143,12 @@ const TrasladosRetornoLista = () => {
                     {t.status}
                   </td>
                   <td className="border p-2">
-                    <PDFDownloadLink
-                      document={<PdfTrasladosRetorno data={t} />}
-                      fileName={`TrasladoRetorno-${t.id}.pdf`}
+                    <button
+                      onClick={() => descargarPDF(t.id)}
+                      className="text-blue-600 hover:underline"
                     >
-                      {({ loading }) => loading ? "Generando..." : "Descargar PDF"}
-                    </PDFDownloadLink>
+                      Descargar PDF
+                    </button>
                   </td>
                 </tr>
               ))
