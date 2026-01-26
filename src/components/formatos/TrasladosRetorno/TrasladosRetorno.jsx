@@ -12,6 +12,12 @@ const CrearTrasladoRetorno = () => {
     motivoSalida: "",
     ubicacionRetorno: "",
     fechaRetorno: "",
+    codigoProveedor: "",
+    telefonoProveedor: "",
+    personaRetira: "",
+    nombreProveedor: "",
+    nombreContacto: "",
+    identificacion: "",
     empleado: null,
     equipos: []
   });
@@ -47,9 +53,6 @@ const CrearTrasladoRetorno = () => {
       .catch(() => toast.error("Empleado no encontrado"));
   };
 
-  /* =========================
-     AGREGAR EQUIPO
-  ========================== */
   const handleAgregarEquipo = () => {
     if (!equipoCodigo.trim()) return;
 
@@ -80,9 +83,6 @@ const CrearTrasladoRetorno = () => {
       .catch(() => toast.error("Equipo no encontrado"));
   };
 
-  /* =========================
-     QUITAR EQUIPO
-  ========================== */
   const handleQuitarEquipo = (index) => {
     setFormData(prev => ({
       ...prev,
@@ -90,9 +90,6 @@ const CrearTrasladoRetorno = () => {
     }));
   };
 
-  /* =========================
-     SUBMIT
-  ========================== */
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -114,6 +111,12 @@ const CrearTrasladoRetorno = () => {
           motivoSalida: "",
           ubicacionRetorno: "",
           fechaRetorno: "",
+          codigoProveedor: "",
+          telefonoProveedor: "",
+          personaRetira: "",
+          nombreProveedor: "",
+          nombreContacto: "",
+          identificacion: "",
           empleado: null,
           equipos: []
         });
@@ -134,8 +137,6 @@ const CrearTrasladoRetorno = () => {
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-
-        {/* NO / FECHA PASE */}
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label>No.</label>
@@ -155,9 +156,78 @@ const CrearTrasladoRetorno = () => {
               onChange={e => setFormData({ ...formData, fechaPase: e.target.value })}
             />
           </div>
-        </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label>Código Proveedor</label>
+              <input
+                className="border p-2 w-full rounded"
+                value={formData.codigoProveedor}
+                onChange={e =>
+                  setFormData({ ...formData, codigoProveedor: e.target.value })
+                }
+              />
+            </div>
 
-        {/* EMPLEADO */}
+            <div>
+              <label>Teléfono Proveedor</label>
+              <input
+                className="border p-2 w-full rounded"
+                value={formData.telefonoProveedor}
+                onChange={e =>
+                  setFormData({ ...formData, telefonoProveedor: e.target.value })
+                }
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label>Nombre Proveedor</label>
+              <input
+                className="border p-2 w-full rounded"
+                value={formData.nombreProveedor}
+                onChange={e =>
+                  setFormData({ ...formData, nombreProveedor: e.target.value })
+                }
+              />
+            </div>
+
+            <div>
+              <label>Nombre Contacto</label>
+              <input
+                className="border p-2 w-full rounded"
+                value={formData.nombreContacto}
+                onChange={e =>
+                  setFormData({ ...formData, nombreContacto: e.target.value })
+                }
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label>Persona que Retira</label>
+              <input
+                className="border p-2 w-full rounded"
+                value={formData.personaRetira}
+                onChange={e =>
+                  setFormData({ ...formData, personaRetira: e.target.value })
+                }
+              />
+            </div>
+
+            <div>
+              <label>Identificación</label>
+              <input
+                className="border p-2 w-full rounded"
+                value={formData.identificacion}
+                onChange={e =>
+                  setFormData({ ...formData, identificacion: e.target.value })
+                }
+              />
+            </div>
+          </div>
+        </div>
         <div>
           <label>Empleado (Código)</label>
           <div className="flex gap-2">
@@ -174,7 +244,6 @@ const CrearTrasladoRetorno = () => {
               Buscar
             </button>
           </div>
-
           {formData.empleado && (
             <div className="mt-2 text-sm text-gray-600">
               <p><b>Codigo:</b> {formData.empleado.empleadoId}</p>
@@ -184,8 +253,6 @@ const CrearTrasladoRetorno = () => {
             </div>
           )}
         </div>
-
-        {/* EQUIPOS */}
         <div>
           <label>Equipo (Codificación)</label>
           <div className="flex gap-2">
@@ -203,8 +270,6 @@ const CrearTrasladoRetorno = () => {
             </button>
           </div>
         </div>
-
-        {/* LISTA EQUIPOS */}
         {formData.equipos.length > 0 && (
           <table className="w-full border text-sm">
             <thead className="bg-gray-100">
@@ -239,8 +304,6 @@ const CrearTrasladoRetorno = () => {
             </tbody>
           </table>
         )}
-
-        {/* MOTIVO */}
         <div>
           <label>Motivo de Salida</label>
           <input
@@ -249,8 +312,6 @@ const CrearTrasladoRetorno = () => {
             onChange={e => setFormData({ ...formData, motivoSalida: e.target.value })}
           />
         </div>
-
-        {/* UBICACIÓN RETORNO */}
         <div>
           <label>Ubicación Retorno</label>
           <select
@@ -270,8 +331,6 @@ const CrearTrasladoRetorno = () => {
           </select>
 
         </div>
-
-        {/* FECHA RETORNO */}
         <div>
           <label>Fecha Retorno</label>
           <input

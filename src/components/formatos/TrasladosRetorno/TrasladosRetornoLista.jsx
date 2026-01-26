@@ -98,7 +98,6 @@ const TrasladosRetornoLista = () => {
               <th className="p-2 border">Motivo</th>
               <th className="p-2 border">Ubicación Retorno</th>
               <th className="p-2 border">Fecha Retorno</th>
-              <th className="p-2 border">Status</th>
               <th className="p-2 border">Acciones</th>
             </tr>
           </thead>
@@ -125,22 +124,29 @@ const TrasladosRetornoLista = () => {
                   <td className="p-2 border text-center">
                     {formatearFecha(t.fechaPase)}
                   </td>
-                  <td className="p-2 border">{t.solicitante}</td>
-                  <td className="p-2 border">{t.equipo}</td>
+                  <td className="p-2 border">
+                    {t.empleado?.empleadoId || "-"}
+                  </td>
+                  <td className="p-2 border max-w-xs">
+                    <div className="flex flex-wrap gap-1">
+                      {t.equipos?.length ? (
+                        t.equipos.map((e, i) => (
+                          <span
+                            key={i}
+                            className="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full"
+                          >
+                            {e.equipo}
+                          </span>
+                        ))
+                      ) : (
+                        "-"
+                      )}
+                    </div>
+                  </td>
                   <td className="p-2 border">{t.motivoSalida}</td>
                   <td className="p-2 border">{t.ubicacionRetorno}</td>
                   <td className="p-2 border text-center">
                     {formatearFecha(t.fechaRetorno)}
-                  </td>
-                  <td
-                    className={`p-2 border text-center font-semibold ${t.status?.toLowerCase() === "pendiente"
-                      ? "text-yellow-600"
-                      : t.status?.toLowerCase() === "completado"
-                        ? "text-green-600"
-                        : "text-gray-700"
-                      }`}
-                  >
-                    {t.status}
                   </td>
                   <td className="border p-2">
                     <button

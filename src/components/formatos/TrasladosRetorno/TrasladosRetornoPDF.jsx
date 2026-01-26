@@ -233,24 +233,50 @@ const PdfTrasladosRetorno = ({ data = {} }) => (
             </View>
             <View style={styles.tableGrid}>
                 <View style={styles.gridRow}>
-                    <Text style={[styles.gridCell, styles.smallText]}>Codigo de proveedor: </Text>
-                    <Text style={[styles.gridCell, styles.smallText]}></Text>
-                    <Text style={[styles.gridCell, styles.smallText]}>Nombre de Proveedor:</Text>
-                    <Text style={[styles.gridCellWide, styles.smallText]}></Text>
+                    <Text style={[styles.gridCell, styles.smallText]}>
+                        Codigo de proveedor:
+                    </Text>
+                    <Text style={[styles.gridCell, styles.smallText]}>
+                        {data.codigoProveedor || "-"}
+                    </Text>
+
+                    <Text style={[styles.gridCell, styles.smallText]}>
+                        Nombre de Proveedor:
+                    </Text>
+                    <Text style={[styles.gridCellWide, styles.smallText]}>
+                        {data.nombreProveedor || "-"}
+                    </Text>
+                </View>
+                <View style={styles.gridRow}>
+                    <Text style={[styles.gridCell, styles.smallText]}>
+                        Telefono de proveedor:
+                    </Text>
+                    <Text style={[styles.gridCell, styles.smallText]}>
+                        {data.telefonoProveedor || "-"}
+                    </Text>
+
+                    <Text style={[styles.gridCell, styles.smallText]}>
+                        Nombre de contacto:
+                    </Text>
+                    <Text style={[styles.gridCellWide, styles.smallText]}>
+                        {data.nombreContacto || "-"}
+                    </Text>
                 </View>
 
                 <View style={styles.gridRow}>
-                    <Text style={[styles.gridCell, styles.smallText]}>Telefono de proveedor: </Text>
-                    <Text style={[styles.gridCell, styles.smallText]}></Text>
-                    <Text style={[styles.gridCell, styles.smallText]}>Nombre de contacto: </Text>
-                    <Text style={[styles.gridCellWide, styles.smallText]}></Text>
-                </View>
+                    <Text style={[styles.gridCell, styles.smallText]}>
+                        Persona que retira Equipo:
+                    </Text>
+                    <Text style={[styles.gridCell, styles.smallText]}>
+                        {data.personaRetira || "-"}
+                    </Text>
 
-                <View style={styles.gridRow}>
-                    <Text style={[styles.gridCell, styles.smallText]}>Persona que retira Equipo: </Text>
-                    <Text style={[styles.gridCell, styles.smallText]}></Text>
-                    <Text style={[styles.gridCell, styles.smallText]}>No. de DPI/Licencia: </Text>
-                    <Text style={[styles.gridCellWide, styles.smallText]}></Text>
+                    <Text style={[styles.gridCell, styles.smallText]}>
+                        No. de DPI/Licencia:
+                    </Text>
+                    <Text style={[styles.gridCellWide, styles.smallText]}>
+                        {data.identificacion || "-"}
+                    </Text>
                 </View>
             </View>
             <View style={styles.tableHeaderFull}>
