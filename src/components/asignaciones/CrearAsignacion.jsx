@@ -6,6 +6,9 @@ import AsignacionesService from "../../services/AsignacionesServices";
 
 export default function CrearAsignacion() {
     const navigate = useNavigate();
+
+    const [equiposAsignados, setEquiposAsignados] = useState([]);
+
     const [empleado, setEmpleado] = useState({
         codigo: "",
         nombre: "",
@@ -46,19 +49,35 @@ export default function CrearAsignacion() {
     };
 
     const buscarEquipo = async () => {
+        if (!codificacion.trim()) return;
+
         try {
             const response = await EquiposService.obtenerPorCodificacion(codificacion);
             const data = response.data;
+
+            const existe = equiposAsignados.some(
+                (e) => e.codificacion === codificacion
+            );
+
+            if (existe) {
+                alert("Este equipo ya fue agregado");
+                return;
+            }
+
             setEquipo(data);
+
+            setEquiposAsignados((prev) => [
+                ...prev,
+                {
+                    codificacion,
+                    ...data
+                }
+            ]);
+
+            setCodificacion("");
         } catch (error) {
             console.error("Error al buscar equipo:", error.message);
-            setEquipo({
-                marca: "",
-                modelo: "",
-                estado: "",
-                tipo: "",
-                ubicacion: ""
-            });
+            alert("Equipo no encontrado");
         }
     };
 
@@ -71,21 +90,31 @@ export default function CrearAsignacion() {
     };
 
     const guardarAsignacion = async () => {
-        const asignacion = {
-            codigoEmpleado: empleado.codigo,
-            nombreEmpleado: empleado.nombre,
-            puesto: empleado.puesto,
-            departamento: empleado.departamento,
-            codificacionEquipo: codificacion,
-        };
+        if (!empleado.codigo || equiposAsignados.length === 0) {
+            alert("Empleado o equipos incompletos");
+            return;
+        }
 
         try {
-            await AsignacionesService.crear(asignacion);
-            alert("Asignación guardada correctamente");
+            const promesas = equiposAsignados.map((eq) => {
+                const asignacion = {
+                    codigoEmpleado: empleado.codigo,
+                    nombreEmpleado: empleado.nombre,
+                    puesto: empleado.puesto,
+                    departamento: empleado.departamento,
+                    codificacionEquipo: eq.codificacion,
+                };
+
+                return AsignacionesService.crear(asignacion);
+            });
+
+            await Promise.all(promesas);
+
+            alert("Asignaciones guardadas correctamente");
             navigate("/dashboard");
         } catch (error) {
-            console.error("Error al guardar asignación:", error.message);
-            alert("Hubo un error al guardar la asignación");
+            console.error("Error al guardar asignaciones:", error.message);
+            alert("Hubo un error al guardar las asignaciones");
         }
     };
 
@@ -93,15 +122,16 @@ export default function CrearAsignacion() {
         <div className="flex justify-center px-4 py-10 overflow-y-auto">
             <div className="bg-white p-6 rounded-xl shadow-md w-full max-w-6xl">
                 <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
+
+                    {/* EMPLEADO */}
                     <section>
                         <h3 className="text-xl font-semibold mb-4 border-b border-indigo-300 pb-2">Empleado</h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div className="col-span-1">
-                                <label htmlFor="codigo" className="mb-1 font-medium text-gray-700">Código de empleado</label>
+                                <label className="mb-1 font-medium text-gray-700">Código de empleado</label>
                                 <div className="flex gap-2">
                                     <input
                                         type="text"
-                                        id="codigo"
                                         name="codigo"
                                         value={empleado.codigo}
                                         onChange={handleInputChange}
@@ -116,98 +146,91 @@ export default function CrearAsignacion() {
                                     </button>
                                 </div>
                             </div>
+
                             <div>
                                 <label className="mb-1 font-medium text-gray-700">Nombre</label>
-                                <div className="px-3 py-2 bg-gray-100 rounded border border-gray-300 text-sm text-gray-800">
-                                    {empleado.nombre || "—"}
-                                </div>
+                                <div className="px-3 py-2 bg-gray-100 rounded border">{empleado.nombre || "—"}</div>
                             </div>
+
                             <div>
                                 <label className="mb-1 font-medium text-gray-700">Puesto</label>
-                                <div className="px-3 py-2 bg-gray-100 rounded border border-gray-300 text-sm text-gray-800">
-                                    {empleado.puesto || "—"}
-                                </div>
+                                <div className="px-3 py-2 bg-gray-100 rounded border">{empleado.puesto || "—"}</div>
                             </div>
+
                             <div>
                                 <label className="mb-1 font-medium text-gray-700">Departamento</label>
-                                <div className="px-3 py-2 bg-gray-100 rounded border border-gray-300 text-sm text-gray-800">
-                                    {empleado.departamento || "—"}
-                                </div>
+                                <div className="px-3 py-2 bg-gray-100 rounded border">{empleado.departamento || "—"}</div>
                             </div>
                         </div>
                     </section>
+
+                    {/* EQUIPOS */}
                     <section>
                         <h3 className="text-xl font-semibold mb-4 border-b border-indigo-300 pb-2">Detalles del equipo</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div className="col-span-1 md:col-span-2">
-                                <label htmlFor="codificacion" className="mb-1 font-medium text-gray-700">Codificación del equipo</label>
-                                <div className="flex gap-2">
-                                    <input
-                                        type="text"
-                                        id="codificacion"
-                                        value={codificacion}
-                                        onChange={(e) => setCodificacion(e.target.value)}
-                                        className="input-field"
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={buscarEquipo}
-                                        className="bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-700 text-sm"
+
+                        <div className="flex gap-2 max-w-md">
+                            <input
+                                type="text"
+                                value={codificacion}
+                                onChange={(e) => setCodificacion(e.target.value)}
+                                className="input-field"
+                                placeholder="Codificación del equipo"
+                            />
+                            <button
+                                type="button"
+                                onClick={buscarEquipo}
+                                className="bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-700 text-sm"
+                            >
+                                Agregar
+                            </button>
+                        </div>
+
+                        {/* LISTA DE EQUIPOS */}
+                        {equiposAsignados.length > 0 && (
+                            <div className="mt-4 space-y-2">
+                                {equiposAsignados.map((eq, index) => (
+                                    <div
+                                        key={index}
+                                        className="flex justify-between items-center bg-gray-100 p-3 rounded border"
                                     >
-                                        Buscar
-                                    </button>
-                                </div>
+                                        <div className="text-sm">
+                                            <strong>{eq.codificacion}</strong> — {eq.modelo} · {eq.tipoEquipo} · {eq.marca}
+                                        </div>
+                                        <button
+                                            onClick={() =>
+                                                setEquiposAsignados((prev) =>
+                                                    prev.filter((_, i) => i !== index)
+                                                )
+                                            }
+                                            className="text-red-600 text-sm hover:underline"
+                                        >
+                                            Quitar
+                                        </button>
+                                    </div>
+                                ))}
                             </div>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
-                            <div>
-                                <label className="mb-1 font-medium text-gray-700">Marca</label>
-                                <div className="px-3 py-2 bg-gray-100 rounded border border-gray-300 text-sm text-gray-800">
-                                    {equipo.marca || "—"}
-                                </div>
-                            </div>
-                            <div>
-                                <label className="mb-1 font-medium text-gray-700">Modelo</label>
-                                <div className="px-3 py-2 bg-gray-100 rounded border border-gray-300 text-sm text-gray-800">
-                                    {equipo.modelo || "—"}
-                                </div>
-                            </div>
-                            <div>
-                                <label className="mb-1 font-medium text-gray-700">Estado</label>
-                                <div className="px-3 py-2 bg-gray-100 rounded border border-gray-300 text-sm text-gray-800">
-                                    {equipo.estado || "—"}
-                                </div>
-                            </div>
-                            <div>
-                                <label className="mb-1 font-medium text-gray-700">Tipo</label>
-                                <div className="px-3 py-2 bg-gray-100 rounded border border-gray-300 text-sm text-gray-800">
-                                    {equipo.tipo || "—"}
-                                </div>
-                            </div>
-                            <div>
-                                <label className="mb-1 font-medium text-gray-700">Ubicación</label>
-                                <div className="px-3 py-2 bg-gray-100 rounded border border-gray-300 text-sm text-gray-800">
-                                    {equipo.ubicacion || "—"}
-                                </div>
-                            </div>
-                        </div>
+                        )}
                     </section>
+
+                    {/* BOTONES */}
                     <div className="flex justify-center gap-4 pt-6">
                         <button
                             type="button"
                             onClick={guardarAsignacion}
                             className="bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-700 text-sm"
                         >
-                            Crear asignación
+                            Crear asignaciones
                         </button>
+
                         <button
                             type="button"
                             onClick={() => navigate("/dashboard")}
-                            className="bg-gray-400 text-white px-5 py-2 rounded-lg hover:bg-gray-500 font-semibold text-sm transition"
+                            className="bg-gray-400 text-white px-5 py-2 rounded-lg hover:bg-gray-500 font-semibold text-sm"
                         >
                             Cancelar
                         </button>
                     </div>
+
                 </form>
             </div>
         </div>
