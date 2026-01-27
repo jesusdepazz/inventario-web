@@ -355,11 +355,11 @@ const HojaSolvenciaPDF = ({ data }) => {
                                             </Text>
 
                                             <Text style={{ fontSize: 9, textAlign: "center", color: "blue" }}>
-                                                Kelin Stefani Blanco
+                                                Kleidy López
                                             </Text>
 
                                             <Text style={{ fontSize: 9, textAlign: "center" }}>
-                                                Activos fijos
+                                                Asistente IT
                                             </Text>
                                         </View>
                                     );

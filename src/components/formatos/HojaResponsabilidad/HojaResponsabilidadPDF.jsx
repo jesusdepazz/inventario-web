@@ -357,7 +357,7 @@ accesorios.forEach((acc, i) => {
   yActual = firmaYActual + 35;
 
   const responsablesFinales = [
-    { nombre: "Kelin Stefani Blanco", puesto: "Administración de Activos Fijos", label: "Realizado Por:" },
+    { nombre: "Kleidy López", puesto: "Asistente IT", label: "Realizado Por:" },
     { nombre: "Carlos Mazariegos", puesto: "Gerente de Sistemas", label: "Entrega de Equipo:" }
   ];
 

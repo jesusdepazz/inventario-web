@@ -480,7 +480,7 @@ const PdfTraslados = ({ data = {} }) => (
                 <View style={styles.signCell}>
                     <View style={styles.signFooter}>
                         <Text style={styles.signFooterText}>
-                            VO.BO. ACTIVOS FIJOS
+                            ASISTENTE IT
                         </Text>
                     </View>
                 </View>
