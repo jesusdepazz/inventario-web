@@ -36,9 +36,7 @@ const ListaAsignaciones = () => {
                                     <td className="px-4 py-2 border">{asig.departamento}</td>
                                     <td className="px-4 py-2 border">{asig.codificacionEquipo}</td>
                                     <td className="px-4 py-2 border">
-                                        {asig.fecha
-                                            ? new Date(asig.fecha).toLocaleDateString()
-                                            : "—"}
+                                        {new Date(asig.fechaAsignacion).toLocaleDateString()}
                                     </td>
                                 </tr>
                             ))
