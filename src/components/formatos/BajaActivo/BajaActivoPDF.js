@@ -326,7 +326,7 @@ export const generarBajaPDF = async (bajaId) => {
         ],
         [
           {
-            content: 'Vo.Bo. Activos Fijos',
+            content: 'Asistente IT',
             styles: {
               fillColor: [200, 200, 200],
               fontStyle: 'bold',
@@ -352,7 +352,7 @@ export const generarBajaPDF = async (bajaId) => {
         ],
         [
           {
-            content: '\n\n\nKelin Blanco',
+            content: '\n\n\nKleidy López',
             styles: {
               minCellHeight: 26,
               valign: 'bottom',

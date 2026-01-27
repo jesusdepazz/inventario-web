@@ -531,12 +531,12 @@ const PdfTrasladosRetorno = ({ data = {} }) => (
                 </View>
                 <View style={[styles.gridRow, { borderTop: "1px solid #000" }]}>
                     <View style={{ width: "50%", borderRight: "1px solid #000" }}>
-                        {[1, 2, 3, 4, 5, 6].map((i) => (
+                        {[1, 2, 3, 4, 5].map((i) => (
                             <View
                                 key={i}
                                 style={{
                                     borderBottom: "1px solid #000",
-                                    minHeight: 40,
+                                    minHeight: i === 5 ? 80 : 40,
                                     padding: 6,
                                 }}
                             >
@@ -595,18 +595,6 @@ const PdfTrasladosRetorno = ({ data = {} }) => (
                                 )}
 
                                 {i === 5 && (
-                                    <Text
-                                        style={{
-                                            fontSize: 9,
-                                            textDecoration: "underline",
-                                            fontWeight: "bold",
-                                        }}
-                                    >
-                                        ACTIVOS FIJOS:
-                                    </Text>
-                                )}
-
-                                {i === 6 && (
                                     <View style={{ flexDirection: "row", width: "100%" }}>
                                         <View style={{ width: "65%" }}>
                                             <Text
@@ -662,14 +650,15 @@ const PdfTrasladosRetorno = ({ data = {} }) => (
                         ))}
                     </View>
                     <View style={{ width: "50%" }}>
-                        {[1, 2, 3, 4].map((i) => (
+                        {[1, 2, 3].map((i) => (
                             <View
                                 key={i}
                                 style={{
                                     borderBottom: "1px solid #000",
-                                    minHeight: 65.5,
+                                    minHeight: i === 1 ? 80 : 65,
                                     padding: 6,
-                                    justifyContent: "center",
+                                    justifyContent: "flex-start",
+                                    flexGrow: i === 3 ? 1 : 0,
                                 }}
                             >
                                 {i === 1 && (
@@ -736,26 +725,23 @@ const PdfTrasladosRetorno = ({ data = {} }) => (
                                     </Text>
                                 )}
                                 {i === 3 && (
-                                    <Text
+                                    <View
                                         style={{
-                                            fontSize: 9,
-                                            fontWeight: "bold",
-                                            textDecoration: "underline",
+                                            flex: 1,
+                                            justifyContent: "center",
+                                            alignItems: "flex-start",
                                         }}
                                     >
-                                        ENTERADO:
-                                    </Text>
-                                )}
-                                {i === 4 && (
-                                    <Text
-                                        style={{
-                                            fontSize: 9,
-                                            fontWeight: "bold",
-                                            textDecoration: "underline",
-                                        }}
-                                    >
-                                        ACTIVOS FIJOS:
-                                    </Text>
+                                        <Text
+                                            style={{
+                                                fontSize: 9,
+                                                fontWeight: "bold",
+                                                textDecoration: "underline",
+                                            }}
+                                        >
+                                            ENTERADO:
+                                        </Text>
+                                    </View>
                                 )}
                             </View>
                         ))}
