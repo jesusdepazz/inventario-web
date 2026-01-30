@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import HojasService from "../../../services/HojasServices";
 import EquiposService from "../../../services/EquiposServices";
 import EmpleadosService from "../../../services/EmpleadosServices";
+import AsignacionesService from "../../../services/AsignacionesServices";
 
 const HojaResponsabilidadForm = () => {
     const [hojaNo, setHojaNo] = useState("");
@@ -28,12 +29,22 @@ const HojaResponsabilidadForm = () => {
 
         try {
             const res = await EmpleadosService.obtenerPorCodigo(empleadoCodigo);
-            setEmpleados([...empleados, res.data]);
+            const empleado = res.data;
+
+            setEmpleados([...empleados, empleado]);
+
+            const resEquipos = await AsignacionesService
+                .obtenerEquiposPorEmpleado(empleado.codigoEmpleado);
+
+            setEquipos(resEquipos.data || []);
+
             setEmpleadoCodigo("");
         } catch (err) {
-            window.alert("Empleado no encontrado");
+            console.error(err);
+            window.alert("Empleado no encontrado o sin equipos asignados");
         }
     };
+
 
     useEffect(() => {
         const delay = setTimeout(async () => {
@@ -151,7 +162,7 @@ const HojaResponsabilidadForm = () => {
                 FechaSolvencia: fechaSolvencia,
             }),
         };
-        
+
         try {
             const res = await HojasService.crearHoja(payload);
             window.alert("Hoja creada con éxito! ID: " + res.Id);
