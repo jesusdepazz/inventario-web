@@ -18,7 +18,6 @@ export default function ListaHojaSolvencia() {
 
         fetchData();
     }, []);
-
     return (
         <div className="p-6 max-w-7xl mx-auto">
             <div className="overflow-x-auto w-full bg-white shadow-md rounded-xl p-6">
