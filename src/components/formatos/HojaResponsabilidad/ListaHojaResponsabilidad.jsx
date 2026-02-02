@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import HojasService from "../../../services/HojasServices";
 import generarPDFHoja from "./HojaResponsabilidadPDF";
+import { useNavigate } from "react-router-dom";
+
 
 const ListaHojasResponsabilidad = () => {
     const [hojas, setHojas] = useState([]);
-
+    const navigate = useNavigate();
+    
     useEffect(() => {
         const fetchHojas = async () => {
             try {
@@ -50,10 +53,10 @@ const ListaHojasResponsabilidad = () => {
                                 <th className="px-6 py-3 border">Jefe Inmediato</th>
                                 <th className="px-6 py-3 border">Ubicacion del equipo</th>
                                 <th className="px-6 py-3 border">Estado</th>
-                                <th className="px-6 py-3 border">Solvencia No.</th>
                                 <th className="px-6 py-3 border">Fecha Solvencia</th>
                                 <th className="px-6 py-3 border">Observaciones</th>
                                 <th className="px-6 py-3 border">Acciones</th>
+                                <th className="px-6 py-3 border">Editar</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -86,7 +89,6 @@ const ListaHojasResponsabilidad = () => {
                                         {hoja.equipos?.[0]?.ubicacion ?? "—"}
                                     </td>
                                     <td className="px-4 py-2">{hoja.estado}</td>
-                                    <td className="px-4 py-2">{hoja.solvenciaNo}</td>
                                     <td className="px-4 py-2">
                                         {new Date(hoja.fechaSolvencia).toLocaleDateString("es-ES", {
                                             day: "2-digit",
@@ -101,6 +103,14 @@ const ListaHojasResponsabilidad = () => {
                                             className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
                                         >
                                             PDF
+                                        </button>
+                                    </td>
+                                    <td className="px-4 py-2">
+                                        <button
+                                            onClick={() => navigate(`/hojas-responsabilidad/editar/${hoja.id}`)}
+                                            className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
+                                        >
+                                            Editar
                                         </button>
                                     </td>
                                 </tr>

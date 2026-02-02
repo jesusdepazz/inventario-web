@@ -23,6 +23,7 @@ import ListabajaAtivos from "./components/formatos/BajaActivo/ListaBajaActivo";
 import { generarBajaPDF } from "./components/formatos/BajaActivo/BajaActivoPDF";
 import HojaResponsabilidad from "./components/formatos/HojaResponsabilidad/HojaResponsabilidad";
 import ListaHojasResponsabilidad from "./components/formatos/HojaResponsabilidad/ListaHojaResponsabilidad";
+import HojaResponsabilidadEdit from "./components/formatos/HojaResponsabilidad/HojaResponsabilidadEditar";
 import ListaHojaSolvencia from "./components/formatos/HojaSolvencia/ListaHojaSolvencia";
 import HojaSolvencia from "./components/formatos/HojaSolvencia/HojaSolvencia";
 import CrearTraslado from "./components/formatos/Traslados/Traslados";
@@ -89,6 +90,7 @@ function AppRoutes() {
           {/* FORMATOS/RESPONSABILIDAD */}
           <Route path="/formatos/hojaderesponsabilidad" element={<HojaResponsabilidad />} />
           <Route path="/formatos/listahojasresponsabilidad" element={<ListaHojasResponsabilidad />} />
+          <Route path="/hojas-responsabilidad/editar/:id" element={<HojaResponsabilidadEdit /> }/>
           {/* FORMATOS/SOLVENCIAS */}
           <Route path="/formatos/listahojasSolvencias" element={<ListaHojaSolvencia />} />
           <Route path="/formatos/hojasSolvencias" element={<HojaSolvencia />} />
@@ -103,10 +105,10 @@ function AppRoutes() {
           <Route path="/formatos/trasladosRetorno/crear" element={<CrearTrasladoRetorno />} />
           <Route path="/formatos/trasladosRetorno/lista" element={<TrasladosRetornoLista />} />
           {/* SUMINISTROS */}
-          <Route path="/suministros"element={<Suministros />}/>
-          <Route path="/suministros/inventario"element={<SuministrosInventario /> }/>
-          <Route path="/suministros/movimientos"element={<Movimientos /> }/>
-          <Route path="/suministros/eliminarMovimientos"element={<EliminarSuministros /> }/>
+          <Route path="/suministros" element={<Suministros />} />
+          <Route path="/suministros/inventario" element={<SuministrosInventario />} />
+          <Route path="/suministros/movimientos" element={<Movimientos />} />
+          <Route path="/suministros/eliminarMovimientos" element={<EliminarSuministros />} />
         </Route>
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
