@@ -27,6 +27,18 @@ const HojasService = {
       throw error.response?.data || error;
     }
   },
+
+  actualizarHoja: async (id, payload) => {
+    try {
+      const response = await ApiClient.put(
+        `/HojasResponsabilidad/${id}`,
+        payload
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
 };
 
 export default HojasService;
