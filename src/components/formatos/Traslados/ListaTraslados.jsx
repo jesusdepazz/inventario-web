@@ -84,9 +84,29 @@ export default function TrasladosLista() {
                                         <td className="border p-2">
                                             {new Date(t.fechaEmision).toLocaleDateString()}
                                         </td>
-                                        <td className="border p-2">{t.codigoEntrega}</td>
-                                        <td className="border p-2">{t.codigoRecibe}</td>
-                                        <td className="border p-2">{t.equipo}</td>
+                                        <td className="border p-2">
+                                            {t.empleadoEntrega
+                                                ? `${t.empleadoEntrega.codigo} - ${t.empleadoEntrega.nombre}`
+                                                : "-"}
+                                        </td>
+                                        <td className="border p-2">
+                                            {t.empleadoRecibe
+                                                ? `${t.empleadoRecibe.codigo} - ${t.empleadoRecibe.nombre}`
+                                                : "-"}
+                                        </td>
+                                        <td className="border p-2">
+                                            {t.equipos?.length > 0 ? (
+                                                <ul className="list-disc list-inside space-y-1">
+                                                    {t.equipos.map((eq, idx) => (
+                                                        <li key={idx}>
+                                                            <b>{eq.equipo}</b> – {eq.descripcionEquipo}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            ) : (
+                                                "-"
+                                            )}
+                                        </td>
                                         <td className="border p-2">{t.motivo}</td>
                                         <td className="border p-2">{t.ubicacionDesde}</td>
                                         <td className="border p-2">{t.ubicacionHasta}</td>
