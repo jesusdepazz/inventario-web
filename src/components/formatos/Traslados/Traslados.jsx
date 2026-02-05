@@ -44,6 +44,7 @@ export default function CrearTraslado() {
   const [infoEntrega, setInfoEntrega] = useState(null);
   const [infoRecibe, setInfoRecibe] = useState(null);
   const [infoEquipo, setInfoEquipo] = useState(null);
+  const [equipos, setEquipos] = useState([]);
 
   /* =========================
      CARGA DE UBICACIONES
@@ -130,28 +131,91 @@ export default function CrearTraslado() {
     }
   };
 
+  const agregarEquipo = () => {
+    if (!infoEquipo) {
+      alert("Primero busca un equipo ❌");
+      return;
+    }
+
+    // evitar duplicados
+    const existe = equipos.some(e => e.Equipo === form.Equipo);
+    if (existe) {
+      alert("Este equipo ya fue agregado ⚠️");
+      return;
+    }
+
+    setEquipos(prev => [
+      ...prev,
+      {
+        Equipo: form.Equipo,
+        DescripcionEquipo: form.DescripcionEquipo,
+        Marca: form.Marca,
+        Modelo: form.Modelo,
+        Serie: form.Serie
+      }
+    ]);
+
+    // limpiar solo campos de equipo
+    setForm(prev => ({
+      ...prev,
+      Equipo: "",
+      DescripcionEquipo: "",
+      Marca: "",
+      Modelo: "",
+      Serie: ""
+    }));
+
+    setInfoEquipo(null);
+  };
+
   /* =========================
      SUBMIT
   ========================== */
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (equipos.length === 0) {
+      alert("Debe agregar al menos un equipo ❌");
+      return;
+    }
+
     try {
       const payload = {
-        ...form,
+        No: form.No,
         FechaEmision: form.FechaEmision
           ? new Date(form.FechaEmision).toISOString()
-          : null
+          : null,
+        Status: form.Status,
+
+        Motivo: form.Motivo,
+        Observaciones: form.Observaciones,
+        UbicacionDesde: form.UbicacionDesde,
+        UbicacionHasta: form.UbicacionHasta,
+
+        Equipos: equipos,
+
+        EmpleadoEntrega: {
+          Codigo: form.CodigoEntrega,
+          Nombre: form.NombreEntrega,
+          Puesto: form.PuestoEntrega,
+          Departamento: form.DepartamentoEntrega
+        },
+
+        EmpleadoRecibe: {
+          Codigo: form.CodigoRecibe,
+          Nombre: form.NombreRecibe,
+          Puesto: form.PuestoRecibe,
+          Departamento: form.DepartamentoRecibe
+        }
       };
 
       await TrasladosServices.crear(payload);
       alert("Traslado creado correctamente ✅");
-
       navigate("/trasladosDashboard");
 
     } catch (err) {
-      console.error("Error creando traslado:", err);
-      alert("Error creando traslado ❌");
+      console.error("Errores de validación:", err.response?.data?.errors);
+      alert("Error creando traslado ❌ (ver consola)");
     }
   };
 
@@ -256,8 +320,6 @@ export default function CrearTraslado() {
               </div>
             </div>
           </section>
-
-          {/* ===== EQUIPO ===== */}
           <section>
             <h3 className="text-xl font-semibold mb-4 border-b border-indigo-300 pb-2">
               Equipo
@@ -282,6 +344,26 @@ export default function CrearTraslado() {
                 </>
               )}
             </div>
+            <button
+              type="button"
+              onClick={agregarEquipo}
+              className="bg-indigo-600 text-white px-4 py-2 rounded-lg mt-2"
+            >
+              Agregar equipo
+            </button>
+
+            {equipos.length > 0 && (
+              <div className="mt-4 border rounded-lg p-3">
+                <h4 className="font-semibold mb-2">Equipos agregados</h4>
+                <ul className="text-sm space-y-1">
+                  {equipos.map((e, i) => (
+                    <li key={i}>
+                      • {e.Equipo} — {e.Marca} {e.Modelo} ({e.Serie})
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </section>
 
           {/* ===== MOTIVO Y UBICACIONES ===== */}

@@ -369,47 +369,52 @@ const PdfTraslados = ({ data = {} }) => (
                     RESPONSABLE QUE RECIBE
                 </Text>
             </View>
+
             <View style={styles.fourColRow}>
                 <Text style={styles.labelCell}>CÓDIGO:</Text>
                 <Text style={styles.valueCell}>
-                    {data?.codigoEntrega || ""}
+                    {data?.empleadoEntrega?.codigo || ""}
                 </Text>
 
                 <Text style={styles.labelCell}>CÓDIGO:</Text>
                 <Text style={[styles.valueCell, { borderRight: "none" }]}>
-                    {data?.codigoRecibe || ""}
+                    {data?.empleadoRecibe?.codigo || ""}
                 </Text>
             </View>
+
             <View style={styles.fourColRow}>
                 <Text style={styles.labelCell}>NOMBRE:</Text>
                 <Text style={styles.valueCell}>
-                    {data?.nombreEntrega || ""}
+                    {data?.empleadoEntrega?.nombre || ""}
                 </Text>
 
                 <Text style={styles.labelCell}>NOMBRE:</Text>
                 <Text style={[styles.valueCell, { borderRight: "none" }]}>
-                    {data?.nombreRecibe || ""}
+                    {data?.empleadoRecibe?.nombre || ""}
                 </Text>
             </View>
+
             <View style={styles.fourColRow}>
                 <Text style={styles.labelCell}>PUESTO:</Text>
                 <Text style={styles.valueCell}>
-                    {data?.puestoEntrega || ""}
+                    {data?.empleadoEntrega?.puesto || ""}
                 </Text>
 
                 <Text style={styles.labelCell}>PUESTO:</Text>
                 <Text style={[styles.valueCell, { borderRight: "none" }]}>
-                    {data?.puestoRecibe || ""}
+                    {data?.empleadoRecibe?.puesto || ""}
                 </Text>
             </View>
+
             <View style={styles.fourColRow}>
                 <Text style={styles.labelCell}>DEPARTAMENTO:</Text>
                 <Text style={styles.valueCell}>
-                    {data?.departamentoEntrega || ""}
+                    {data?.empleadoEntrega?.departamento || ""}
                 </Text>
+
                 <Text style={styles.labelCell}>DEPARTAMENTO:</Text>
                 <Text style={[styles.valueCell, { borderRight: "none" }]}>
-                    {data?.departamentoRecibe || ""}
+                    {data?.empleadoRecibe?.departamento || ""}
                 </Text>
             </View>
             <View style={styles.sectionHeader}>
@@ -427,24 +432,27 @@ const PdfTraslados = ({ data = {} }) => (
                     SERIE
                 </Text>
             </View>
-            <View style={styles.sixColRow}>
-                <Text style={styles.sixColValue}>1</Text>
-                <Text style={styles.sixColValue}>
-                    {data?.equipo || ""}
-                </Text>
-                <Text style={styles.sixColValue}>
-                    {data?.descripcionEquipo || ""}
-                </Text>
-                <Text style={styles.sixColValue}>
-                    {data?.marca || ""}
-                </Text>
-                <Text style={styles.sixColValue}>
-                    {data?.modelo || ""}
-                </Text>
-                <Text style={[styles.sixColValue, { borderRight: "none" }]}>
-                    {data?.serie || ""}
-                </Text>
-            </View>
+            {data?.equipos?.length > 0 &&
+                data.equipos.map((eq, index) => (
+                    <View key={index} style={styles.sixColRow}>
+                        <Text style={styles.sixColValue}>{index + 1}</Text>
+                        <Text style={styles.sixColValue}>
+                            {eq.equipo || ""}
+                        </Text>
+                        <Text style={styles.sixColValue}>
+                            {eq.descripcionEquipo || ""}
+                        </Text>
+                        <Text style={styles.sixColValue}>
+                            {eq.marca || ""}
+                        </Text>
+                        <Text style={styles.sixColValue}>
+                            {eq.modelo || ""}
+                        </Text>
+                        <Text style={[styles.sixColValue, { borderRight: "none" }]}>
+                            {eq.serie || ""}
+                        </Text>
+                    </View>
+                ))}
             <View style={styles.sectionHeader}>
                 <Text style={styles.sectionHeaderText}>
                     OBSERVACIONES:
