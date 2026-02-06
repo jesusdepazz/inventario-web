@@ -34,7 +34,7 @@ const generarPDFHoja = async (hoja) => {
     doc.setFontSize(8);
     doc.setTextColor(100);
 
-    doc.text("Depto. de Contabilidad", 10, footerY);
+    doc.text("Depto. de Sistemas", 10, footerY);
 
     const textoPagina = `Página ${numeroPagina}`;
     const textWidth = doc.getTextWidth(textoPagina);
@@ -73,7 +73,7 @@ const generarPDFHoja = async (hoja) => {
     doc.setFontSize(10);
     doc.setFont("helvetica", "bold");
     doc.setTextColor(0, 0, 0);
-    doc.text("ADMINISTRACION DE ACTIVOS FIJOS", marginX, yStart);
+    doc.text("ADMINISTRACION DE ACTIVOS IT", marginX, yStart);
 
     if (mostrarContador) {
       doc.setFontSize(15);
@@ -90,7 +90,7 @@ const generarPDFHoja = async (hoja) => {
 
     doc.setTextColor(0, 0, 0);
     doc.text("HOJA DE RESPONSABILIDAD", marginX, yStart + 4);
-    doc.text("ACTIVOS FIJOS, EQUIPOS Y SUMINISTROS", marginX, yStart + 8);
+    doc.text("ACTIVOS IT, EQUIPOS Y SUMINISTROS", marginX, yStart + 8);
     doc.text(`FECHA DE ACTUALIZACIÓN: ${fechaActual}`, marginX, yStart + 12);
 
     const yTitulo = yStart + 22;
@@ -106,7 +106,7 @@ const generarPDFHoja = async (hoja) => {
     doc.setFont("helvetica", "bold");
     doc.text(titulo, tituloX, yTitulo + 7);
 
-    return yTitulo + lineHeight + 5;
+    return yTitulo + lineHeight + 1;
   };
 
   const numeroHoja = hoja.hojaNo ?? 1;
@@ -129,7 +129,7 @@ const generarPDFHoja = async (hoja) => {
     margin: { left: marginX, right: marginX },
     tableWidth: boxWidth
   });
-  yActual = doc.lastAutoTable.finalY + 5;
+  yActual = doc.lastAutoTable.finalY + 1;
 
   const motivoLabel = "Motivo de actualización:";
   const motivoTexto = hoja.motivo ?? "—";
@@ -155,7 +155,7 @@ const generarPDFHoja = async (hoja) => {
     yActual + 6
   );
 
-  yActual += motivoHeight + 5;
+  yActual += motivoHeight + 1;
 
   const equipos = hoja.equipos ?? [];
   const equiposBody = equipos.map(eq => [
@@ -188,74 +188,83 @@ const generarPDFHoja = async (hoja) => {
   });
   yActual = doc.lastAutoTable.finalY + 5;
 
-  const alturaTituloAccesorios = 8;
-doc.setFillColor(200, 230, 255);
-doc.rect(marginX, yActual, boxWidth, alturaTituloAccesorios, "F");
-doc.setFont("helvetica", "bold");
-doc.setFontSize(8);
-doc.setTextColor(0, 0, 0);
-doc.text("Detalle de accesorios entregados:", marginX + 2, yActual + 6);
+  const alturaTituloAccesorios = 6;
+  doc.setFillColor(200, 230, 255);
+  doc.rect(marginX, yActual, boxWidth, alturaTituloAccesorios, "F");
 
-yActual += alturaTituloAccesorios + 4;
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(8);
+  doc.setTextColor(0, 0, 0);
+  doc.text("Detalle de accesorios entregados:", marginX + 2, yActual + 4.5);
 
-const accesorios = [
-  "Maletin",
-  "Adaptador",
-  "Cable USB",
-  "Cargador/Cubo",
-  "Audífonos",
-  "Control Remoto",
-  "Baterías",
-  "Estuche",
-  "Memoria SD",
-  "Otros",
-];
+  yActual += alturaTituloAccesorios + 1;
 
-const accesoriosSeleccionados = hoja.accesorios
-  ? hoja.accesorios.split(",").map((a) => a.trim())
-  : [];
+  const accesorios = [
+    "Maletin",
+    "Adaptador",
+    "Cable USB",
+    "Cargador/Cubo",
+    "Audífonos",
+    "Control Remoto",
+    "Baterías",
+    "Estuche",
+    "Memoria SD",
+    "Otros",
+  ];
 
-const spacingX = 35;
-const spacingY = 12; 
+  const accesoriosSeleccionados = hoja.accesorios
+    ? hoja.accesorios.split(",").map(a => a.trim())
+    : [];
 
-accesorios.forEach((acc, i) => {
-  const x = marginX + (i % 5) * spacingX;
-  const y = yActual + Math.floor(i / 5) * spacingY;
+  const spacingX = 35;
+  const spacingY = 8;
 
-  doc.rect(x, y, 4, 4);
+  accesorios.forEach((acc, i) => {
+    const x = marginX + (i % 5) * spacingX;
+    const y = yActual + Math.floor(i / 5) * spacingY;
 
-  if (accesoriosSeleccionados.includes(acc)) {
-    doc.setFont("helvetica", "bold");
-    doc.text("X", x + 1, y + 3);
-  }
+    doc.rect(x, y, 3.5, 3.5);
 
-  doc.setFont("helvetica", "normal");
-  doc.text(acc, x + 6, y + 3);
+    if (accesoriosSeleccionados.includes(acc)) {
+      doc.setFont("helvetica", "bold");
+      doc.text("X", x + 0.9, y + 2.7);
+    }
 
-  if (acc === "Otros") {
-    const lineStartX = x + 30; 
-    const lineEndX = pageWidth - marginX;
-    doc.setDrawColor(0, 0, 0);
-    doc.line(lineStartX, y + 3, lineEndX, y + 3);
-  }
-});
+    doc.setFont("helvetica", "normal");
+    doc.text(acc, x + 5.5, y + 2.7);
+
+    if (acc === "Otros") {
+      const lineStartX = x + 26;
+      const lineEndX = pageWidth - marginX;
+      doc.line(lineStartX, y + 2.7, lineEndX, y + 2.7);
+    }
+  });
 
   yActual += 18
 
   const col1Width = boxWidth * 0.7;
   const col2Width = boxWidth * 0.3;
+  const headerHeight = 6;
+  const rowHeight = 12;
+
   doc.setFillColor(204, 229, 255);
-  doc.rect(marginX, yActual, col1Width, 8, 'F');
-  doc.rect(marginX + col1Width, yActual, col2Width, 8, 'F');
+  doc.rect(marginX, yActual, col1Width, headerHeight, 'F');
+  doc.rect(marginX + col1Width, yActual, col2Width, headerHeight, 'F');
 
-  doc.text('Comentarios relacionados al estado del equipo', marginX + 2, yActual + 6);
-  doc.text('Firma del responsable', marginX + col1Width + 2, yActual + 6);
+  doc.text(
+    'Comentarios relacionados al estado del equipo',
+    marginX + 2,
+    yActual + 4
+  );
+  doc.text(
+    'Firma del responsable',
+    marginX + col1Width + 2,
+    yActual + 4
+  );
 
-  yActual += 8;
+  yActual += headerHeight;
 
-  const rowHeight = 20;
   doc.setDrawColor(180);
-
   doc.rect(marginX, yActual, col1Width, rowHeight);
   doc.rect(marginX + col1Width, yActual, col2Width, rowHeight);
 
@@ -264,10 +273,14 @@ accesorios.forEach((acc, i) => {
   doc.setTextColor(0, 0, 0);
 
   const comentariosTexto = hoja.comentarios || "Sin comentarios";
-  const comentariosLines = doc.splitTextToSize(comentariosTexto, col1Width - 4);
-  doc.text(comentariosLines, marginX + 2, yActual + 6);
+  const comentariosLines = doc.splitTextToSize(
+    comentariosTexto,
+    col1Width - 4
+  );
 
-  yActual += 25;
+  doc.text(comentariosLines, marginX + 2, yActual + 4);
+
+  yActual += 15;
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(8);
