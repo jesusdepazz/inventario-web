@@ -218,10 +218,7 @@ export default function CrearTraslado() {
       alert("Error creando traslado ❌ (ver consola)");
     }
   };
-
-  /* =========================
-     JSX (SIN CAMBIOS)
-  ========================== */
+  
   return (
     <div className="h-screen flex items-center justify-center px-4 py-8">
       <div className="bg-white w-full max-w-6xl p-6 rounded-xl shadow-lg overflow-auto max-h-[90vh]">
