@@ -2,8 +2,8 @@ import { Page, Text, View, Document, StyleSheet, Image } from "@react-pdf/render
 
 const styles = StyleSheet.create({
     page: {
-        padding: 30,
-        fontSize: 11,
+        padding: 20,
+        fontSize: 9,
         fontFamily: "Helvetica",
     },
 
@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         width: "100%",
-        marginBottom: 25,
+        marginBottom: 10,
     },
 
     colLeft: {
@@ -32,33 +32,33 @@ const styles = StyleSheet.create({
     },
 
     logo: {
-        width: 120,
-        height: 80,
+        width: 90,
+        height: 60,
     },
 
     companyName: {
-        fontSize: 11,
+        fontSize: 9,
         fontWeight: "bold",
         textAlign: "center",
         color: "black",
     },
 
     registro: {
-        fontSize: 11,
+        fontSize: 9,
         fontWeight: "bold",
         textAlign: "center",
         color: "black",
     },
 
     tituloDocumento: {
-        fontSize: 11,
+        fontSize: 9,
         fontWeight: "bold",
         textAlign: "center",
         color: "black",
     },
 
     correlativo: {
-        fontSize: 10,
+        fontSize: 8,
         fontWeight: "bold",
         color: "red",
         textAlign: "right",
@@ -79,21 +79,21 @@ const styles = StyleSheet.create({
     tableCellLabel: {
         width: "40%",
         backgroundColor: "#d9d9d9",
-        padding: 6,
+        padding: 4,
         borderRight: "1px solid #000",
         fontWeight: "bold",
     },
 
     tableCellValue: {
         width: "60%",
-        padding: 6,
+        padding: 4,
         color: "blue"
     },
 
     sectionHeader: {
         width: "100%",
         backgroundColor: "#003366",
-        padding: 6,
+        padding: 4,
         borderLeft: "1px solid #000",
         borderRight: "1px solid #000",
         borderTop: "1px solid #000",
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
         color: "white",
         fontWeight: "bold",
         textAlign: "center",
-        fontSize: 11,
+        fontSize: 9,
     },
 
     fourColRow: {
@@ -220,18 +220,18 @@ const styles = StyleSheet.create({
     sixColHeader: {
         width: "16.66%",
         backgroundColor: "#d9d9d9",
-        padding: 6,
+        padding: 3,
         borderRight: "1px solid #000",
         fontWeight: "bold",
-        fontSize: 9,
+        fontSize: 7,
         textAlign: "center",
     },
 
     sixColValue: {
         width: "16.66%",
-        padding: 6,
+        padding: 3,
         borderRight: "1px solid #000",
-        fontSize: 9,
+        fontSize: 7,
         textAlign: "center",
     },
 
@@ -448,7 +448,18 @@ const PdfTraslados = ({ data = {} }) => (
                         <Text style={styles.sixColValue}>
                             {eq.modelo || ""}
                         </Text>
-                        <Text style={[styles.sixColValue, { borderRight: "none" }]}>
+                        <Text
+                            style={[
+                                styles.sixColValue,
+                                {
+                                    borderRight: "none",
+                                    fontSize: 6,
+                                    textAlign: "left",
+                                    flexWrap: "wrap",
+                                    wordBreak: "break-all",
+                                },
+                            ]}
+                        >
                             {eq.serie || ""}
                         </Text>
                     </View>
