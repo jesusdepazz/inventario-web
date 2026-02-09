@@ -119,7 +119,7 @@ const HojaResponsabilidadForm = () => {
         const accesoriosString =
             Array.isArray(accesorios) && accesorios.length > 0
                 ? accesorios.join(", ")
-                : null;
+                : "";
 
         const empleadosMapped =
             Array.isArray(empleados) && empleados.length > 0
