@@ -24,28 +24,58 @@ export default function CrearAsignacion() {
         ubicacion: ""
     });
 
+    const [empleadoActual, setEmpleadoActual] = useState({
+        codigo: "",
+        nombre: "",
+        puesto: "",
+        departamento: ""
+    });
+
+    const [empleadosAsignados, setEmpleadosAsignados] = useState([]);
+
     const [codificacion, setCodificacion] = useState("");
 
     const buscarEmpleado = async () => {
-        if (!empleado.codigo.trim()) {
+        if (!empleadoActual.codigo.trim()) {
             alert("Por favor ingresa un código de empleado");
             return;
         }
 
         try {
-            const response = await EmpleadosService.obtenerPorCodigo(empleado.codigo);
+            const response = await EmpleadosService.obtenerPorCodigo(empleadoActual.codigo);
             const data = response.data;
 
-            setEmpleado((prev) => ({
-                ...prev,
+            setEmpleadoActual({
+                codigo: empleadoActual.codigo,
                 nombre: data.nombre,
                 puesto: data.puesto,
                 departamento: data.departamento,
-            }));
+            });
         } catch (error) {
-            console.error("Error al buscar empleado:", error.message);
             alert("Empleado no encontrado");
         }
+    };
+
+    const agregarEmpleado = () => {
+        if (!empleadoActual.codigo) return;
+
+        const existe = empleadosAsignados.some(
+            (e) => e.codigo === empleadoActual.codigo
+        );
+
+        if (existe) {
+            alert("Este empleado ya fue agregado");
+            return;
+        }
+
+        setEmpleadosAsignados((prev) => [...prev, empleadoActual]);
+
+        setEmpleadoActual({
+            codigo: "",
+            nombre: "",
+            puesto: "",
+            departamento: ""
+        });
     };
 
     const buscarEquipo = async () => {
@@ -90,22 +120,26 @@ export default function CrearAsignacion() {
     };
 
     const guardarAsignacion = async () => {
-        if (!empleado.codigo || equiposAsignados.length === 0) {
-            alert("Empleado o equipos incompletos");
+        if (empleadosAsignados.length === 0 || equiposAsignados.length === 0) {
+            alert("Debes agregar empleados y equipos");
             return;
         }
 
         try {
-            const promesas = equiposAsignados.map((eq) => {
-                const asignacion = {
-                    codigoEmpleado: empleado.codigo,
-                    nombreEmpleado: empleado.nombre,
-                    puesto: empleado.puesto,
-                    departamento: empleado.departamento,
-                    codificacionEquipo: eq.codificacion,
-                };
+            const promesas = [];
 
-                return AsignacionesService.crear(asignacion);
+            empleadosAsignados.forEach((emp) => {
+                equiposAsignados.forEach((eq) => {
+                    promesas.push(
+                        AsignacionesService.crear({
+                            codigoEmpleado: emp.codigo,
+                            nombreEmpleado: emp.nombre,
+                            puesto: emp.puesto,
+                            departamento: emp.departamento,
+                            codificacionEquipo: eq.codificacion,
+                        })
+                    );
+                });
             });
 
             await Promise.all(promesas);
@@ -113,8 +147,7 @@ export default function CrearAsignacion() {
             alert("Asignaciones guardadas correctamente");
             navigate("/dashboard");
         } catch (error) {
-            console.error("Error al guardar asignaciones:", error.message);
-            alert("Hubo un error al guardar las asignaciones");
+            alert("Error al guardar asignaciones");
         }
     };
 
@@ -122,49 +155,71 @@ export default function CrearAsignacion() {
         <div className="flex justify-center px-4 py-10 overflow-y-auto">
             <div className="bg-white p-6 rounded-xl shadow-md w-full max-w-6xl">
                 <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
-
-                    {/* EMPLEADO */}
                     <section>
-                        <h3 className="text-xl font-semibold mb-4 border-b border-indigo-300 pb-2">Empleado</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div className="col-span-1">
-                                <label className="mb-1 font-medium text-gray-700">Código de empleado</label>
-                                <div className="flex gap-2">
-                                    <input
-                                        type="text"
-                                        name="codigo"
-                                        value={empleado.codigo}
-                                        onChange={handleInputChange}
-                                        className="input-field"
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={buscarEmpleado}
-                                        className="bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-700 text-sm"
-                                    >
-                                        Buscar
-                                    </button>
-                                </div>
-                            </div>
+                        <h3 className="text-xl font-semibold mb-4 border-b border-indigo-300 pb-2">
+                            Empleados
+                        </h3>
 
-                            <div>
-                                <label className="mb-1 font-medium text-gray-700">Nombre</label>
-                                <div className="px-3 py-2 bg-gray-100 rounded border">{empleado.nombre || "—"}</div>
-                            </div>
+                        <div className="flex gap-2 max-w-md">
+                            <input
+                                type="text"
+                                value={empleadoActual.codigo}
+                                onChange={(e) =>
+                                    setEmpleadoActual({ ...empleadoActual, codigo: e.target.value })
+                                }
+                                className="input-field"
+                                placeholder="Código de empleado"
+                            />
 
-                            <div>
-                                <label className="mb-1 font-medium text-gray-700">Puesto</label>
-                                <div className="px-3 py-2 bg-gray-100 rounded border">{empleado.puesto || "—"}</div>
-                            </div>
+                            <button
+                                type="button"
+                                onClick={buscarEmpleado}
+                                className="bg-indigo-600 text-white px-3 py-1 rounded text-sm"
+                            >
+                                Buscar
+                            </button>
 
-                            <div>
-                                <label className="mb-1 font-medium text-gray-700">Departamento</label>
-                                <div className="px-3 py-2 bg-gray-100 rounded border">{empleado.departamento || "—"}</div>
-                            </div>
+                            <button
+                                type="button"
+                                onClick={agregarEmpleado}
+                                className="bg-green-600 text-white px-3 py-1 rounded text-sm"
+                            >
+                                Agregar
+                            </button>
                         </div>
-                    </section>
 
-                    {/* EQUIPOS */}
+                        {empleadoActual.nombre && (
+                            <div className="mt-3 text-sm bg-gray-100 p-3 rounded border">
+                                <strong>{empleadoActual.nombre}</strong> · {empleadoActual.puesto} · {empleadoActual.departamento}
+                            </div>
+                        )}
+
+                        {empleadosAsignados.length > 0 && (
+                            <div className="mt-4 space-y-2">
+                                {empleadosAsignados.map((emp, index) => (
+                                    <div
+                                        key={index}
+                                        className="flex justify-between items-center bg-gray-100 p-3 rounded border"
+                                    >
+                                        <div className="text-sm">
+                                            <strong>{emp.codigo}</strong> — {emp.nombre} · {emp.puesto}
+                                        </div>
+
+                                        <button
+                                            onClick={() =>
+                                                setEmpleadosAsignados((prev) =>
+                                                    prev.filter((_, i) => i !== index)
+                                                )
+                                            }
+                                            className="text-red-600 text-sm hover:underline"
+                                        >
+                                            Quitar
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </section>
                     <section>
                         <h3 className="text-xl font-semibold mb-4 border-b border-indigo-300 pb-2">Detalles del equipo</h3>
 
@@ -184,8 +239,6 @@ export default function CrearAsignacion() {
                                 Agregar
                             </button>
                         </div>
-
-                        {/* LISTA DE EQUIPOS */}
                         {equiposAsignados.length > 0 && (
                             <div className="mt-4 space-y-2">
                                 {equiposAsignados.map((eq, index) => (
