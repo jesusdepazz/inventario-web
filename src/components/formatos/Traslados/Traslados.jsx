@@ -224,7 +224,6 @@ export default function CrearTraslado() {
       <div className="bg-white w-full max-w-6xl p-6 rounded-xl shadow-lg overflow-auto max-h-[90vh]">
         <form onSubmit={handleSubmit} className="space-y-6">
 
-          {/* ===== DATOS GENERALES ===== */}
           <section>
             <h3 className="text-xl font-semibold mb-4 border-b border-indigo-300 pb-2">
               Datos Generales

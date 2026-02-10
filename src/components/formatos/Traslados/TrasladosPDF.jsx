@@ -269,6 +269,12 @@ const styles = StyleSheet.create({
 
 });
 
+const wrapText = (text = "", max = 25) => {
+    if (!text) return "";
+    const regex = new RegExp(`(.{1,${max}})`, "g");
+    return text.match(regex).join("\n");
+};
+
 const formatSpanishDate = (dateString) => {
     if (!dateString) return "";
 
@@ -455,12 +461,11 @@ const PdfTraslados = ({ data = {} }) => (
                                     borderRight: "none",
                                     fontSize: 6,
                                     textAlign: "left",
-                                    flexWrap: "wrap",
-                                    wordBreak: "break-all",
+                                    lineHeight: 1.1,
                                 },
                             ]}
                         >
-                            {eq.serie || ""}
+                            {wrapText(eq.serie, 25)}
                         </Text>
                     </View>
                 ))}
