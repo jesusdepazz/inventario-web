@@ -392,7 +392,17 @@ const generarPDFHoja = async (hoja) => {
     doc.text(firmas[i].nombre ?? "", x, y + 12, { align: "center" });
 
     doc.setTextColor(0, 0, 0);
-    doc.text(firmas[i].puesto ?? "", x, y + 18, { align: "center" });
+    doc.setFontSize(6);
+
+    doc.text(
+      firmas[i].puesto ?? "",
+      x,
+      y + 18,
+      {
+        align: "center",
+        maxWidth: 40
+      }
+    );
   }
 
   yActual = inicioFirmasY + alturaTotalFirmas;
