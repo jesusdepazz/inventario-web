@@ -392,7 +392,7 @@ const generarPDFHoja = async (hoja) => {
     doc.text(firmas[i].nombre ?? "", x, y + 12, { align: "center" });
 
     doc.setTextColor(0, 0, 0);
-    doc.setFontSize(6);
+    doc.setFontSize(8);
 
     doc.text(
       firmas[i].puesto ?? "",
