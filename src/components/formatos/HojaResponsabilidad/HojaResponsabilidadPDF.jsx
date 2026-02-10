@@ -124,11 +124,23 @@ const generarPDFHoja = async (hoja) => {
     startY: yActual,
     head: [["Código", "Nombre", "Puesto", "Departamento"]],
     body: empleadosBody.length > 0 ? empleadosBody : [["—", "—", "—", "—"]],
-    styles: { fontSize: 8, lineColor: [0, 0, 0], lineWidth: 0.3 },
-    headStyles: { fillColor: [30, 58, 138], textColor: [255, 255, 255] },
+    styles: {
+      fontSize: 6,
+      cellPadding: 1,
+      minCellHeight: 4,
+      lineColor: [0, 0, 0],
+      lineWidth: 0.2
+    },
+    headStyles: {
+      fillColor: [30, 58, 138],
+      textColor: [255, 255, 255],
+      fontSize: 6
+    },
     margin: { left: marginX, right: marginX },
-    tableWidth: boxWidth
+    tableWidth: boxWidth,
+    pageBreak: "auto"
   });
+
   yActual = doc.lastAutoTable.finalY + 1;
 
   const motivoLabel = "Motivo de actualización:";
@@ -170,23 +182,26 @@ const generarPDFHoja = async (hoja) => {
 
   autoTable(doc, {
     startY: yActual,
-    head: [["Fecha", "Codificacion", "Equipo", "Marca", "Modelo", "Serie", "Observaciones"]],
+    head: [["Fecha", "Código", "Equipo", "Marca", "Modelo", "Serie", "Obs."]],
     body: equiposBody.length > 0 ? equiposBody : [["—", "—", "—", "—", "—", "—", "—"]],
     styles: {
-      fontSize: 8,
+      fontSize: 6,
+      cellPadding: 1,
+      minCellHeight: 4,
       lineColor: [0, 0, 0],
-      lineWidth: 0.3
+      lineWidth: 0.2
     },
     headStyles: {
       fillColor: [30, 58, 138],
       textColor: [255, 255, 255],
-      lineColor: [0, 0, 0],
-      lineWidth: 0.3
+      fontSize: 6
     },
     margin: { left: marginX, right: marginX },
-    tableWidth: boxWidth
+    tableWidth: boxWidth,
+    pageBreak: "auto"
   });
-  yActual = doc.lastAutoTable.finalY + 5;
+
+  yActual = doc.lastAutoTable.finalY + 3;
 
   const alturaTituloAccesorios = 6;
   doc.setFillColor(200, 230, 255);
@@ -305,94 +320,82 @@ const generarPDFHoja = async (hoja) => {
 
   yActual += 0;
 
-  agregarFooter(doc, doc.internal.getNumberOfPages());
+  const marginFirma = 30;
 
-  const espacioNecesario = 20;
-  if (yActual + espacioNecesario > pageHeight - 40) {
-    doc.addPage();
-    yActual = await agregarEncabezado(doc, numeroHoja, marginX, true);
-    yActual = pageHeight / 2 - 30;
-  }
-
-
-  const marginFirma = 40;
-  const filaAltura = 40;
-  let firmaYActual = yActual;
-
-  if (empleados.length > 0) {
-    const firmasPorFila = 3;
-
-    for (let i = 0; i < empleados.length; i++) {
-      const emp = empleados[i];
-      const filaIndex = Math.floor(i / firmasPorFila);
-      const posicionEnFila = i % firmasPorFila;
-      const empleadosEnFila = Math.min(firmasPorFila, empleados.length - filaIndex * firmasPorFila);
-
-      firmaYActual = yActual + filaIndex * filaAltura;
-
-      if (firmaYActual + 30 > pageHeight - 20) {
-        doc.addPage();
-        firmaYActual = await agregarEncabezado(doc, numeroHoja, marginX, true);
-        yActual = firmaYActual;
-        i--;
-        continue;
-      }
-
-      let xPos;
-      if (empleadosEnFila === 1) {
-        xPos = pageWidth / 2;
-      } else if (empleadosEnFila === 2) {
-        xPos = posicionEnFila === 0 ? marginFirma : pageWidth - marginFirma;
-      } else {
-        if (posicionEnFila === 0) xPos = marginFirma;
-        else if (posicionEnFila === 1) xPos = pageWidth / 2;
-        else xPos = pageWidth - marginFirma;
-      }
-
-      const offsetY = 15;
-
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(10);
-      doc.setTextColor(0, 0, 0);
-      doc.text("(F):________________", xPos, firmaYActual + offsetY, { align: "center" });
-
-      doc.setFontSize(8);
-      doc.text("Responsable:", xPos, firmaYActual + 6 + offsetY, { align: "center" });
-
-      doc.setTextColor(0, 102, 204);
-      doc.text(emp.nombre ?? "", xPos, firmaYActual + 12 + offsetY, { align: "center" });
-
-      doc.setTextColor(0, 0, 0);
-      doc.text(emp.puesto ?? "", xPos, firmaYActual + 18 + offsetY, { align: "center" });
+  const verificarSaltoPagina = async (alturaNecesaria) => {
+    if (yActual + alturaNecesaria > pageHeight - 40) {
+      agregarFooter(doc, doc.internal.getNumberOfPages());
+      doc.addPage();
+      yActual = await agregarEncabezado(doc, numeroHoja, marginX, true) + 10;
     }
-  }
+  };
 
-  yActual = firmaYActual + 35;
-
-  const responsablesFinales = [
-    { nombre: "Kleidy López", puesto: "Asistente IT", label: "Realizado Por:" },
-    { nombre: "Carlos Mazariegos", puesto: "Gerente de Sistemas", label: "Entrega de Equipo:" }
+  const firmas = [
+    ...empleados.map(e => ({
+      nombre: e.nombre,
+      puesto: e.puesto,
+      label: "Responsable:"
+    })),
+    {
+      nombre: "Kleidy López",
+      puesto: "Asistente IT",
+      label: "Realizado por:"
+    },
+    {
+      nombre: "Carlos Mazariegos",
+      puesto: "Gerente de Sistemas",
+      label: "Entrega de equipo:"
+    }
   ];
 
-  responsablesFinales.forEach((r, index) => {
-    const x = index === 0 ? marginFirma : pageWidth - marginFirma;
+  const firmasPorFila = 3;
+  const alturaFirma = 35;
+  const totalFilas = Math.ceil(firmas.length / firmasPorFila);
+  const alturaTotalFirmas = totalFilas * alturaFirma + 10;
+
+  await verificarSaltoPagina(alturaTotalFirmas);
+
+  const inicioFirmasY = yActual;
+
+  for (let i = 0; i < firmas.length; i++) {
+    const fila = Math.floor(i / firmasPorFila);
+    const col = i % firmasPorFila;
+
+    const firmasEnFila = Math.min(
+      firmasPorFila,
+      firmas.length - fila * firmasPorFila
+    );
+
+    let x;
+
+    if (firmasEnFila === 1) {
+      x = pageWidth / 2;
+    } else if (firmasEnFila === 2) {
+      x = col === 0 ? marginFirma : pageWidth - marginFirma;
+    } else {
+      if (col === 0) x = marginFirma;
+      else if (col === 1) x = pageWidth / 2;
+      else x = pageWidth - marginFirma;
+    }
+
+    const y = inicioFirmasY + fila * alturaFirma;
 
     doc.setFont("helvetica", "bold");
     doc.setFontSize(10);
     doc.setTextColor(0, 0, 0);
-    doc.text("(F):________________", x, yActual, { align: "center" });
+    doc.text("(F):________________", x, y, { align: "center" });
 
     doc.setFontSize(8);
-    doc.text(r.label, x, yActual + 6, { align: "center" });
+    doc.text(firmas[i].label, x, y + 6, { align: "center" });
 
     doc.setTextColor(0, 102, 204);
-    doc.text(r.nombre, x, yActual + 12, { align: "center" });
+    doc.text(firmas[i].nombre ?? "", x, y + 12, { align: "center" });
 
     doc.setTextColor(0, 0, 0);
-    doc.text(r.puesto, x, yActual + 18, { align: "center" });
-  });
+    doc.text(firmas[i].puesto ?? "", x, y + 18, { align: "center" });
+  }
 
-  yActual += 50;
+  yActual = inicioFirmasY + alturaTotalFirmas;
 
   agregarFooter(doc, doc.internal.getNumberOfPages());
 
