@@ -1,10 +1,10 @@
 import ApiClient from "./ApiClient";
 
 const SolvenciasService = {
-  crearSolvencia: async (hojaResponsabilidadId, observaciones) => {
+  crearSolvencia: async (hojaResponsabilidadId, observaciones, solvenciaNo) => {
     try {
       const response = await ApiClient.post("/HojaSolvencias", null, {
-        params: { hojaResponsabilidadId, observaciones },
+        params: { hojaResponsabilidadId, observaciones, solvenciaNo},
       });
       return response.data;
     } catch (error) {

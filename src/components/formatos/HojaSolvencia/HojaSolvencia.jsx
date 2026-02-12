@@ -9,6 +9,7 @@ export default function HojaSolvencia() {
   const [observaciones, setObservaciones] = useState("");
   const [mensaje, setMensaje] = useState("");
   const [detalleHoja, setDetalleHoja] = useState(null);
+  const [solvenciaNo, setSolvenciaNo] = useState("");
 
   useEffect(() => {
     const fetchHojas = async () => {
@@ -30,6 +31,12 @@ export default function HojaSolvencia() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!solvenciaNo) {
+      setMensaje("Debes ingresar el número de solvencia.");
+      return;
+    }
+
     if (!selectedHoja) {
       setMensaje("Debes seleccionar una hoja de responsabilidad.");
       return;
@@ -38,10 +45,13 @@ export default function HojaSolvencia() {
     try {
       const res = await SolvenciasService.crearSolvencia(
         selectedHoja,
-        observaciones
+        observaciones,
+        solvenciaNo
       );
+
       setMensaje(`✅ Solvencia creada con No: ${res.solvenciaNo}`);
       setObservaciones("");
+      setSolvenciaNo("");
       setSelectedHoja("");
       setDetalleHoja(null);
     } catch (err) {
@@ -57,6 +67,19 @@ export default function HojaSolvencia() {
           <FaClipboardList className="text-blue-600" /> Crear Solvencia
         </h2>
         <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="block mb-2 font-medium text-gray-700">
+              No. de Solvencia
+            </label>
+            <input
+              type="text"
+              value={solvenciaNo}
+              onChange={(e) => setSolvenciaNo(e.target.value)}
+              className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              placeholder="Solvencia No"
+              required
+            />
+          </div>
           <div>
             <label className="block mb-2 font-medium text-gray-700">
               Selecciona una Hoja de Responsabilidad

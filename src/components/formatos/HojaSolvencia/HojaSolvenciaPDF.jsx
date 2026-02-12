@@ -62,7 +62,7 @@ const HojaSolvenciaPDF = ({ data }) => {
                             Guatemalan Candies, S.A.
                         </Text>
                         <Text style={{ fontSize: 9, marginVertical: 1 }}>
-                            Administración de Activos Fijos
+                            Administración de Equipos IT
                         </Text>
                         <Text style={{ fontSize: 9, marginVertical: 1 }}>
                             Solvencia de Equipo de Cómputo
@@ -101,7 +101,7 @@ const HojaSolvenciaPDF = ({ data }) => {
                         marginBottom: 4,
                         fontWeight: "bold"
                     }}>
-                        El infrascrito encargado del departamento de Activos Fijos, Certifica que:
+                        El infrascrito encargado del departamento de IT, Certifica que:
                     </Text>
                 </View>
                 <View style={{ width: "100%", alignItems: "center", marginBottom: 10 }}>
