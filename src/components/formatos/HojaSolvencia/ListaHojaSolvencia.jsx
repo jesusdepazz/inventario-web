@@ -43,9 +43,7 @@ export default function ListaHojaSolvencia() {
                                 <th className="p-3 font-semibold">Nombre</th>
                                 <th className="p-3 font-semibold">Puesto</th>
                                 <th className="p-3 font-semibold">Departamento</th>
-                                <th className="p-3 font-semibold">Ubicación</th>
                                 <th className="p-3 font-semibold">Hoja No.</th>
-                                <th className="p-3 font-semibold">Jefe inmediato</th>
                                 <th className="p-3 font-semibold">Observaciones</th>
                                 <th className="p-3 font-semibold">Acciones</th>
                             </tr>
@@ -69,11 +67,7 @@ export default function ListaHojaSolvencia() {
                                         <td className="border p-2">{nombre}</td>
                                         <td className="border p-2">{puesto}</td>
                                         <td className="border p-2">{depto}</td>
-                                        <td className="border p-2">{ubicacion}</td>
                                         <td className="border p-2">{h.hojaNo}</td>
-                                        <td className="border p-2">
-                                            {h.JefeInmediato}
-                                        </td>
                                         <td className="border p-2">{h.observaciones}</td>
                                         <td className="border p-2">
                                             <PDFDownloadLink
