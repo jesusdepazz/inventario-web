@@ -5,6 +5,7 @@ import EmpleadosService from "../../../services/EmpleadosServices";
 import AsignacionesService from "../../../services/AsignacionesServices";
 
 const HojaResponsabilidadForm = () => {
+    const [tipoHoja, setTipoHoja] = useState("");
     const [hojaNo, setHojaNo] = useState("");
     const [motivo, setMotivo] = useState("");
     const [comentarios, setComentarios] = useState("");
@@ -142,10 +143,15 @@ const HojaResponsabilidadForm = () => {
                     Ubicacion: eq.ubicacion,
                     FechaIngreso: eq.fechaIngreso,
                     Estado: eq.estado,
+                    EquipoTipo: eq.equipoTipo,
+                    Extension: eq.extension,
+                    NumeroAsignado: eq.numeroAsignado,
+                    Imei: eq.imei,
                 }))
                 : [];
 
         const payload = {
+            TipoHoja: tipoHoja,
             HojaNo: hojaNo,
             Motivo: motivo,
             Comentarios: comentarios,
@@ -153,7 +159,7 @@ const HojaResponsabilidadForm = () => {
             Observaciones: observaciones,
             Accesorios: accesoriosString,
             JefeInmediato: jefeSeleccionado
-                ? `${jefeSeleccionado.nombre} - ${jefeSeleccionado.puesto}`
+                ? `${jefeSeleccionado.nombre} - ${jefeSeleccionado.puesto} - ${jefeSeleccionado.departamento}`
                 : "",
             Empleados: empleadosMapped,
             Equipos: equiposMapped,
@@ -189,6 +195,21 @@ const HojaResponsabilidadForm = () => {
                             Detalles de la Hoja
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-gray-600 mb-1">
+                                    Tipo De Hoja
+                                </label>
+
+                                <select
+                                    value={tipoHoja}
+                                    onChange={(e) => setTipoHoja(e.target.value)}
+                                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                >
+                                    <option value="">-- Seleccione tipo de hoja --</option>
+                                    <option value="Computo">Hoja responsabilidad cómputo</option>
+                                    <option value="Movil">Hoja responsabilidad móvil</option>
+                                </select>
+                            </div>
                             <div>
                                 <label className="block text-gray-600 mb-1">Hoja No.</label>
                                 <input
@@ -344,7 +365,7 @@ const HojaResponsabilidadForm = () => {
                                             setIsTypingJefe(false);
                                         }}
                                     >
-                                        <strong>{j.nombre}</strong> — {j.puesto}
+                                        <strong>{j.nombre}</strong> — {j.puesto} — {j.departamento}
                                     </li>
                                 ))}
                             </ul>
@@ -352,7 +373,7 @@ const HojaResponsabilidadForm = () => {
                     </div>
                     {jefeData && (
                         <div className="bg-white p-2 border rounded-lg shadow-sm flex justify-between items-center mt-2">
-                            <span>{jefeData.nombre} - {jefeData.puesto}</span>
+                            <span>{jefeData.nombre} - {jefeData.puesto} - {jefeData.departamento}</span>
                             <button
                                 className="text-red-500 font-bold"
                                 onClick={() => {

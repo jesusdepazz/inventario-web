@@ -17,9 +17,10 @@ const CrearEquipo = () => {
         marca: "",
         modelo: "",
         serie: "",
+        imei: "",
         numeroAsignado: "",
         extension: "",
-        tipo: "",
+        equipoTipo: "",
         responsableAnterior: "",
         estado: "",
         ubicacion: "",
@@ -65,7 +66,7 @@ const CrearEquipo = () => {
         e.preventDefault();
 
         const camposObligatorios = [
-            "tipo",
+            "equipoTipo",
             "estado",
             "marca",
             "modelo",
@@ -317,8 +318,25 @@ const CrearEquipo = () => {
                                     className="input-field"
                                 />
                             </div>
-                            {form.tipo === "Equipo móvil" && (
+                            {form.equipoTipo === "Equipo móvil" && (
                                 <>
+                                    <div className="flex flex-col">
+                                        <label
+                                            htmlFor="imei"
+                                            className="mb-1 font-medium text-gray-700"
+                                        >
+                                            Imei
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="imei"
+                                            name="imei"
+                                            value={form.imei}
+                                            onChange={handleChange}
+                                            placeholder="Número asignado"
+                                            className="input-field"
+                                        />
+                                    </div>
                                     <div className="flex flex-col">
                                         <label
                                             htmlFor="numeroAsignado"
@@ -375,12 +393,12 @@ const CrearEquipo = () => {
                             </div>
                             <div className="flex flex-col">
                                 <label htmlFor="tipo" className="mb-1 font-medium text-gray-700">
-                                    Tipo <span className="text-red-500">*</span>
+                                    Equipo tipo <span className="text-red-500">*</span>
                                 </label>
                                 <select
-                                    id="tipo"
-                                    name="tipo"
-                                    value={form.tipo}
+                                    id="equipoTipo"
+                                    name="equipoTipo"
+                                    value={form.equipoTipo}
                                     onChange={handleChange}
                                     required
                                     className="input-field"
@@ -463,7 +481,7 @@ const CrearEquipo = () => {
                     </section>
                     <div className="flex justify-end gap-4">
                         <button
-                             type="submit"
+                            type="submit"
                             className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 font-semibold transition"
                         >
                             Crear Equipo
