@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import HojasService from "../../../services/HojasServices";
 import generarPDFHoja from "./HojaResponsabilidadPDF";
+import generarPDFHojaMovil from "./HojaResponsabilidadMovilPdf";
 import { useNavigate } from "react-router-dom";
 
 
 const ListaHojasResponsabilidad = () => {
     const [hojas, setHojas] = useState([]);
     const navigate = useNavigate();
-    
+
     useEffect(() => {
         const fetchHojas = async () => {
             try {
@@ -23,6 +24,14 @@ const ListaHojasResponsabilidad = () => {
 
         fetchHojas();
     }, []);
+
+    const handleGenerarPDF = (hoja) => {
+        if (hoja.tipoHoja === "Movil") {
+            generarPDFHojaMovil(hoja);
+        } else {
+            generarPDFHoja(hoja);
+        }
+    };
 
     return (
         <div className="p-6 max-w-7xl mx-auto">
@@ -55,6 +64,7 @@ const ListaHojasResponsabilidad = () => {
                                 <th className="px-6 py-3 border">Estado</th>
                                 <th className="px-6 py-3 border">Fecha Solvencia</th>
                                 <th className="px-6 py-3 border">Observaciones</th>
+                                <th className="px-6 py-3 border">Tipo Hoja</th>
                                 <th className="px-6 py-3 border">Acciones</th>
                                 <th className="px-6 py-3 border">Editar</th>
                             </tr>
@@ -97,9 +107,10 @@ const ListaHojasResponsabilidad = () => {
                                         })}
                                     </td>
                                     <td className="px-4 py-2">{hoja.observaciones}</td>
+                                    <td className="px-4 py-2">{hoja.tipoHoja}</td>
                                     <td className="px-4 py-2">
                                         <button
-                                            onClick={() => generarPDFHoja(hoja)}
+                                            onClick={() => handleGenerarPDF(hoja)}
                                             className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
                                         >
                                             PDF
