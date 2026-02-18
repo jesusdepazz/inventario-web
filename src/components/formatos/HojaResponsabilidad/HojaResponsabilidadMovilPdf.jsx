@@ -142,7 +142,6 @@ const generarPDFHojaMovil = async (hoja) => {
 
     yActual = doc.lastAutoTable.finalY + 10;
 
-    // Obtener datos
     const jefeInfo = hoja.jefeInmediato ?? "";
 
     let nombreJefe = "";
@@ -160,7 +159,6 @@ const generarPDFHojaMovil = async (hoja) => {
         ? formatFecha(hoja.fechaCreacion)
         : "";
 
-    // Configuración
     doc.setFontSize(8);
 
     const lineHeight = 8;
@@ -169,17 +167,12 @@ const generarPDFHojaMovil = async (hoja) => {
     const leftWidth = boxWidth / 2 - 10;
     const rightWidth = boxWidth / 2 - 10;
 
-    // ─────────────────────────────
-    // FILA 1
-    // ─────────────────────────────
-
     doc.setFont("helvetica", "bold");
     doc.text("JEFE INMEDIATO:", leftX, yActual);
 
     doc.setFont("helvetica", "normal");
     doc.text(nombreJefe, leftX + 38, yActual);
 
-    // Línea izquierda
     doc.line(
         leftX + 38,
         yActual + 2,
@@ -187,14 +180,12 @@ const generarPDFHojaMovil = async (hoja) => {
         yActual + 2
     );
 
-    // COLUMNA DERECHA
     doc.setFont("helvetica", "bold");
     doc.text("CARGO:", rightX, yActual);
 
     doc.setFont("helvetica", "normal");
     doc.text(cargoJefe, rightX + 20, yActual);
 
-    // Línea derecha
     doc.line(
         rightX + 20,
         yActual + 2,
@@ -202,9 +193,6 @@ const generarPDFHojaMovil = async (hoja) => {
         yActual + 2
     );
 
-    // ─────────────────────────────
-    // FILA 2 (solo izquierda)
-    // ─────────────────────────────
 
     yActual += lineHeight;
 
@@ -221,10 +209,6 @@ const generarPDFHojaMovil = async (hoja) => {
         yActual + 2
     );
 
-    // ─────────────────────────────
-    // FILA 3 (solo izquierda)
-    // ─────────────────────────────
-
     yActual += lineHeight;
 
     doc.setFont("helvetica", "bold");
@@ -240,7 +224,6 @@ const generarPDFHojaMovil = async (hoja) => {
         yActual + 2
     );
 
-    // Espacio para continuar PDF
     yActual += 10;
 
     const equipos = hoja.equipos ?? [];
