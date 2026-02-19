@@ -154,7 +154,6 @@ const HojaResponsabilidadEditar = () => {
 
     const eliminarEquipo = (index) => setEquipos(equipos.filter((_, i) => i !== index));
 
-    // --- Submit ---
     const handleSubmit = async (e) => {
         e.preventDefault();
 

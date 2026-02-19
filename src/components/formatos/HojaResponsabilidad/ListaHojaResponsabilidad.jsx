@@ -3,11 +3,13 @@ import HojasService from "../../../services/HojasServices";
 import generarPDFHoja from "./HojaResponsabilidadPDF";
 import generarPDFHojaMovil from "./HojaResponsabilidadMovilPdf";
 import { useNavigate } from "react-router-dom";
+import { getRol } from "../../../services/auth"
 
 
 const ListaHojasResponsabilidad = () => {
     const [hojas, setHojas] = useState([]);
     const navigate = useNavigate();
+    const rol = getRol();
 
     useEffect(() => {
         const fetchHojas = async () => {
@@ -66,7 +68,9 @@ const ListaHojasResponsabilidad = () => {
                                 <th className="px-6 py-3 border">Observaciones</th>
                                 <th className="px-6 py-3 border">Tipo Hoja</th>
                                 <th className="px-6 py-3 border">Acciones</th>
-                                <th className="px-6 py-3 border">Editar</th>
+                                {rol === "Administrador" && (
+                                    <th className="px-6 py-3 border">Editar</th>
+                                )}
                             </tr>
                         </thead>
                         <tbody>
@@ -116,14 +120,16 @@ const ListaHojasResponsabilidad = () => {
                                             PDF
                                         </button>
                                     </td>
-                                    <td className="px-4 py-2">
-                                        <button
-                                            onClick={() => navigate(`/hojas-responsabilidad/editar/${hoja.id}`)}
-                                            className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
-                                        >
-                                            Editar
-                                        </button>
-                                    </td>
+                                    {rol === "Administrador" && (
+                                        <td className="px-4 py-2">
+                                            <button
+                                                onClick={() => navigate(`/hojas-responsabilidad/editar/${hoja.id}`)}
+                                                className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
+                                            >
+                                                Editar
+                                            </button>
+                                        </td>
+                                    )}
                                 </tr>
                             ))}
 

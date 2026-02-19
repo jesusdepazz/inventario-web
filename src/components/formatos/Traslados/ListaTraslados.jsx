@@ -11,13 +11,19 @@ export default function TrasladosLista() {
         const fetchTraslados = async () => {
             try {
                 const res = await TrasladosServices.obtenerTodos();
-                setTraslados(res.data);
+
+                const ordenados = res.data.sort((a, b) => {
+                    return Number(a.no) - Number(b.no);
+                });
+
+                setTraslados(ordenados);
             } catch (err) {
                 console.error("Error cargando traslados:", err);
             } finally {
                 setLoading(false);
             }
         };
+
         fetchTraslados();
     }, []);
 
