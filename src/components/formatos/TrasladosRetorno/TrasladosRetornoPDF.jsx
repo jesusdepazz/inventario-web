@@ -214,7 +214,7 @@ const PdfTrasladosRetorno = ({ data = {} }) => (
 
                 <View style={styles.colRight}>
                     <Text style={styles.correlativo}>
-                        Correlativo Serie “B” No. {data?.no || ""}
+                        Correlativo Serie “IT” No. {data?.no || ""}
                     </Text>
                 </View>
             </View>

@@ -318,12 +318,12 @@ const PdfTraslados = ({ data = {} }) => (
                         Registro
                     </Text>
                     <Text style={styles.tituloDocumento}>
-                        Movimiento de activos fijos administración
+                        Movimiento de Equipos de Computo
                     </Text>
                 </View>
                 <View style={styles.colRight}>
                     <Text style={styles.correlativo}>
-                        Correlativo Serie “B” No. {data?.no || ""}
+                        Correlativo Serie “IT” No. {data?.no || ""}
                     </Text>
                 </View>
             </View>
