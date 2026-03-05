@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
 import { useIsAuthenticated } from "@azure/msal-react";
-import Dashboard from "./pages/Dashboard";
+import Inicio from "./pages/Inicio";
 import Layout from "./components/Layout";
 import Login from "./components/Login";
 import CrearEquipo from "./components/equipos/Crearquipos";
@@ -10,9 +10,6 @@ import ListaEquipos from "./components/equipos/ListaEquipos";
 import EditarEquipo from "./components/equipos/EditarEquipos";
 import EliminarEquipos from "./components/equipos/EliminarEquipos";
 import CrearAsignacion from "./components/asignaciones/CrearAsignacion";
-import CrearMantenimiento from "./components/asignaciones/mantenimientos/CrearMantenimientos";
-import ListaMantenimientos from "./components/asignaciones/mantenimientos/ListaMantenimientos";
-import EliminarMantenimientos from "./components/asignaciones/mantenimientos/EliminarMantenimiento";
 import ListaAsignaciones from "./components/asignaciones/ListaAsignacion";
 import EliminarAsignacion from "./components/asignaciones/EliminarAsignacion";
 import CrearSolicitud from "./components/solicitudes/CrearSolicitud";
@@ -69,7 +66,7 @@ function AppRoutes() {
             </RequireAuth>
           }
         >
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/inicio" element={<Inicio />} />
           {/* EQUIPOS */}
           <Route path="/equipos/crear" element={<CrearEquipo />} />
           <Route path="/equipos/inventario" element={<ListaEquipos />} />
@@ -79,10 +76,6 @@ function AppRoutes() {
           <Route path="/asignaciones/crear" element={<CrearAsignacion />} />
           <Route path="asignaciones/lista" element={<ListaAsignaciones />} />
           <Route path="asignaciones/eliminar" element={<EliminarAsignacion />} />
-          {/* MANTENIMIENTOS */}
-          <Route path="/mantenimientos/crear" element={<CrearMantenimiento />} />
-          <Route path="/mantenimientos/lista" element={<ListaMantenimientos />} />
-          <Route path="/mantenimientos/eliminar" element={<EliminarMantenimientos />} />
           {/* SOLICITUDES */}
           <Route path="/solicitudes/crear" element={<CrearSolicitud />} />
           <Route path="/solicitudes/lista" element={<ListaSolicitud />} />
@@ -110,7 +103,7 @@ function AppRoutes() {
           <Route path="/suministros/movimientos" element={<Movimientos />} />
           <Route path="/suministros/eliminarMovimientos" element={<EliminarSuministros />} />
         </Route>
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        <Route path="*" element={<Navigate to="/inicio" replace />} />
       </Routes>
     </BrowserRouter>
   );

@@ -1,444 +1,588 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import HojasService from "../../../services/HojasServices";
 import EquiposService from "../../../services/EquiposServices";
 import EmpleadosService from "../../../services/EmpleadosServices";
 import AsignacionesService from "../../../services/AsignacionesServices";
 
 const HojaResponsabilidadForm = () => {
-    const [tipoHoja, setTipoHoja] = useState("");
-    const [hojaNo, setHojaNo] = useState("");
-    const [motivo, setMotivo] = useState("");
-    const [comentarios, setComentarios] = useState("");
-    const [estado, SetEstado] = useState("");
-    const [solvenciaNo, SetSolvenciaNo] = useState("");
-    const [fechaSolvencia, SetFechaSolvencia] = useState("");
-    const [observaciones, SetObservaciones] = useState("");
-    const [empleados, setEmpleados] = useState([]);
-    const [jefeInmediato, setJefeInmediato] = useState("");
-    const [jefeData, setJefeData] = useState(null);
-    const [jefeSuggestions, setJefeSuggestions] = useState([]);
-    const [isTypingJefe, setIsTypingJefe] = useState(false);
-    const [jefeSeleccionado, setJefeSeleccionado] = useState(null);
-    const [equipos, setEquipos] = useState([]);
-    const [empleadoCodigo, setEmpleadoCodigo] = useState("");
-    const [equipoCodificacion, setEquipoCodificacion] = useState("");
-    const [accesorios, setAccesorios] = useState([]);
+  const [tipoHoja, setTipoHoja] = useState("");
+  const [hojaNo, setHojaNo] = useState("");
+  const [motivo, setMotivo] = useState("");
+  const [comentarios, setComentarios] = useState("");
+  const [estado, SetEstado] = useState("");
+  const [solvenciaNo, SetSolvenciaNo] = useState("");
+  const [fechaSolvencia, SetFechaSolvencia] = useState("");
+  const [observaciones, SetObservaciones] = useState("");
+  const [empleados, setEmpleados] = useState([]);
+  const [jefeInmediato, setJefeInmediato] = useState("");
+  const [jefeData, setJefeData] = useState(null);
+  const [jefeSuggestions, setJefeSuggestions] = useState([]);
+  const [isTypingJefe, setIsTypingJefe] = useState(false);
+  const [jefeSeleccionado, setJefeSeleccionado] = useState(null);
+  const [equipos, setEquipos] = useState([]);
+  const [empleadoCodigo, setEmpleadoCodigo] = useState("");
+  const [equipoCodificacion, setEquipoCodificacion] = useState("");
+  const [accesorios, setAccesorios] = useState([]);
 
+  const accesoriosDisponibles = useMemo(
+    () => [
+      "Maletin",
+      "Adaptador",
+      "Cable USB",
+      "Cargador/Cubo",
+      "Audifonos",
+      "Control Remoto",
+      "Baterias",
+      "Estuche",
+      "Memoria SD",
+      "Otros",
+    ],
+    []
+  );
 
-    const agregarEmpleado = async () => {
-        if (!empleadoCodigo) return;
+  const agregarEmpleado = async () => {
+    if (!empleadoCodigo?.trim()) return;
 
-        try {
-            const res = await EmpleadosService.obtenerPorCodigo(empleadoCodigo);
-            const empleado = res.data;
+    try {
+      const res = await EmpleadosService.obtenerPorCodigo(empleadoCodigo.trim());
+      const empleado = res.data;
 
-            setEmpleados([...empleados, empleado]);
+      setEmpleados((prev) => {
+        const existe = prev.some((e) => e.codigoEmpleado === empleado.codigoEmpleado);
+        if (existe) return prev;
+        return [...prev, empleado];
+      });
 
-            const resEquipos = await AsignacionesService
-                .obtenerEquiposPorEmpleado(empleado.codigoEmpleado);
+      const resEquipos = await AsignacionesService.obtenerEquiposPorEmpleado(
+        empleado.codigoEmpleado
+      );
 
-            setEquipos(resEquipos.data || []);
+      const lista = Array.isArray(resEquipos.data)
+        ? resEquipos.data
+        : Array.isArray(resEquipos.data?.$values)
+        ? resEquipos.data.$values
+        : [];
 
-            setEmpleadoCodigo("");
-        } catch (err) {
-            console.error(err);
-            window.alert("Empleado no encontrado o sin equipos asignados");
-        }
-    };
+      setEquipos((prev) => {
+        const map = new Map(prev.map((x) => [x.codificacion, x]));
+        for (const it of lista) map.set(it.codificacion, it);
+        return Array.from(map.values());
+      });
 
+      setEmpleadoCodigo("");
+    } catch (err) {
+      console.error(err);
+      window.alert("Empleado no encontrado o sin equipos asignados");
+    }
+  };
 
-    useEffect(() => {
-        const delay = setTimeout(async () => {
-            if (jefeInmediato.trim().length < 2) {
-                setJefeSuggestions([]);
-                return;
-            }
-
-            try {
-                const res = await EmpleadosService.buscarPorNombre(jefeInmediato);
-
-                if (res?.data && Array.isArray(res.data)) {
-                    setJefeSuggestions(res.data);
-                    setIsTypingJefe(true);
-                } else {
-                    setJefeSuggestions([]);
-                }
-            } catch (err) {
-                console.error(err);
-                setJefeSuggestions([]);
-            }
-        }, 300);
-
-        return () => clearTimeout(delay);
-    }, [jefeInmediato]);
-
-
-    const selectJefe = (jefe) => {
-        setJefeData(jefe);
-        setJefeSeleccionado(jefe);
-        setJefeInmediato(jefe.nombre);
+  useEffect(() => {
+    const delay = setTimeout(async () => {
+      if (jefeInmediato.trim().length < 2) {
         setJefeSuggestions([]);
-    };
+        return;
+      }
 
-    const eliminarEmpleado = (index) => {
-        setEmpleados(empleados.filter((_, i) => i !== index));
-    };
+      try {
+        const res = await EmpleadosService.buscarPorNombre(jefeInmediato);
 
-    const agregarEquipo = async () => {
-        if (!equipoCodificacion) return;
-
-        try {
-            const res = await EquiposService.obtenerPorCodificacion(equipoCodificacion);
-            setEquipos([...equipos, res.data]);
-            setEquipoCodificacion("");
-        } catch (err) {
-            window.alert("Equipo no encontrado");
+        if (Array.isArray(res?.data)) {
+          setJefeSuggestions(res.data);
+          setIsTypingJefe(true);
+        } else if (Array.isArray(res?.data?.$values)) {
+          setJefeSuggestions(res.data.$values);
+          setIsTypingJefe(true);
+        } else {
+          setJefeSuggestions([]);
         }
+      } catch (err) {
+        console.error(err);
+        setJefeSuggestions([]);
+      }
+    }, 300);
+
+    return () => clearTimeout(delay);
+  }, [jefeInmediato]);
+
+  const selectJefe = (jefe) => {
+    setJefeData(jefe);
+    setJefeSeleccionado(jefe);
+    setJefeInmediato(jefe.nombre);
+    setJefeSuggestions([]);
+  };
+
+  const eliminarEmpleado = (index) => {
+    setEmpleados((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const agregarEquipo = async () => {
+    if (!equipoCodificacion?.trim()) return;
+
+    try {
+      const res = await EquiposService.obtenerPorCodificacion(equipoCodificacion.trim());
+      const eq = res.data;
+
+      setEquipos((prev) => {
+        const existe = prev.some((x) => x.codificacion === eq.codificacion);
+        if (existe) return prev;
+        return [...prev, eq];
+      });
+
+      setEquipoCodificacion("");
+    } catch (err) {
+      window.alert("Equipo no encontrado");
+    }
+  };
+
+  const eliminarEquipo = (index) => {
+    setEquipos((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const accesoriosString =
+      Array.isArray(accesorios) && accesorios.length > 0 ? accesorios.join(", ") : "";
+
+    const empleadosMapped =
+      Array.isArray(empleados) && empleados.length > 0
+        ? empleados.map((emp) => ({
+            EmpleadoId: emp.codigoEmpleado,
+            Nombre: emp.nombre,
+            Puesto: emp.puesto,
+            Departamento: emp.departamento,
+          }))
+        : [];
+
+    const equiposMapped =
+      Array.isArray(equipos) && equipos.length > 0
+        ? equipos.map((eq) => ({
+            Codificacion: eq.codificacion,
+            Marca: eq.marca,
+            Modelo: eq.modelo,
+            Serie: eq.serie,
+            TipoEquipo: eq.tipoEquipo,
+            Ubicacion: eq.ubicacion,
+            FechaIngreso: eq.fechaIngreso,
+            Estado: eq.estado,
+            EquipoTipo: eq.equipoTipo,
+            Extension: eq.extension,
+            NumeroAsignado: eq.numeroAsignado,
+            Imei: eq.imei,
+          }))
+        : [];
+
+    const payload = {
+      TipoHoja: tipoHoja,
+      HojaNo: hojaNo,
+      Motivo: motivo,
+      Comentarios: comentarios,
+      Estado: estado,
+      Observaciones: observaciones,
+      Accesorios: accesoriosString,
+      JefeInmediato: jefeSeleccionado
+        ? `${jefeSeleccionado.nombre} - ${jefeSeleccionado.puesto} - ${jefeSeleccionado.departamento}`
+        : "",
+      Empleados: empleadosMapped,
+      Equipos: equiposMapped,
+      ...(estado === "Inactiva" && {
+        SolvenciaNo: solvenciaNo,
+        FechaSolvencia: fechaSolvencia,
+      }),
     };
 
-    const eliminarEquipo = (index) => {
-        setEquipos(equipos.filter((_, i) => i !== index));
-    };
+    try {
+      const res = await HojasService.crearHoja(payload);
+      window.alert("Hoja creada con éxito! ID: " + (res?.Id ?? ""));
+    } catch (error) {
+      if (error?.mensaje) window.alert("Error del servidor: " + error.mensaje);
+      else {
+        console.error(error);
+        window.alert("Ocurrió un error al crear la hoja");
+      }
+    }
+  };
 
-    const accesoriosDisponibles = [
-        "Maletin",
-        "Adaptador",
-        "Cable USB",
-        "Cargador/Cubo",
-        "Audifonos",
-        "Control Remoto",
-        "Baterias",
-        "Estuche",
-        "Memoria SD",
-        "Otros"
-    ];
+  return (
+    <div className="w-full min-h-[calc(100vh-56px)] px-4 py-6">
+      <div className="max-w-6xl mx-auto h-[calc(100vh-56px-48px)]">
+        <div className="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden h-full flex flex-col">
+          <div className="px-6 py-5 border-b border-slate-100 flex-none">
+            <h2 className="text-2xl font-bold text-slate-900">Crear Hoja de Responsabilidad</h2>
+            <p className="text-sm text-slate-600 mt-1">
+              Completá los datos, agregá empleados y equipos. Todo se guarda en una sola hoja.
+            </p>
+          </div>
 
+          <form onSubmit={handleSubmit} className="flex-1 overflow-auto">
+            <div className="p-6">
+              <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+                <div className="xl:col-span-7 space-y-6">
+                  <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div className="px-5 py-4 border-b border-slate-100">
+                      <h3 className="text-base font-semibold text-slate-900">Detalles de la hoja</h3>
+                      <p className="text-sm text-slate-600">Información general de la hoja.</p>
+                    </div>
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        const accesoriosString =
-            Array.isArray(accesorios) && accesorios.length > 0
-                ? accesorios.join(", ")
-                : "";
-
-        const empleadosMapped =
-            Array.isArray(empleados) && empleados.length > 0
-                ? empleados.map((emp) => ({
-                    EmpleadoId: emp.codigoEmpleado,
-                    Nombre: emp.nombre,
-                    Puesto: emp.puesto,
-                    Departamento: emp.departamento,
-                }))
-                : [];
-
-        const equiposMapped =
-            Array.isArray(equipos) && equipos.length > 0
-                ? equipos.map((eq) => ({
-                    Codificacion: eq.codificacion,
-                    Marca: eq.marca,
-                    Modelo: eq.modelo,
-                    Serie: eq.serie,
-                    TipoEquipo: eq.tipoEquipo,
-                    Ubicacion: eq.ubicacion,
-                    FechaIngreso: eq.fechaIngreso,
-                    Estado: eq.estado,
-                    EquipoTipo: eq.equipoTipo,
-                    Extension: eq.extension,
-                    NumeroAsignado: eq.numeroAsignado,
-                    Imei: eq.imei,
-                }))
-                : [];
-
-        const payload = {
-            TipoHoja: tipoHoja,
-            HojaNo: hojaNo,
-            Motivo: motivo,
-            Comentarios: comentarios,
-            Estado: estado,
-            Observaciones: observaciones,
-            Accesorios: accesoriosString,
-            JefeInmediato: jefeSeleccionado
-                ? `${jefeSeleccionado.nombre} - ${jefeSeleccionado.puesto} - ${jefeSeleccionado.departamento}`
-                : "",
-            Empleados: empleadosMapped,
-            Equipos: equiposMapped,
-            ...(estado === "Inactiva" && {
-                SolvenciaNo: solvenciaNo,
-                FechaSolvencia: fechaSolvencia,
-            }),
-        };
-
-        try {
-            const res = await HojasService.crearHoja(payload);
-            window.alert("Hoja creada con éxito! ID: " + res.Id);
-        } catch (error) {
-            if (error.mensaje) {
-                window.alert("Error del servidor: " + error.mensaje);
-            } else {
-                console.error(error);
-                window.alert("Ocurrió un error al crear la hoja");
-            }
-        }
-    };
-
-    return (
-        <div className="flex justify-center items-start px-4 py-1">
-            <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-4xl">
-                <h2 className="text-2xl font-bold mb-6 text-center text-blue-900">
-                    Crear Hoja de Responsabilidad
-                </h2>
-
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="bg-gray-50 p-4 rounded-xl shadow-inner border border-gray-200">
-                        <h3 className="text-lg font-semibold mb-4 text-gray-700">
-                            Detalles de la Hoja
-                        </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-gray-600 mb-1">
-                                    Tipo De Hoja
-                                </label>
-
-                                <select
-                                    value={tipoHoja}
-                                    onChange={(e) => setTipoHoja(e.target.value)}
-                                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                >
-                                    <option value="">-- Seleccione tipo de hoja --</option>
-                                    <option value="Computo">Hoja responsabilidad cómputo</option>
-                                    <option value="Movil">Hoja responsabilidad móvil</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label className="block text-gray-600 mb-1">Hoja No.</label>
-                                <input
-                                    value={hojaNo}
-                                    onChange={(e) => setHojaNo(e.target.value)}
-                                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-gray-600 mb-1">Motivo</label>
-                                <input
-                                    value={motivo}
-                                    onChange={(e) => setMotivo(e.target.value)}
-                                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-gray-600 mb-1">Estado</label>
-                                <select
-                                    value={estado}
-                                    onChange={(e) => SetEstado(e.target.value)}
-                                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                >
-                                    <option value="">-- Selecciona estado --</option>
-                                    <option value="Activa">Activa</option>
-                                    <option value="Inactiva">Inactiva</option>
-                                </select>
-                            </div>
-                            {estado === "Inactiva" && (
-                                <>
-                                    <div>
-                                        <label className="block text-gray-600 mb-1">No. Solvencia</label>
-                                        <input
-                                            value={solvenciaNo}
-                                            onChange={(e) => SetSolvenciaNo(e.target.value)}
-                                            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-gray-600 mb-1">Fecha de Solvencia</label>
-                                        <input
-                                            type="date"
-                                            value={fechaSolvencia}
-                                            onChange={(e) => SetFechaSolvencia(e.target.value)}
-                                            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                        />
-                                    </div>
-                                </>
-                            )}
-                            <div>
-                                <label className="block text-gray-600 mb-1">Observaciones</label>
-                                <input
-                                    value={observaciones}
-                                    onChange={(e) => SetObservaciones(e.target.value)}
-                                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                />
-                            </div>
-                        </div>
-                        <div className="mt-4">
-                            <label className="block text-gray-600 mb-1">Comentarios</label>
-                            <textarea
-                                value={comentarios}
-                                onChange={(e) => setComentarios(e.target.value)}
-                                rows={3}
-                                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                            />
-                        </div>
+                    <div className="p-5">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-gray-600 mb-1">Accesorios</label>
-                            {accesoriosDisponibles.map((item) => (
-                                <div key={item} className="flex items-center gap-2">
-                                    <input
-                                        type="checkbox"
-                                        checked={accesorios.includes(item)}
-                                        onChange={(e) => {
-                                            if (e.target.checked) {
-                                                setAccesorios([...accesorios, item]);
-                                            } else {
-                                                setAccesorios(accesorios.filter((a) => a !== item));
-                                            }
-                                        }}
-                                    />
-                                    <span>{item}</span>
-                                </div>
-                            ))}
+                          <label className="text-xs font-medium text-slate-600">Tipo de hoja</label>
+                          <select
+                            value={tipoHoja}
+                            onChange={(e) => setTipoHoja(e.target.value)}
+                            className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                          >
+                            <option value="">-- Seleccione tipo de hoja --</option>
+                            <option value="Computo">Hoja responsabilidad cómputo</option>
+                            <option value="Movil">Hoja responsabilidad móvil</option>
+                          </select>
                         </div>
 
-                    </div>
-
-                    <div className="bg-gray-50 p-4 rounded-xl shadow-inner border border-gray-200">
-                        <h3 className="text-lg font-semibold mb-4 text-gray-700">
-                            Agregar Empleado
-                        </h3>
-                        <div className="flex gap-2 mb-3">
-                            <input
-                                placeholder="Código de empleado"
-                                value={empleadoCodigo}
-                                onChange={(e) => setEmpleadoCodigo(e.target.value)}
-                                className="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
-                            />
-                            <button
-                                type="button"
-                                onClick={agregarEmpleado}
-                                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
-                            >
-                                Agregar
-                            </button>
+                        <div>
+                          <label className="text-xs font-medium text-slate-600">Hoja No.</label>
+                          <input
+                            value={hojaNo}
+                            onChange={(e) => setHojaNo(e.target.value)}
+                            className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                          />
                         </div>
-                        <ul className="space-y-2">
-                            {empleados.map((emp, i) => (
-                                <li
-                                    key={i}
-                                    className="flex justify-between items-center bg-white p-2 border rounded-lg shadow-sm"
-                                >
-                                    <span className="text-gray-700">
-                                        {emp.nombre} - {emp.puesto}
-                                    </span>
-                                    <button
-                                        type="button"
-                                        onClick={() => eliminarEmpleado(i)}
-                                        className="text-red-500 hover:text-red-700 font-bold"
-                                    >
-                                        ✕
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                    <div className="flex flex-col mb-3 relative">
-                        <input
-                            placeholder="Ingrese nombre del jefe inmediato"
-                            value={jefeInmediato}
-                            onChange={(e) => {
-                                const val = e.target.value;
-                                setJefeInmediato(val);
-                                setIsTypingJefe(val.trim().length > 0);
 
-                                if (val.trim().length < 2) {
-                                    setJefeSuggestions([]);
-                                }
-                            }}
-                            className="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
-                        />
-                        {isTypingJefe && jefeSuggestions.length > 0 && (
-                            <ul className="absolute top-full mt-1 w-full bg-white border rounded-lg shadow-lg z-20 max-h-48 overflow-auto">
-                                {jefeSuggestions.map((j, i) => (
-                                    <li
-                                        key={i}
-                                        className="px-3 py-2 hover:bg-gray-200 cursor-pointer"
-                                        onClick={() => {
-                                            selectJefe(j);
-                                            setIsTypingJefe(false);
-                                        }}
-                                    >
-                                        <strong>{j.nombre}</strong> — {j.puesto} — {j.departamento}
-                                    </li>
-                                ))}
-                            </ul>
+                        <div>
+                          <label className="text-xs font-medium text-slate-600">Motivo</label>
+                          <input
+                            value={motivo}
+                            onChange={(e) => setMotivo(e.target.value)}
+                            className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="text-xs font-medium text-slate-600">Estado</label>
+                          <select
+                            value={estado}
+                            onChange={(e) => SetEstado(e.target.value)}
+                            className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                          >
+                            <option value="">-- Selecciona estado --</option>
+                            <option value="Activa">Activa</option>
+                            <option value="Inactiva">Inactiva</option>
+                          </select>
+                        </div>
+
+                        {estado === "Inactiva" && (
+                          <>
+                            <div>
+                              <label className="text-xs font-medium text-slate-600">No. Solvencia</label>
+                              <input
+                                value={solvenciaNo}
+                                onChange={(e) => SetSolvenciaNo(e.target.value)}
+                                className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="text-xs font-medium text-slate-600">Fecha de solvencia</label>
+                              <input
+                                type="date"
+                                value={fechaSolvencia}
+                                onChange={(e) => SetFechaSolvencia(e.target.value)}
+                                className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                              />
+                            </div>
+                          </>
                         )}
-                    </div>
-                    {jefeData && (
-                        <div className="bg-white p-2 border rounded-lg shadow-sm flex justify-between items-center mt-2">
-                            <span>{jefeData.nombre} - {jefeData.puesto} - {jefeData.departamento}</span>
-                            <button
-                                className="text-red-500 font-bold"
-                                onClick={() => {
-                                    setJefeData(null);
-                                    setJefeInmediato("");
-                                    setIsTypingJefe(false);
+
+                        <div className="md:col-span-2">
+                          <label className="text-xs font-medium text-slate-600">Observaciones</label>
+                          <input
+                            value={observaciones}
+                            onChange={(e) => SetObservaciones(e.target.value)}
+                            className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                          />
+                        </div>
+
+                        <div className="md:col-span-2">
+                          <label className="text-xs font-medium text-slate-600">Comentarios</label>
+                          <textarea
+                            value={comentarios}
+                            onChange={(e) => setComentarios(e.target.value)}
+                            rows={3}
+                            className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="text-sm font-semibold text-slate-900">Accesorios</div>
+                            <div className="text-xs text-slate-600 mt-1">
+                              Seleccioná los accesorios entregados.
+                            </div>
+                          </div>
+                          <span className="text-xs font-semibold text-slate-700 bg-white border border-slate-200 px-2 py-1 rounded-full">
+                            {accesorios.length} seleccionados
+                          </span>
+                        </div>
+
+                        <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-2">
+                          {accesoriosDisponibles.map((item) => (
+                            <label
+                              key={item}
+                              className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={accesorios.includes(item)}
+                                onChange={(e) => {
+                                  if (e.target.checked) setAccesorios((prev) => [...prev, item]);
+                                  else setAccesorios((prev) => prev.filter((a) => a !== item));
                                 }}
-                            >
-                                ✕
-                            </button>
+                                className="h-4 w-4"
+                              />
+                              {item}
+                            </label>
+                          ))}
                         </div>
-                    )}
+                      </div>
+                    </div>
+                  </div>
 
-                    <div className="bg-gray-50 p-4 rounded-xl shadow-inner border border-gray-200">
-                        <h3 className="text-lg font-semibold mb-4 text-gray-700">
-                            Agregar Equipo
-                        </h3>
-                        <div className="flex gap-2 mb-3">
-                            <input
-                                placeholder="Codificación del equipo"
-                                value={equipoCodificacion}
-                                onChange={(e) => setEquipoCodificacion(e.target.value)}
-                                className="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
-                            />
-                            <button
-                                type="button"
-                                onClick={agregarEquipo}
-                                className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700"
-                            >
-                                Agregar
-                            </button>
+                  <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div className="px-5 py-4 border-b border-slate-100">
+                      <h3 className="text-base font-semibold text-slate-900">Agregar empleado</h3>
+                      <p className="text-sm text-slate-600">Ingresá el código y agregalo a la hoja.</p>
+                    </div>
+
+                    <div className="p-5 space-y-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
+                        <div className="sm:col-span-8">
+                          <label className="text-xs font-medium text-slate-600">Código de empleado</label>
+                          <input
+                            placeholder="Ej: T03108"
+                            value={empleadoCodigo}
+                            onChange={(e) => setEmpleadoCodigo(e.target.value)}
+                            className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                          />
                         </div>
-                        <ul className="space-y-2">
-                            {equipos.map((eq, i) => (
-                                <li
-                                    key={i}
-                                    className="flex justify-between items-center bg-white p-2 border rounded-lg shadow-sm"
-                                >
-                                    <span className="text-gray-700">
-                                        {eq.marca} {eq.modelo} ({eq.codificacion})
-                                    </span>
-                                    <button
-                                        type="button"
-                                        onClick={() => eliminarEquipo(i)}
-                                        className="text-red-500 hover:text-red-700 font-bold"
-                                    >
-                                        ✕
-                                    </button>
+                        <div className="sm:col-span-4 flex items-end">
+                          <button
+                            type="button"
+                            onClick={agregarEmpleado}
+                            className="w-full rounded-xl bg-emerald-600 text-white px-4 py-2 text-sm font-semibold hover:bg-emerald-700"
+                          >
+                            Agregar
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="rounded-2xl border border-slate-200 overflow-hidden">
+                        <div className="px-4 py-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                          <div className="text-sm font-semibold text-slate-900">Empleados</div>
+                          <span className="text-xs font-semibold text-slate-700 bg-white border border-slate-200 px-2 py-1 rounded-full">
+                            {empleados.length}
+                          </span>
+                        </div>
+
+                        <div className="max-h-52 overflow-auto">
+                          {empleados.length === 0 ? (
+                            <div className="px-4 py-6 text-sm text-slate-500 text-center">
+                              No hay empleados agregados todavía.
+                            </div>
+                          ) : (
+                            <ul className="divide-y divide-slate-100">
+                              {empleados.map((emp, i) => (
+                                <li key={i} className="px-4 py-3 flex items-center justify-between">
+                                  <div className="min-w-0">
+                                    <div className="text-sm font-semibold text-slate-900 truncate">
+                                      {emp.nombre}
+                                    </div>
+                                    <div className="text-xs text-slate-600 mt-1 truncate">
+                                      {emp.puesto} · {emp.departamento}
+                                    </div>
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={() => eliminarEmpleado(i)}
+                                    className="ml-3 text-red-600 font-semibold text-sm hover:underline"
+                                  >
+                                    Quitar
+                                  </button>
                                 </li>
-                            ))}
-                        </ul>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="xl:col-span-5 space-y-6">
+                  <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-visible">
+                    <div className="px-5 py-4 border-b border-slate-100">
+                      <h3 className="text-base font-semibold text-slate-900">Jefe inmediato</h3>
+                      <p className="text-sm text-slate-600">Buscá por nombre y seleccioná.</p>
                     </div>
 
-                    <div className="text-center">
-                        <button
-                            type="submit"
-                            className="bg-blue-600 text-white px-6 py-2 rounded-xl font-semibold hover:bg-blue-700 transition-colors"
-                        >
-                            Crear Hoja
-                        </button>
+                    <div className="p-5">
+                      <div className="relative">
+                        <input
+                          placeholder="Ingrese nombre del jefe inmediato"
+                          value={jefeInmediato}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setJefeInmediato(val);
+                            setIsTypingJefe(val.trim().length > 0);
+                            if (val.trim().length < 2) setJefeSuggestions([]);
+                          }}
+                          className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        />
+
+                        {isTypingJefe && jefeSuggestions.length > 0 && (
+                          <ul className="absolute left-0 right-0 top-full mt-2 bg-white border border-slate-200 rounded-2xl shadow-lg z-50 max-h-64 overflow-auto">
+                            {jefeSuggestions.map((j, i) => (
+                              <li
+                                key={i}
+                                className="px-4 py-3 hover:bg-slate-50 cursor-pointer"
+                                onClick={() => {
+                                  selectJefe(j);
+                                  setIsTypingJefe(false);
+                                }}
+                              >
+                                <div className="text-sm font-semibold text-slate-900">{j.nombre}</div>
+                                <div className="text-xs text-slate-600 mt-1">
+                                  {j.puesto} · {j.departamento}
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+
+                      {jefeData && (
+                        <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <div className="text-sm font-semibold text-slate-900 truncate">
+                              {jefeData.nombre}
+                            </div>
+                            <div className="text-xs text-slate-600 mt-1 truncate">
+                              {jefeData.puesto} · {jefeData.departamento}
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            className="text-red-600 font-semibold text-sm hover:underline"
+                            onClick={() => {
+                              setJefeData(null);
+                              setJefeSeleccionado(null);
+                              setJefeInmediato("");
+                              setIsTypingJefe(false);
+                            }}
+                          >
+                            Quitar
+                          </button>
+                        </div>
+                      )}
                     </div>
-                </form>
+                  </div>
+
+                  <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div className="px-5 py-4 border-b border-slate-100">
+                      <h3 className="text-base font-semibold text-slate-900">Agregar equipo</h3>
+                      <p className="text-sm text-slate-600">Ingresá la codificación y agregalo.</p>
+                    </div>
+
+                    <div className="p-5 space-y-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
+                        <div className="sm:col-span-8">
+                          <label className="text-xs font-medium text-slate-600">Codificación</label>
+                          <input
+                            placeholder="Ej: EQ-IT-000123"
+                            value={equipoCodificacion}
+                            onChange={(e) => setEquipoCodificacion(e.target.value)}
+                            className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                          />
+                        </div>
+                        <div className="sm:col-span-4 flex items-end">
+                          <button
+                            type="button"
+                            onClick={agregarEquipo}
+                            className="w-full rounded-xl bg-indigo-600 text-white px-4 py-2 text-sm font-semibold hover:bg-indigo-700"
+                          >
+                            Agregar
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="rounded-2xl border border-slate-200 overflow-hidden">
+                        <div className="px-4 py-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                          <div className="text-sm font-semibold text-slate-900">Equipos</div>
+                          <span className="text-xs font-semibold text-slate-700 bg-white border border-slate-200 px-2 py-1 rounded-full">
+                            {equipos.length}
+                          </span>
+                        </div>
+
+                        <div className="max-h-64 overflow-auto">
+                          {equipos.length === 0 ? (
+                            <div className="px-4 py-6 text-sm text-slate-500 text-center">
+                              No hay equipos agregados todavía.
+                            </div>
+                          ) : (
+                            <ul className="divide-y divide-slate-100">
+                              {equipos.map((eq, i) => (
+                                <li key={i} className="px-4 py-3 flex items-start justify-between gap-3">
+                                  <div className="min-w-0">
+                                    <div className="text-sm font-semibold text-slate-900 truncate">
+                                      {eq.codificacion}
+                                    </div>
+                                    <div className="text-xs text-slate-600 mt-1 truncate">
+                                      {eq.marca} {eq.modelo}
+                                      {eq.serie ? ` · ${eq.serie}` : ""}
+                                    </div>
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={() => eliminarEquipo(i)}
+                                    className="text-red-600 font-semibold text-sm hover:underline"
+                                  >
+                                    Quitar
+                                  </button>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-800">
+                        Tip: si agregás empleados primero, se cargan automáticamente sus equipos asignados.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
+
+            <div className="sticky bottom-0 bg-white border-t border-slate-200 px-6 py-4">
+              <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
+                <div className="text-sm text-slate-700">
+                  Empleados: <b>{empleados.length}</b> · Equipos: <b>{equipos.length}</b>
+                </div>
+                <button
+                  type="submit"
+                  className="rounded-xl bg-blue-600 text-white px-6 py-2 text-sm font-semibold hover:bg-blue-700"
+                >
+                  Crear Hoja
+                </button>
+              </div>
+            </div>
+          </form>
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default HojaResponsabilidadForm;

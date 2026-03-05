@@ -7,15 +7,17 @@ html, body, #root {
   padding: 0;
   height: 100%;
   overflow-x: hidden;
+  background: #1e3a8a; 
+}
+
+body {
+  background: #1e3a8a;
+  overflow: hidden; 
 }
 
 @keyframes bounce-slow {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
 .animate-bounce-slow {
@@ -23,9 +25,8 @@ html, body, #root {
 }
 
 .input-field {
-    @apply w-full border border-gray-300 rounded px-3 py-2 text-sm;
+  @apply w-full border border-gray-300 rounded px-3 py-2 text-sm;
 }
 .info-box {
-    @apply px-3 py-2 bg-gray-100 rounded border border-gray-300 text-sm text-gray-800;
+  @apply px-3 py-2 bg-gray-100 rounded border border-gray-300 text-sm text-gray-800;
 }
-

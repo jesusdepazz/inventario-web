@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import TrasladosServices from "../../../services/TrasladosServices";
@@ -14,8 +14,8 @@ export default function CrearTraslado() {
     FechaEmision: "",
     Status: "Pendiente",
 
-    PersonaEntrega: "", // input
-    PersonaRecibe: "",  // input
+    PersonaEntrega: "",
+    PersonaRecibe: "",
 
     CodigoEntrega: "",
     NombreEntrega: "",
@@ -45,46 +45,40 @@ export default function CrearTraslado() {
   const [infoRecibe, setInfoRecibe] = useState(null);
   const [infoEquipo, setInfoEquipo] = useState(null);
   const [equipos, setEquipos] = useState([]);
+  const [submitting, setSubmitting] = useState(false);
 
-  /* =========================
-     CARGA DE UBICACIONES
-  ========================== */
   useEffect(() => {
     const fetchUbicaciones = async () => {
       try {
         const res = await UbicacionesServices.obtenerTodas();
-        setUbicaciones(res.data);
+        const data = Array.isArray(res.data) ? res.data : res.data?.$values ?? [];
+        setUbicaciones(data);
       } catch (err) {
         console.error("Error cargando ubicaciones:", err);
       }
     };
-
     fetchUbicaciones();
   }, []);
 
-  /* =========================
-     HANDLERS
-  ========================== */
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  /* =========================
-     BUSCAR EMPLEADO
-  ========================== */
   const buscarEmpleado = async (codigo, tipo) => {
-    if (!codigo) return;
+    const c = (codigo || "").trim();
+    if (!c) return;
 
     try {
-      const res = await EmpleadosService.obtenerPorCodigo(codigo);
+      const res = await EmpleadosService.obtenerPorCodigo(c);
       const emp = res.data;
 
       if (tipo === "entrega") {
         setInfoEntrega(emp);
-        setForm(prev => ({
+        setForm((prev) => ({
           ...prev,
-          CodigoEntrega: codigo,
+          PersonaEntrega: c,
+          CodigoEntrega: c,
           NombreEntrega: emp.nombre || "",
           PuestoEntrega: emp.puesto || "",
           DepartamentoEntrega: emp.departamento || ""
@@ -93,33 +87,32 @@ export default function CrearTraslado() {
 
       if (tipo === "recibe") {
         setInfoRecibe(emp);
-        setForm(prev => ({
+        setForm((prev) => ({
           ...prev,
-          CodigoRecibe: codigo,
+          PersonaRecibe: c,
+          CodigoRecibe: c,
           NombreRecibe: emp.nombre || "",
           PuestoRecibe: emp.puesto || "",
           DepartamentoRecibe: emp.departamento || ""
         }));
       }
-
     } catch (err) {
       alert("Empleado no encontrado ❌");
     }
   };
 
-  /* =========================
-     BUSCAR EQUIPO
-  ========================== */
   const buscarEquipo = async (codigo) => {
-    if (!codigo) return;
+    const c = (codigo || "").trim();
+    if (!c) return;
 
     try {
-      const res = await EquiposService.obtenerPorCodificacion(codigo);
+      const res = await EquiposService.obtenerPorCodificacion(c);
       const eq = res.data;
 
       setInfoEquipo(eq);
-      setForm(prev => ({
+      setForm((prev) => ({
         ...prev,
+        Equipo: c,
         DescripcionEquipo: eq.tipoEquipo || "",
         Marca: eq.marca || "",
         Modelo: eq.modelo || "",
@@ -132,22 +125,26 @@ export default function CrearTraslado() {
   };
 
   const agregarEquipo = () => {
-    if (!infoEquipo) {
-      alert("Primero busca un equipo ❌");
+    if (!form.Equipo?.trim()) {
+      alert("Ingresá la codificación del equipo ❌");
       return;
     }
 
-    // evitar duplicados
-    const existe = equipos.some(e => e.Equipo === form.Equipo);
+    if (!infoEquipo) {
+      alert("Primero buscá el equipo (botón Buscar) ❌");
+      return;
+    }
+
+    const existe = equipos.some((e) => (e.Equipo || "").toLowerCase() === form.Equipo.trim().toLowerCase());
     if (existe) {
       alert("Este equipo ya fue agregado ⚠️");
       return;
     }
 
-    setEquipos(prev => [
+    setEquipos((prev) => [
       ...prev,
       {
-        Equipo: form.Equipo,
+        Equipo: form.Equipo.trim(),
         DescripcionEquipo: form.DescripcionEquipo,
         Marca: form.Marca,
         Modelo: form.Modelo,
@@ -155,8 +152,7 @@ export default function CrearTraslado() {
       }
     ]);
 
-    // limpiar solo campos de equipo
-    setForm(prev => ({
+    setForm((prev) => ({
       ...prev,
       Equipo: "",
       DescripcionEquipo: "",
@@ -168,9 +164,22 @@ export default function CrearTraslado() {
     setInfoEquipo(null);
   };
 
-  /* =========================
-     SUBMIT
-  ========================== */
+  const quitarEquipo = (idx) => {
+    setEquipos((prev) => prev.filter((_, i) => i !== idx));
+  };
+
+  const canSubmit = useMemo(() => {
+    return (
+      form.No.trim() &&
+      form.FechaEmision &&
+      form.Motivo.trim() &&
+      form.UbicacionHasta &&
+      form.CodigoEntrega.trim() &&
+      form.CodigoRecibe.trim() &&
+      equipos.length > 0
+    );
+  }, [form, equipos.length]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -179,12 +188,16 @@ export default function CrearTraslado() {
       return;
     }
 
+    if (!form.CodigoEntrega || !form.CodigoRecibe) {
+      alert("Debe buscar empleado entrega y recibe ❌");
+      return;
+    }
+
+    setSubmitting(true);
     try {
       const payload = {
-        No: form.No,
-        FechaEmision: form.FechaEmision
-          ? new Date(form.FechaEmision).toISOString()
-          : null,
+        No: form.No.trim(),
+        FechaEmision: form.FechaEmision ? new Date(form.FechaEmision).toISOString() : null,
         Status: form.Status,
 
         Motivo: form.Motivo,
@@ -212,230 +225,339 @@ export default function CrearTraslado() {
       await TrasladosServices.crear(payload);
       alert("Traslado creado correctamente ✅");
       navigate("/trasladosDashboard");
-
     } catch (err) {
       console.error("Errores de validación:", err.response?.data?.errors);
       alert("Error creando traslado ❌ (ver consola)");
+    } finally {
+      setSubmitting(false);
     }
   };
-  
+
   return (
-    <div className="h-screen flex items-center justify-center px-4 py-8">
-      <div className="bg-white w-full max-w-6xl p-6 rounded-xl shadow-lg overflow-auto max-h-[90vh]">
-        <form onSubmit={handleSubmit} className="space-y-6">
+    <div className="h-full w-full flex justify-center px-4 py-6">
+      <div className="w-full max-w-6xl bg-white rounded-2xl shadow-md border border-gray-200 flex flex-col min-h-0">
+        <div className="px-6 py-5 border-b border-gray-100 flex items-start justify-between gap-4">
+          <div>
+            <h2 className="text-2xl font-extrabold text-gray-900">Crear Traslado</h2>
+            <p className="text-sm text-gray-500">Completá los datos, agregá equipos y guardá el traslado.</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold px-3 py-1 rounded-full border bg-gray-50 text-gray-700">
+              Equipos: {equipos.length}
+            </span>
+            <span className="text-xs font-semibold px-3 py-1 rounded-full border bg-gray-50 text-gray-700">
+              {new Date().toLocaleDateString("es-ES", { weekday: "long", day: "2-digit", month: "long", year: "numeric" })}
+            </span>
+          </div>
+        </div>
 
-          <section>
-            <h3 className="text-xl font-semibold mb-4 border-b border-indigo-300 pb-2">
-              Datos Generales
-            </h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
-                <label className="mb-1 font-medium text-gray-700">Número</label>
-                <input
-                  type="text"
-                  name="No"
-                  value={form.No}
-                  onChange={handleChange}
-                  className="w-full border rounded-lg p-2"
-                  required
-                />
+        <div className="px-6 py-6 overflow-y-auto min-h-0 max-h-[calc(100vh-180px)]">
+          <form onSubmit={handleSubmit} className="space-y-8">
+            <section className="bg-gray-50 border border-gray-200 rounded-2xl p-5">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-gray-800">Datos Generales</h3>
+                <span className="text-xs font-semibold px-3 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-100">
+                  {form.Status}
+                </span>
               </div>
 
-              <div>
-                <label className="mb-1 font-medium text-gray-700">Fecha Emisión</label>
-                <input
-                  type="date"
-                  name="FechaEmision"
-                  value={form.FechaEmision}
-                  onChange={handleChange}
-                  className="w-full border rounded-lg p-2"
-                  required
-                />
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Número</label>
+                  <input
+                    type="text"
+                    name="No"
+                    value={form.No}
+                    onChange={handleChange}
+                    className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Fecha Emisión</label>
+                  <input
+                    type="date"
+                    name="FechaEmision"
+                    value={form.FechaEmision}
+                    onChange={handleChange}
+                    className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Status</label>
+                  <select
+                    name="Status"
+                    value={form.Status}
+                    onChange={handleChange}
+                    className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  >
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="En Proceso">En Proceso</option>
+                    <option value="Completado">Completado</option>
+                  </select>
+                </div>
               </div>
+            </section>
 
-              <div>
-                <label className="mb-1 font-medium text-gray-700">Status</label>
-                <select
-                  name="Status"
-                  value={form.Status}
-                  onChange={handleChange}
-                  className="w-full border rounded-lg p-2"
-                >
-                  <option value="Pendiente">Pendiente</option>
-                  <option value="En Proceso">En Proceso</option>
-                  <option value="Completado">Completado</option>
-                </select>
-              </div>
-            </div>
-          </section>
+            <section className="bg-gray-50 border border-gray-200 rounded-2xl p-5">
+              <h3 className="text-lg font-bold text-gray-800 mb-4">Empleados</h3>
 
-          {/* ===== EMPLEADOS ===== */}
-          <section>
-            <h3 className="text-xl font-semibold mb-4 border-b border-indigo-300 pb-2">
-              Empleados
-            </h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="font-medium text-gray-700">Persona Entrega (código)</label>
-                <input
-                  type="text"
-                  name="PersonaEntrega"
-                  value={form.PersonaEntrega}
-                  onChange={handleChange}
-                  onBlur={() => buscarEmpleado(form.PersonaEntrega, "entrega")}
-                  className="w-full border rounded-lg p-2"
-                />
-                {infoEntrega && (
-                  <div className="mt-2 text-sm text-gray-700">
-                    <p><b>Nombre:</b> {infoEntrega.nombre}</p>
-                    <p><b>Departamento:</b> {infoEntrega.departamento}</p>
-                    <p><b>Puesto:</b> {infoEntrega.puesto}</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-white border border-gray-200 rounded-2xl p-4">
+                  <div className="flex items-end gap-3">
+                    <div className="flex-1">
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">Persona Entrega (código)</label>
+                      <input
+                        type="text"
+                        name="PersonaEntrega"
+                        value={form.PersonaEntrega}
+                        onChange={handleChange}
+                        className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-600"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => buscarEmpleado(form.PersonaEntrega, "entrega")}
+                      className="px-5 py-3 rounded-xl bg-green-600 text-white font-semibold hover:bg-green-700 transition"
+                    >
+                      Buscar
+                    </button>
                   </div>
-                )}
-              </div>
 
-              <div>
-                <label className="font-medium text-gray-700">Persona Recibe (código)</label>
-                <input
-                  type="text"
-                  name="PersonaRecibe"
-                  value={form.PersonaRecibe}
-                  onChange={handleChange}
-                  onBlur={() => buscarEmpleado(form.PersonaRecibe, "recibe")}
-                  className="w-full border rounded-lg p-2"
-                />
-                {infoRecibe && (
-                  <div className="mt-2 text-sm text-gray-700">
-                    <p><b>Nombre:</b> {infoRecibe.nombre}</p>
-                    <p><b>Departamento:</b> {infoRecibe.departamento}</p>
-                    <p><b>Puesto:</b> {infoRecibe.puesto}</p>
+                  {infoEntrega && (
+                    <div className="mt-4 text-sm text-gray-700 border-t pt-3">
+                      <div className="font-bold text-gray-900">{infoEntrega.nombre}</div>
+                      <div className="text-gray-600">{infoEntrega.puesto}</div>
+                      <div className="text-gray-600">{infoEntrega.departamento}</div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="bg-white border border-gray-200 rounded-2xl p-4">
+                  <div className="flex items-end gap-3">
+                    <div className="flex-1">
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">Persona Recibe (código)</label>
+                      <input
+                        type="text"
+                        name="PersonaRecibe"
+                        value={form.PersonaRecibe}
+                        onChange={handleChange}
+                        className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-600"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => buscarEmpleado(form.PersonaRecibe, "recibe")}
+                      className="px-5 py-3 rounded-xl bg-green-600 text-white font-semibold hover:bg-green-700 transition"
+                    >
+                      Buscar
+                    </button>
                   </div>
-                )}
-              </div>
-            </div>
-          </section>
-          <section>
-            <h3 className="text-xl font-semibold mb-4 border-b border-indigo-300 pb-2">
-              Equipo
-            </h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
-                <label className="font-medium text-gray-700">Equipo (codificación)</label>
-                <input
-                  type="text"
-                  name="Equipo"
-                  value={form.Equipo}
-                  onChange={handleChange}
-                  onBlur={() => buscarEquipo(form.Equipo)}
-                  className="w-full border rounded-lg p-2"
-                />
+                  {infoRecibe && (
+                    <div className="mt-4 text-sm text-gray-700 border-t pt-3">
+                      <div className="font-bold text-gray-900">{infoRecibe.nombre}</div>
+                      <div className="text-gray-600">{infoRecibe.puesto}</div>
+                      <div className="text-gray-600">{infoRecibe.departamento}</div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </section>
+
+            <section className="bg-gray-50 border border-gray-200 rounded-2xl p-5">
+              <h3 className="text-lg font-bold text-gray-800 mb-4">Equipo</h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+                <div className="md:col-span-6">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Equipo (codificación)</label>
+                  <input
+                    type="text"
+                    name="Equipo"
+                    value={form.Equipo}
+                    onChange={handleChange}
+                    className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                  />
+                </div>
+
+                <div className="md:col-span-3">
+                  <button
+                    type="button"
+                    onClick={() => buscarEquipo(form.Equipo)}
+                    className="w-full px-5 py-3 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition"
+                  >
+                    Buscar
+                  </button>
+                </div>
+
+                <div className="md:col-span-3">
+                  <button
+                    type="button"
+                    onClick={agregarEquipo}
+                    className="w-full px-5 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
+                  >
+                    Agregar
+                  </button>
+                </div>
               </div>
 
               {infoEquipo && (
-                <>
-                  <input type="hidden" />
-                </>
+                <div className="mt-4 bg-white border border-gray-200 rounded-2xl p-4">
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+                    <div>
+                      <div className="text-xs font-semibold text-gray-500">Tipo</div>
+                      <div className="font-semibold text-gray-900">{form.DescripcionEquipo || "-"}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs font-semibold text-gray-500">Marca / Modelo</div>
+                      <div className="font-semibold text-gray-900">{form.Marca} {form.Modelo}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs font-semibold text-gray-500">Serie</div>
+                      <div className="font-semibold text-gray-900">{form.Serie || "-"}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs font-semibold text-gray-500">Ubicación actual</div>
+                      <div className="font-semibold text-gray-900">{form.UbicacionDesde || "-"}</div>
+                    </div>
+                  </div>
+                </div>
               )}
+
+              <div className="mt-4 bg-white border border-gray-200 rounded-2xl overflow-hidden">
+                <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
+                  <div className="font-bold text-gray-800">Equipos agregados</div>
+                  <span className="text-xs font-semibold px-3 py-1 rounded-full border bg-gray-50 text-gray-700">
+                    {equipos.length}
+                  </span>
+                </div>
+
+                {equipos.length === 0 ? (
+                  <div className="p-5 text-sm text-gray-500">No hay equipos agregados todavía.</div>
+                ) : (
+                  <div className="max-h-56 overflow-auto">
+                    <table className="w-full text-sm">
+                      <thead className="sticky top-0 bg-gray-50 border-b border-gray-200">
+                        <tr className="text-left">
+                          <th className="px-4 py-3 font-bold">Codificación</th>
+                          <th className="px-4 py-3 font-bold">Descripción</th>
+                          <th className="px-4 py-3 font-bold">Marca</th>
+                          <th className="px-4 py-3 font-bold">Modelo</th>
+                          <th className="px-4 py-3 font-bold">Serie</th>
+                          <th className="px-4 py-3 font-bold"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {equipos.map((e, i) => (
+                          <tr key={`${e.Equipo}-${i}`} className={i % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                            <td className="px-4 py-3 border-t border-gray-200 font-semibold text-blue-800">{e.Equipo}</td>
+                            <td className="px-4 py-3 border-t border-gray-200">{e.DescripcionEquipo}</td>
+                            <td className="px-4 py-3 border-t border-gray-200">{e.Marca}</td>
+                            <td className="px-4 py-3 border-t border-gray-200">{e.Modelo}</td>
+                            <td className="px-4 py-3 border-t border-gray-200">{e.Serie}</td>
+                            <td className="px-4 py-3 border-t border-gray-200 text-right">
+                              <button
+                                type="button"
+                                onClick={() => quitarEquipo(i)}
+                                className="px-3 py-1.5 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 transition"
+                              >
+                                Quitar
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </section>
+
+            <section className="bg-gray-50 border border-gray-200 rounded-2xl p-5">
+              <h3 className="text-lg font-bold text-gray-800 mb-4">Motivo y Ubicaciones</h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Motivo</label>
+                  <textarea
+                    name="Motivo"
+                    value={form.Motivo}
+                    onChange={handleChange}
+                    rows={4}
+                    className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-600 resize-none"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Observaciones</label>
+                  <textarea
+                    name="Observaciones"
+                    value={form.Observaciones}
+                    onChange={handleChange}
+                    rows={4}
+                    className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-600 resize-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Ubicación Desde</label>
+                  <input
+                    type="text"
+                    name="UbicacionDesde"
+                    value={form.UbicacionDesde}
+                    readOnly
+                    className="w-full border border-gray-300 rounded-xl px-4 py-3 bg-gray-100 text-gray-700"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Ubicación Hasta</label>
+                  <select
+                    name="UbicacionHasta"
+                    value={form.UbicacionHasta}
+                    onChange={handleChange}
+                    className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    required
+                  >
+                    <option value="">Seleccione...</option>
+                    {ubicaciones.map((u) => (
+                      <option key={u.id} value={u.nombre}>
+                        {u.nombre}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </section>
+
+            <div className="flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => navigate("/trasladosDashboard")}
+                className="px-6 py-3 rounded-xl bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition"
+                disabled={submitting}
+              >
+                Cancelar
+              </button>
+
+              <button
+                type="submit"
+                className={`px-6 py-3 rounded-xl font-semibold text-white transition ${
+                  canSubmit && !submitting ? "bg-green-600 hover:bg-green-700" : "bg-green-300 cursor-not-allowed"
+                }`}
+                disabled={!canSubmit || submitting}
+              >
+                {submitting ? "Creando..." : "Crear Traslado"}
+              </button>
             </div>
-            <button
-              type="button"
-              onClick={agregarEquipo}
-              className="bg-indigo-600 text-white px-4 py-2 rounded-lg mt-2"
-            >
-              Agregar equipo
-            </button>
-
-            {equipos.length > 0 && (
-              <div className="mt-4 border rounded-lg p-3">
-                <h4 className="font-semibold mb-2">Equipos agregados</h4>
-                <ul className="text-sm space-y-1">
-                  {equipos.map((e, i) => (
-                    <li key={i}>
-                      • {e.Equipo} — {e.Marca} {e.Modelo} ({e.Serie})
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </section>
-
-          {/* ===== MOTIVO Y UBICACIONES ===== */}
-          <section>
-            <h3 className="text-xl font-semibold mb-4 border-b border-indigo-300 pb-2">
-              Motivo y Ubicaciones
-            </h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="font-medium text-gray-700">Motivo</label>
-                <textarea
-                  name="Motivo"
-                  value={form.Motivo}
-                  onChange={handleChange}
-                  className="w-full border rounded-lg p-2 resize-none"
-                  rows={3}
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="font-medium text-gray-700">Observaciones</label>
-                <textarea
-                  name="Observaciones"
-                  value={form.Observaciones}
-                  onChange={handleChange}
-                  className="w-full border rounded-lg p-2 resize-none"
-                  rows={3}
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-              <div>
-                <label className="font-medium text-gray-700">Ubicación Desde</label>
-                <input
-                  type="text"
-                  name="UbicacionDesde"
-                  value={form.UbicacionDesde}
-                  readOnly
-                  className="w-full border rounded-lg p-2 bg-gray-100"
-                />
-              </div>
-
-              <div>
-                <label className="font-medium text-gray-700">Ubicación Hasta</label>
-                <select
-                  name="UbicacionHasta"
-                  value={form.UbicacionHasta}
-                  onChange={handleChange}
-                  className="w-full border rounded-lg p-2"
-                  required
-                >
-                  <option value="">Seleccione...</option>
-                  {ubicaciones.map(u => (
-                    <option key={u.id} value={u.nombre}>
-                      {u.nombre}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </section>
-
-          <div className="flex justify-center gap-4 pt-6">
-            <button type="submit" className="bg-green-600 text-white px-5 py-2 rounded-lg">
-              Crear Traslado
-            </button>
-            <button type="button" onClick={() => navigate("/trasladosDashboard")}
-              className="bg-gray-400 text-white px-5 py-2 rounded-lg">
-              Cancelar
-            </button>
-          </div>
-
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   );
