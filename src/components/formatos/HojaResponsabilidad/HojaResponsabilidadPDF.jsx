@@ -470,21 +470,8 @@ const generarPDFHoja = async (hoja) => {
 
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(8);
-<<<<<<< HEAD
-
-    doc.text(
-      firmas[i].puesto ?? "",
-      x,
-      y + 18,
-      {
-        align: "center",
-        maxWidth: 40
-      }
-    );
-=======
     doc.setFont("helvetica", "normal");
     doc.text(firmas[i].puesto ?? "", x, y + 18, { align: "center", maxWidth: 40 });
->>>>>>> jesusdepazz
   }
 
   yActual = inicioFirmasY + alturaTotalFirmas;
