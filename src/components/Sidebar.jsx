@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { getRol } from "../services/auth";
+import { createPortal } from "react-dom";
 import {
     FaHome,
     FaLaptop,
@@ -38,6 +39,12 @@ export default function Sidebar() {
         const storedRol = localStorage.getItem("rol");
         setRol(storedRol);
     }, []);
+
+    useEffect(() => {
+        const open = modalHojaOpen || modalSolvenciaOpen || modalTrasladoOpen || modalBajasActivoOpen || modalTrasladoRetornoOpen;
+        document.body.style.overflow = open ? "hidden" : "";
+        return () => (document.body.style.overflow = "");
+    }, [modalHojaOpen, modalSolvenciaOpen, modalTrasladoOpen, modalBajasActivoOpen, modalTrasladoRetornoOpen]);
 
     const handleLogout = () => {
         localStorage.removeItem("token");
@@ -79,7 +86,7 @@ export default function Sidebar() {
     const closeTrasladoRetornoModal = () => setModalTrasladoRetornoOpen(false);
 
     return (
-        <div className="bg-gradient-to-b from-blue-900 via-blue-800 to-blue-700 text-white w-80 h-screen p-6 fixed flex flex-col justify-between shadow-2xl rounded-r-2xl">
+        <div className="bg-gradient-to-b from-blue-900 via-blue-800 to-blue-700 text-white w-80 h-screen p-6 fixed flex flex-col justify-between shadow-2xl">
             <div>
                 <div className="flex flex-col items-center mb-10">
                     <img src="/logo_guandy.png" alt="Logo Guandy" className="h-16 mb-3" />
@@ -89,7 +96,7 @@ export default function Sidebar() {
 
                 <nav className="flex flex-col gap-3">
                     <Link
-                        to="/dashboard"
+                        to="/inicio"
                         className="flex items-center gap-3 font-semibold text-lg px-3 py-2 rounded-lg hover:bg-white/10 hover:translate-x-2 transition-all duration-300"
                     >
                         <FaHome /> Inicio
@@ -308,140 +315,164 @@ export default function Sidebar() {
                 </button>
             </div>
 
-            {modalHojaOpen && (<div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                <div className="bg-white rounded-2xl shadow-2xl p-6 w-96">
-                    <h2 className="text-xl font-bold mb-6 text-gray-800 text-center"> Selecciona una opción </h2>
-                    <div className="flex flex-col gap-3">
-                        {rol === "Administrador" && (<button onClick={() => handleHojaOption("/formatos/hojaderesponsabilidad")} className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700" > Crear </button>)}
-                        <button onClick={() => handleHojaOption("/formatos/listahojasresponsabilidad")} className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700" > Ver Historial </button>
-                        <button onClick={closeHojaModal} className="w-full bg-gray-400 text-white py-2 px-4 rounded-lg hover:bg-gray-500" > Cancelar </button>
-                    </div>
-                </div>
-            </div>)}
-            {modalSolvenciaOpen && (<div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                <div className="bg-white rounded-2xl shadow-2xl p-6 w-96">
-                    <h2 className="text-xl font-bold mb-6 text-gray-800 text-center"> Solvencias </h2>
-                    <div className="flex flex-col gap-3">
-                        {rol === "Administrador" && (
-                            <button
-                                onClick={() => handleSolvenciaOption("/formatos/hojasSolvencias")}
-                                className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
-                            >
-                                Crear
-                            </button>
-                        )}
-                        <button
-                            onClick={() => handleSolvenciaOption("/formatos/listahojasSolvencias")}
-                            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
-                        >
-                            Ver Historial
-                        </button>
-
-                        <button
-                            onClick={closeSolvenciaModal}
-                            className="w-full bg-gray-400 text-white py-2 px-4 rounded-lg hover:bg-gray-500"
-                        >
-                            Cancelar
-                        </button>
-                    </div>
-                </div>
-            </div>)}
-            {modalTrasladoOpen && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-2xl shadow-2xl p-6 w-96">
-                        <h2 className="text-xl font-bold mb-6 text-gray-800 text-center">
-                            Traslados
-                        </h2>
-                        <div className="flex flex-col gap-3">
-                            {rol === "Administrador" && (
-                                <button
-                                    onClick={() => handleTrasladoOption("/formatos/traslados/crear")}
-                                    className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
-                                >
-                                    Crear
-                                </button>
-                            )}
-                            <button
-                                onClick={() => handleTrasladoOption("/formatos/traslados/lista")}
-                                className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
-                            >
-                                Ver Historial
-                            </button>
-                            <button
-                                onClick={closeTrasladoModal}
-                                className="w-full bg-gray-400 text-white py-2 px-4 rounded-lg hover:bg-gray-500"
-                            >
-                                Cancelar
-                            </button>
+            {createPortal(
+                <>
+                    {modalHojaOpen && (
+                        <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+                            <div className="absolute inset-0 bg-black/60" onClick={closeHojaModal} />
+                            <div className="relative bg-white rounded-2xl shadow-2xl p-6 w-96">
+                                <h2 className="text-xl font-bold mb-6 text-gray-800 text-center">Selecciona una opción</h2>
+                                <div className="flex flex-col gap-3">
+                                    {rol === "Administrador" && (
+                                        <button
+                                            onClick={() => handleHojaOption("/formatos/hojaderesponsabilidad")}
+                                            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+                                        >
+                                            Crear
+                                        </button>
+                                    )}
+                                    <button
+                                        onClick={() => handleHojaOption("/formatos/listahojasresponsabilidad")}
+                                        className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+                                    >
+                                        Ver Historial
+                                    </button>
+                                    <button
+                                        onClick={closeHojaModal}
+                                        className="w-full bg-gray-400 text-white py-2 px-4 rounded-lg hover:bg-gray-500"
+                                    >
+                                        Cancelar
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            )}
-            {modalBajasActivoOpen && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-2xl shadow-2xl p-6 w-96">
-                        <h2 className="text-xl font-bold mb-6 text-gray-800 text-center"> Bajas de Activos </h2>
-                        <div className="flex flex-col gap-3">
-                            {rol === "Administrador" && (
-                                <button
-                                    onClick={() => handleBajasActivoOption("/formatos/bajaAtivos")}
-                                    className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
-                                >
-                                    Crear Baja
-                                </button>
-                            )}
-                            <button
-                                onClick={() => handleBajasActivoOption("/formatos/ListabajaAtivos")}
-                                className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
-                            >
-                                Ver Historial
-                            </button>
-                            <button
-                                onClick={closeBajasActivoModal}
-                                className="w-full bg-gray-400 text-white py-2 px-4 rounded-lg hover:bg-gray-500"
-                            >
-                                Cancelar
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-            {modalTrasladoRetornoOpen && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-2xl shadow-2xl p-6 w-96 animate-fadeIn">
-                        <h2 className="text-xl font-bold mb-6 text-gray-800 text-center">
-                            Selecciona una opción
-                        </h2>
+                    )}
 
-                        <div className="flex flex-col gap-3">
-                            {rol === "Administrador" && (
-                                <button
-                                    onClick={() =>
-                                        handleTrasladoRetornoOption("/formatos/trasladosRetorno/crear")
-                                    }
-                                    className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
-                                >
-                                    Crear Traslado Retorno
-                                </button>
-                            )}
-                            <button
-                                onClick={() =>
-                                    handleTrasladoRetornoOption("/formatos/trasladosRetorno/lista")
-                                }
-                                className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
-                            >
-                                Ver Historial
-                            </button>
-
-                            <button
-                                onClick={closeTrasladoRetornoModal}
-                                className="w-full bg-gray-400 text-white py-2 px-4 rounded-lg hover:bg-gray-500"
-                            >
-                                Cancelar
-                            </button>
+                    {modalSolvenciaOpen && (
+                        <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+                            <div className="absolute inset-0 bg-black/60" onClick={closeSolvenciaModal} />
+                            <div className="relative bg-white rounded-2xl shadow-2xl p-6 w-96">
+                                <h2 className="text-xl font-bold mb-6 text-gray-800 text-center">Solvencias</h2>
+                                <div className="flex flex-col gap-3">
+                                    {rol === "Administrador" && (
+                                        <button
+                                            onClick={() => handleSolvenciaOption("/formatos/hojasSolvencias")}
+                                            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+                                        >
+                                            Crear
+                                        </button>
+                                    )}
+                                    <button
+                                        onClick={() => handleSolvenciaOption("/formatos/listahojasSolvencias")}
+                                        className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+                                    >
+                                        Ver Historial
+                                    </button>
+                                    <button
+                                        onClick={closeSolvenciaModal}
+                                        className="w-full bg-gray-400 text-white py-2 px-4 rounded-lg hover:bg-gray-500"
+                                    >
+                                        Cancelar
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
+                    )}
+
+                    {modalTrasladoOpen && (
+                        <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+                            <div className="absolute inset-0 bg-black/60" onClick={closeTrasladoModal} />
+                            <div className="relative bg-white rounded-2xl shadow-2xl p-6 w-96">
+                                <h2 className="text-xl font-bold mb-6 text-gray-800 text-center">Traslados</h2>
+                                <div className="flex flex-col gap-3">
+                                    {rol === "Administrador" && (
+                                        <button
+                                            onClick={() => handleTrasladoOption("/formatos/traslados/crear")}
+                                            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+                                        >
+                                            Crear
+                                        </button>
+                                    )}
+                                    <button
+                                        onClick={() => handleTrasladoOption("/formatos/traslados/lista")}
+                                        className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+                                    >
+                                        Ver Historial
+                                    </button>
+                                    <button
+                                        onClick={closeTrasladoModal}
+                                        className="w-full bg-gray-400 text-white py-2 px-4 rounded-lg hover:bg-gray-500"
+                                    >
+                                        Cancelar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {modalBajasActivoOpen && (
+                        <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+                            <div className="absolute inset-0 bg-black/60" onClick={closeBajasActivoModal} />
+                            <div className="relative bg-white rounded-2xl shadow-2xl p-6 w-96">
+                                <h2 className="text-xl font-bold mb-6 text-gray-800 text-center">Bajas de Activos</h2>
+                                <div className="flex flex-col gap-3">
+                                    {rol === "Administrador" && (
+                                        <button
+                                            onClick={() => handleBajasActivoOption("/formatos/bajaAtivos")}
+                                            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+                                        >
+                                            Crear Baja
+                                        </button>
+                                    )}
+                                    <button
+                                        onClick={() => handleBajasActivoOption("/formatos/ListabajaAtivos")}
+                                        className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+                                    >
+                                        Ver Historial
+                                    </button>
+                                    <button
+                                        onClick={closeBajasActivoModal}
+                                        className="w-full bg-gray-400 text-white py-2 px-4 rounded-lg hover:bg-gray-500"
+                                    >
+                                        Cancelar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {modalTrasladoRetornoOpen && (
+                        <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+                            <div className="absolute inset-0 bg-black/60" onClick={closeTrasladoRetornoModal} />
+                            <div className="relative bg-white rounded-2xl shadow-2xl p-6 w-96">
+                                <h2 className="text-xl font-bold mb-6 text-gray-800 text-center">Selecciona una opción</h2>
+                                <div className="flex flex-col gap-3">
+                                    {rol === "Administrador" && (
+                                        <button
+                                            onClick={() => handleTrasladoRetornoOption("/formatos/trasladosRetorno/crear")}
+                                            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+                                        >
+                                            Crear Traslado Retorno
+                                        </button>
+                                    )}
+                                    <button
+                                        onClick={() => handleTrasladoRetornoOption("/formatos/trasladosRetorno/lista")}
+                                        className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+                                    >
+                                        Ver Historial
+                                    </button>
+                                    <button
+                                        onClick={closeTrasladoRetornoModal}
+                                        className="w-full bg-gray-400 text-white py-2 px-4 rounded-lg hover:bg-gray-500"
+                                    >
+                                        Cancelar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </>,
+                document.body
             )}
         </div>
     );

@@ -76,9 +76,6 @@ const HojaSolvenciaPDF = ({ data }) => {
                         </Text>
                     </View>
                 </View>
-
-
-                {/* FECHA */}
                 <View style={{ marginTop: -5, marginBottom: 10 }}>
                     <Text style={{ textAlign: "center", fontSize: 9, marginBottom: 6 }}>
                         De acuerdo a controles internos el día{" "}
@@ -154,8 +151,6 @@ const HojaSolvenciaPDF = ({ data }) => {
                         </View>
                     ))}
                 </View>
-
-                {/* MOBILIARIO */}
                 <View
                     style={{
                         backgroundColor: "#DFF3FF",
@@ -171,8 +166,6 @@ const HojaSolvenciaPDF = ({ data }) => {
                         <Text style={{ color: "red", fontWeight: "bold" }}> {data.hojaNo}</Text>
                     </Text>
                 </View>
-
-                {/* SOLVENTE */}
                 <View style={{
                     flexDirection: "row",
                     alignItems: "center",
@@ -426,7 +419,6 @@ const HojaSolvenciaPDF = ({ data }) => {
                         </View>
                     ))}
                 </View>
-
             </Page>
         </Document>
     );

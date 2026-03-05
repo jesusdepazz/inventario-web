@@ -23,7 +23,7 @@ const ProtectedRoute = ({ children, allowedRoles = [], requiredRole }) => {
           No tienes permisos para acceder a esta página.
         </p>
         <button
-          onClick={() => navigate("/dashboard")}
+          onClick={() => navigate("/inicio")}
           className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition font-semibold"
         >
           Volver al Inicio

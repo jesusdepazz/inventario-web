@@ -1,14 +1,15 @@
-import { useState, useEffect } from "react";
+import { useMemo, useEffect, useRef, useState } from "react";
 import SuministrosService from "../../services/SuministrosService";
 import EntradaSuministroService from "../../services/EntradasSuministrosServices";
 import SalidaSuministroService from "../../services/SalidasSuministrosServices";
 import UbicacionesService from "../../services/UbicacionesServices";
 import EmpleadosService from "../../services/EmpleadosServices";
+import { FaArrowDown, FaArrowUp, FaFloppyDisk, FaUserCheck, FaBoxesStacked } from "react-icons/fa6";
 
 export default function Movimientos() {
   const [suministros, setSuministros] = useState([]);
   const [ubicaciones, setUbicaciones] = useState([]);
-  const [sugerencias, setSugerencias] = useState([]);
+
   const [tipoMovimiento, setTipoMovimiento] = useState("entrada");
   const [formData, setFormData] = useState({
     suministroId: "",
@@ -16,8 +17,16 @@ export default function Movimientos() {
     personaResponsable: "",
     departamentoResponsable: "",
   });
+
+  const [sugerencias, setSugerencias] = useState([]);
+  const [openSug, setOpenSug] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [mensaje, setMensaje] = useState("");
+  const [mensajeTipo, setMensajeTipo] = useState("ok");
+
+  const debounceRef = useRef(null);
+  const blurRef = useRef(null);
 
   useEffect(() => {
     const cargarDatos = async () => {
@@ -26,62 +35,113 @@ export default function Movimientos() {
           SuministrosService.obtenerTodos(),
           UbicacionesService.obtenerTodas(),
         ]);
-        setSuministros(suministrosRes.data);
-        setUbicaciones(ubicacionesRes.data);
+
+        setSuministros(suministrosRes.data || []);
+        setUbicaciones(ubicacionesRes.data || []);
       } catch (error) {
         console.error("Error cargando datos:", error);
+        setMensajeTipo("error");
         setMensaje("Error cargando datos ❌");
       }
     };
+
     cargarDatos();
   }, []);
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+  const suministroSeleccionado = useMemo(() => {
+    const id = Number(formData.suministroId);
+    if (!id) return null;
+    return suministros.find((s) => s.id === id) || null;
+  }, [formData.suministroId, suministros]);
 
-    if (e.target.name === "personaResponsable") {
-      buscarEmpleado(e.target.value);
-    }
+  const limpiarMensaje = () => {
+    setMensaje("");
+    setMensajeTipo("ok");
   };
 
   const buscarEmpleado = async (texto) => {
-    if (texto.length < 2) {
+    const q = (texto || "").trim();
+    if (q.length < 2) {
       setSugerencias([]);
+      setOpenSug(false);
       return;
     }
+
     try {
-      const { data } = await EmpleadosService.buscarPorNombre(texto);
-      setSugerencias(data || []);
+      const { data } = await EmpleadosService.buscarPorNombre(q);
+      const arr = Array.isArray(data) ? data : [];
+      setSugerencias(arr);
+      setOpenSug(arr.length > 0);
     } catch (error) {
       console.error(error);
       setSugerencias([]);
+      setOpenSug(false);
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    if (mensaje) limpiarMensaje();
+
+    if (name === "personaResponsable") {
+      setFormData((prev) => ({
+        ...prev,
+        departamentoResponsable: "",
+      }));
+
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      debounceRef.current = setTimeout(() => buscarEmpleado(value), 250);
     }
   };
 
   const seleccionarEmpleado = (empleado) => {
-    setFormData({
-      ...formData,
-      personaResponsable: empleado.nombre,
-      departamentoResponsable: empleado.departamento,
-    });
+    setFormData((prev) => ({
+      ...prev,
+      personaResponsable: empleado?.nombre || "",
+      departamentoResponsable: empleado?.departamento || "",
+    }));
     setSugerencias([]);
+    setOpenSug(false);
+  };
+
+  const handleTipoMovimiento = (val) => {
+    setTipoMovimiento(val);
+    limpiarMensaje();
+
+    if (val === "entrada") {
+      setFormData((prev) => ({
+        ...prev,
+        personaResponsable: "",
+        departamentoResponsable: "",
+      }));
+      setSugerencias([]);
+      setOpenSug(false);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setMensaje("");
+    limpiarMensaje();
 
-    if (!formData.suministroId || !formData.cantidad || parseInt(formData.cantidad) <= 0) {
+    const suministroIdNum = Number(formData.suministroId);
+    const cantidadNum = Number(formData.cantidad);
+
+    if (!suministroIdNum || !cantidadNum || cantidadNum <= 0) {
+      setMensajeTipo("error");
       setMensaje("Debe seleccionar un suministro y una cantidad válida ❌");
       setLoading(false);
       return;
     }
 
-    if (tipoMovimiento === "salida" && (!formData.personaResponsable)) {
+    if (tipoMovimiento === "salida" && !formData.personaResponsable.trim()) {
+      setMensajeTipo("error");
       setMensaje("Debe indicar la persona responsable ❌");
       setLoading(false);
       return;
@@ -89,33 +149,49 @@ export default function Movimientos() {
 
     try {
       const payload = {
-        suministroId: parseInt(formData.suministroId),
-        cantidadProducto: parseInt(formData.cantidad),
+        suministroId: suministroIdNum,
+        cantidadProducto: cantidadNum,
       };
 
       if (tipoMovimiento === "entrada") {
         await EntradaSuministroService.crear(payload);
+        setMensajeTipo("ok");
         setMensaje("Entrada registrada correctamente ✔️");
       } else {
-        payload.personaResponsable = formData.personaResponsable;
-        payload.departamentoResponsable = formData.departamentoResponsable;
-        await SalidaSuministroService.crear(payload);
+        await SalidaSuministroService.crear({
+          ...payload,
+          personaResponsable: formData.personaResponsable,
+          departamentoResponsable: formData.departamentoResponsable,
+        });
+
+        setMensajeTipo("ok");
         setMensaje("Salida registrada correctamente ✔️");
       }
 
       setFormData({
         suministroId: "",
         cantidad: "",
-        persona: "",
+        personaResponsable: "",
         departamentoResponsable: "",
       });
+      setSugerencias([]);
+      setOpenSug(false);
+
+      try {
+        const suministrosRes = await SuministrosService.obtenerTodos();
+        setSuministros(suministrosRes.data || []);
+      } catch (_) {}
     } catch (error) {
       console.error(error);
+
       if (error.response?.data?.errors) {
+        setMensajeTipo("error");
         setMensaje("Error del backend: " + JSON.stringify(error.response.data.errors));
       } else if (error.response?.data?.title) {
+        setMensajeTipo("error");
         setMensaje("Error: " + error.response.data.title);
       } else {
+        setMensajeTipo("error");
         setMensaje("Error al registrar el movimiento ❌");
       }
     } finally {
@@ -123,115 +199,231 @@ export default function Movimientos() {
     }
   };
 
+  const iconTipo = tipoMovimiento === "entrada" ? (
+    <FaArrowDown className="text-green-700" />
+  ) : (
+    <FaArrowUp className="text-blue-700" />
+  );
+
   return (
-    <div className="max-w-lg mx-auto mt-10 bg-white shadow-lg p-6 rounded-xl">
-      <h2 className="text-2xl font-bold mb-4 text-gray-800">Registrar Movimiento</h2>
+    <div className="h-full w-full overflow-y-auto">
+      <div className="max-w-4xl mx-auto px-4 py-6">
+        <div className="bg-white border border-gray-200 shadow-md rounded-2xl overflow-hidden">
+          <div className="p-6 border-b border-gray-200">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h2 className="text-2xl font-extrabold text-gray-900 flex items-center gap-2">
+                  {iconTipo}
+                  Registrar movimiento
+                </h2>
+                <p className="text-gray-600 text-sm mt-1">
+                  Entradas y salidas de suministros con validación básica.
+                </p>
+              </div>
 
-      {mensaje && (
-        <div
-          className={`p-3 mb-4 rounded-lg ${
-            mensaje.includes("✔️") ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
-          }`}
-        >
-          {mensaje}
-        </div>
-      )}
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-semibold text-gray-600 bg-gray-50 border border-gray-200 px-2 py-1 rounded-full">
+                  Suministros: {suministros.length}
+                </span>
+                <span className="text-xs font-semibold text-gray-600 bg-gray-50 border border-gray-200 px-2 py-1 rounded-full">
+                  Ubicaciones: {ubicaciones.length}
+                </span>
+              </div>
+            </div>
+          </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block font-medium text-gray-700">Tipo de Movimiento</label>
-          <select
-            name="tipoMovimiento"
-            value={tipoMovimiento}
-            onChange={(e) => setTipoMovimiento(e.target.value)}
-            className="w-full mt-1 p-2 border rounded-lg focus:ring focus:ring-blue-300"
-          >
-            <option value="entrada">Entrada</option>
-            <option value="salida">Salida</option>
-          </select>
-        </div>
+          <div className="p-6">
+            {mensaje && (
+              <div
+                className={`mb-5 rounded-xl border p-4 text-sm font-semibold ${
+                  mensajeTipo === "ok"
+                    ? "bg-green-50 border-green-200 text-green-800"
+                    : "bg-red-50 border-red-200 text-red-800"
+                }`}
+              >
+                {mensaje}
+              </div>
+            )}
 
-        <div>
-          <label className="block font-medium text-gray-700">Suministro</label>
-          <select
-            name="suministroId"
-            value={formData.suministroId}
-            onChange={handleChange}
-            required
-            className="w-full mt-1 p-2 border rounded-lg bg-white focus:ring focus:ring-blue-300"
-          >
-            <option value="">Seleccione un suministro</option>
-            {suministros.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.nombreProducto} (Cantidad actual: {s.cantidadActual})
-              </option>
-            ))}
-          </select>
-        </div>
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+                <div className="md:col-span-4">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Tipo de movimiento
+                  </label>
 
-        <div>
-          <label className="block font-medium text-gray-700">Cantidad</label>
-          <input
-            type="number"
-            min="1"
-            name="cantidad"
-            value={formData.cantidad}
-            onChange={handleChange}
-            required
-            className="w-full mt-1 p-2 border rounded-lg focus:ring focus:ring-blue-300"
-            placeholder="Cantidad a registrar"
-          />
-        </div>
-
-        {tipoMovimiento === "salida" && (
-          <>
-            <div className="relative">
-              <label className="block font-medium text-gray-700">Persona Responsable</label>
-              <input
-                type="text"
-                name="personaResponsable"
-                value={formData.personaResponsable}
-                onChange={handleChange}
-                className="w-full mt-1 p-2 border rounded-lg focus:ring focus:ring-blue-300"
-                placeholder="Escribe el nombre"
-                autoComplete="off"
-              />
-              {sugerencias.length > 0 && (
-                <ul className="absolute border rounded-md mt-1 max-h-40 overflow-auto bg-white z-10 w-full">
-                  {sugerencias.map((emp) => (   
-                    <li
-                      key={emp.codigoEmpleado}
-                      className="p-2 hover:bg-gray-100 cursor-pointer"
-                      onClick={() => seleccionarEmpleado(emp)}
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleTipoMovimiento("entrada")}
+                      className={`rounded-xl px-3 py-2 font-semibold border transition ${
+                        tipoMovimiento === "entrada"
+                          ? "bg-green-600 text-white border-green-600"
+                          : "bg-white text-gray-800 border-gray-200 hover:bg-gray-50"
+                      }`}
                     >
-                      {emp.nombre} ({emp.departamento})
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
+                      Entrada
+                    </button>
 
-            <div>
-              <label className="block font-medium text-gray-700">Departamento Responsable</label>
-              <input
-                type="text"
-                name="departamentoResponsable"
-                value={formData.departamentoResponsable}
-                readOnly
-                className="w-full mt-1 p-2 border rounded-lg bg-gray-100"
-              />
-            </div>
-          </>
-        )}
+                    <button
+                      type="button"
+                      onClick={() => handleTipoMovimiento("salida")}
+                      className={`rounded-xl px-3 py-2 font-semibold border transition ${
+                        tipoMovimiento === "salida"
+                          ? "bg-blue-600 text-white border-blue-600"
+                          : "bg-white text-gray-800 border-gray-200 hover:bg-gray-50"
+                      }`}
+                    >
+                      Salida
+                    </button>
+                  </div>
+                </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
-        >
-          {loading ? "Guardando..." : "Registrar Movimiento"}
-        </button>
-      </form>
+                <div className="md:col-span-8">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Suministro
+                  </label>
+
+                  <select
+                    name="suministroId"
+                    value={formData.suministroId}
+                    onChange={handleChange}
+                    required
+                    className="w-full rounded-xl border border-gray-300 bg-white p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  >
+                    <option value="">Seleccione un suministro</option>
+                    {suministros.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.nombreProducto} (Actual: {s.cantidadActual})
+                      </option>
+                    ))}
+                  </select>
+
+                  {suministroSeleccionado && (
+                    <div className="mt-3 rounded-xl border border-gray-200 bg-gray-50 p-3 flex items-start gap-3">
+                      <div className="h-9 w-9 rounded-lg bg-white border border-gray-200 flex items-center justify-center">
+                        <FaBoxesStacked className="text-gray-700" />
+                      </div>
+                      <div className="text-sm">
+                        <p className="font-bold text-gray-900">
+                          {suministroSeleccionado.nombreProducto}
+                        </p>
+                        <p className="text-gray-600">
+                          Existencia actual:{" "}
+                          <span className="font-semibold text-gray-900">
+                            {suministroSeleccionado.cantidadActual}
+                          </span>
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+                <div className="md:col-span-4">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Cantidad
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    name="cantidad"
+                    value={formData.cantidad}
+                    onChange={handleChange}
+                    required
+                    placeholder="Cantidad a registrar"
+                    className="w-full rounded-xl border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  />
+                </div>
+
+                {tipoMovimiento === "salida" && (
+                  <>
+                    <div className="md:col-span-5 relative">
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Persona responsable
+                      </label>
+                      <input
+                        type="text"
+                        name="personaResponsable"
+                        value={formData.personaResponsable}
+                        onChange={handleChange}
+                        onFocus={() => {
+                          if (sugerencias.length > 0) setOpenSug(true);
+                        }}
+                        onBlur={() => {
+                          blurRef.current = setTimeout(() => setOpenSug(false), 150);
+                        }}
+                        autoComplete="off"
+                        placeholder="Escribe el nombre"
+                        className="w-full rounded-xl border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      />
+
+                      {openSug && sugerencias.length > 0 && (
+                        <ul
+                          className="absolute left-0 right-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-lg max-h-56 overflow-auto z-20"
+                          onMouseDown={() => {
+                            if (blurRef.current) clearTimeout(blurRef.current);
+                          }}
+                        >
+                          {sugerencias.map((emp) => (
+                            <li
+                              key={emp.codigoEmpleado}
+                              className="px-3 py-2 hover:bg-gray-50 cursor-pointer"
+                              onClick={() => seleccionarEmpleado(emp)}
+                            >
+                              <div className="font-semibold text-gray-900">{emp.nombre}</div>
+                              <div className="text-xs text-gray-600">{emp.departamento}</div>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+
+                    <div className="md:col-span-3">
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Departamento
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="text"
+                          name="departamentoResponsable"
+                          value={formData.departamentoResponsable}
+                          readOnly
+                          className="w-full rounded-xl border border-gray-300 bg-gray-100 p-3 text-gray-800"
+                        />
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600">
+                          <FaUserCheck />
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className={`w-full inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-extrabold transition ${
+                    loading
+                      ? "bg-gray-300 text-gray-700 cursor-not-allowed"
+                      : "bg-blue-600 hover:bg-blue-700 text-white"
+                  }`}
+                >
+                  <FaFloppyDisk />
+                  {loading ? "Guardando..." : "Registrar movimiento"}
+                </button>
+
+                <p className="text-xs text-gray-500 mt-3 text-center">
+                  Tip: para salidas, buscá y seleccioná la persona para que se llene el
+                  departamento automáticamente.
+                </p>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
