@@ -2,20 +2,28 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
 const generarPDFHoja = async (hoja) => {
-  const doc = new jsPDF();
+  // --- Documento ---
+  const doc = new jsPDF({ unit: "mm", format: "a4" });
+
+  // --- Layout base ---
   const marginX = 5;
   const pageWidth = doc.internal.pageSize.getWidth();
-  const boxWidth = pageWidth - marginX * 2;
   const pageHeight = doc.internal.pageSize.getHeight();
+  const boxWidth = pageWidth - marginX * 2;
+
+  // Footer real (no “-40” mágico)
+  const FOOTER_H = 12;
+  const BOTTOM_PAD = 6;
+  const PAGE_BOTTOM = pageHeight - FOOTER_H - BOTTOM_PAD;
 
   const fechaActual = new Date().toLocaleDateString("es-ES");
 
   const formatFecha = (fecha) => {
-    if (!fecha || fecha.startsWith("0001-01-01")) return "—";
+    if (!fecha || String(fecha).startsWith("0001-01-01")) return "—";
     return new Date(fecha).toLocaleDateString("es-ES", {
       day: "2-digit",
       month: "2-digit",
-      year: "numeric"
+      year: "numeric",
     });
   };
 
@@ -28,24 +36,28 @@ const generarPDFHoja = async (hoja) => {
       img.src = url;
     });
 
-  const agregarFooter = (doc, numeroPagina) => {
+  const agregarFooter = (docInstance, numeroPagina) => {
     const footerY = pageHeight - 10;
 
-    doc.setFontSize(8);
-    doc.setTextColor(100);
+    docInstance.setFontSize(8);
+    docInstance.setTextColor(100);
 
-    doc.text("Depto. de Sistemas", 10, footerY);
+    docInstance.text("Depto. de Sistemas", 10, footerY);
 
     const textoPagina = `Página ${numeroPagina}`;
-    const textWidth = doc.getTextWidth(textoPagina);
-    doc.text(textoPagina, (pageWidth - textWidth) / 2, footerY);
+    const textWidth = docInstance.getTextWidth(textoPagina);
+    docInstance.text(textoPagina, (pageWidth - textWidth) / 2, footerY);
 
     const emision = `Emisión: ${fechaActual}`;
-    const emisionWidth = doc.getTextWidth(emision);
-    doc.text(emision, pageWidth - emisionWidth - 10, footerY);
+    const emisionWidth = docInstance.getTextWidth(emision);
+    docInstance.text(emision, pageWidth - emisionWidth - 10, footerY);
   };
 
-  const agregarEncabezado = async (doc, numeroHoja, marginX, mostrarContador = true, yStart = 20) => {
+  const agregarEncabezado = async (
+    docInstance,
+    numeroHoja,
+    mostrarContador = true
+  ) => {
     const logoUrl = `${window.location.origin}/logo_guandy.png`;
     const logoImg = await loadImage(logoUrl);
 
@@ -53,74 +65,125 @@ const generarPDFHoja = async (hoja) => {
     const logoHeight = 20;
     const logoX = (pageWidth - logoWidth) / 2;
     const logoY = 10;
+
     const lineMarginX = marginX;
     const lineWidth = pageWidth - marginX * 2;
     const centerY = logoY + logoHeight / 2;
     const space = 0.7;
 
-    doc.setDrawColor(30, 58, 138);
-    doc.setLineWidth(0.3);
-    doc.line(lineMarginX, centerY - space * 2, lineMarginX + lineWidth, centerY - space * 2);
-    doc.setLineWidth(1.2);
-    doc.line(lineMarginX, centerY, lineMarginX + lineWidth, centerY);
-    doc.setLineWidth(0.3);
-    doc.line(lineMarginX, centerY + space * 2, lineMarginX + lineWidth, centerY + space * 2);
+    docInstance.setDrawColor(30, 58, 138);
+    docInstance.setLineWidth(0.3);
+    docInstance.line(
+      lineMarginX,
+      centerY - space * 2,
+      lineMarginX + lineWidth,
+      centerY - space * 2
+    );
+    docInstance.setLineWidth(1.2);
+    docInstance.line(lineMarginX, centerY, lineMarginX + lineWidth, centerY);
+    docInstance.setLineWidth(0.3);
+    docInstance.line(
+      lineMarginX,
+      centerY + space * 2,
+      lineMarginX + lineWidth,
+      centerY + space * 2
+    );
 
-    doc.addImage(logoImg, "PNG", logoX, logoY, logoWidth, logoHeight);
+    docInstance.addImage(logoImg, "PNG", logoX, logoY, logoWidth, logoHeight);
 
-    yStart = logoY + logoHeight + 5;
+    let yStart = logoY + logoHeight + 5;
 
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "bold");
-    doc.setTextColor(0, 0, 0);
-    doc.text("ADMINISTRACION DE ACTIVOS IT", marginX, yStart);
+    docInstance.setFontSize(10);
+    docInstance.setFont("helvetica", "bold");
+    docInstance.setTextColor(0, 0, 0);
+    docInstance.text("ADMINISTRACION DE ACTIVOS IT", marginX, yStart);
 
     if (mostrarContador) {
-      doc.setFontSize(15);
-      doc.setTextColor(255, 0, 0);
-      doc.text(
+      docInstance.setFontSize(15);
+      docInstance.setTextColor(255, 0, 0);
+      docInstance.text(
         `No. ${String(numeroHoja).padStart(5, "0")}`,
         pageWidth - marginX,
         yStart,
         { align: "right" }
       );
-
-      doc.setFontSize(10);
+      docInstance.setFontSize(10);
     }
 
-    doc.setTextColor(0, 0, 0);
-    doc.text("HOJA DE RESPONSABILIDAD", marginX, yStart + 4);
-    doc.text("ACTIVOS IT, EQUIPOS Y SUMINISTROS", marginX, yStart + 8);
-    doc.text(`FECHA DE ACTUALIZACIÓN: ${fechaActual}`, marginX, yStart + 12);
+    docInstance.setTextColor(0, 0, 0);
+    docInstance.text("HOJA DE RESPONSABILIDAD", marginX, yStart + 4);
+    docInstance.text("ACTIVOS IT, EQUIPOS Y SUMINISTROS", marginX, yStart + 8);
+    docInstance.text(`FECHA DE ACTUALIZACIÓN: ${fechaActual}`, marginX, yStart + 12);
 
     const yTitulo = yStart + 22;
     const titulo = "HOJA DE RESPONSABILIDAD EQUIPO DE COMPUTO";
-    const textWidth = doc.getTextWidth(titulo);
+    const textWidth = docInstance.getTextWidth(titulo);
     const tituloX = (pageWidth - textWidth) / 3;
     const lineHeight = 10;
 
-    doc.setFillColor(204, 229, 255);
-    doc.rect(marginX, yTitulo, boxWidth, lineHeight, "F");
+    docInstance.setFillColor(204, 229, 255);
+    docInstance.rect(marginX, yTitulo, boxWidth, lineHeight, "F");
 
-    doc.setFontSize(14);
-    doc.setFont("helvetica", "bold");
-    doc.text(titulo, tituloX, yTitulo + 7);
+    docInstance.setFontSize(14);
+    docInstance.setFont("helvetica", "bold");
+    docInstance.text(titulo, tituloX, yTitulo + 7);
 
-    return yTitulo + lineHeight + 1;
+    return yTitulo + lineHeight + 1; // y inicial siguiente sección
   };
 
-  const numeroHoja = hoja.hojaNo ?? 1;
-  let yActual = await agregarEncabezado(doc, numeroHoja, marginX, true);
+  // ---- Helpers de layout (profesional) ----
+  const ensureSpace = async (yActualRef, neededHeight, numeroHoja) => {
+    // si no cabe, footer + nueva página + encabezado
+    if (yActualRef + neededHeight > PAGE_BOTTOM) {
+      agregarFooter(doc, doc.internal.getNumberOfPages());
+      doc.addPage();
+      const yHeaderEnd = await agregarEncabezado(doc, numeroHoja, true);
+      return yHeaderEnd + 10;
+    }
+    return yActualRef;
+  };
 
+  const getLineH = (fontSize) => fontSize * 0.45; // mm aprox, suficiente para jsPDF
+  const printWrappedText = (texto, x, y, maxWidth, fontSize = 6, style = {}) => {
+    doc.setFontSize(fontSize);
+    if (style.bold) doc.setFont("helvetica", "bold");
+    else doc.setFont("helvetica", "normal");
+    if (style.color) doc.setTextColor(...style.color);
+    else doc.setTextColor(0, 0, 0);
+
+    const lines = doc.splitTextToSize(texto, maxWidth);
+    const lh = getLineH(fontSize);
+    doc.text(lines, x, y);
+    return y + lines.length * lh;
+  };
+
+  const getEquipoTableStyles = (count) => {
+    if (count <= 5) return { fontSize: 8, cellPadding: 2, minCellHeight: 7 };
+    if (count <= 12) return { fontSize: 7, cellPadding: 1.5, minCellHeight: 5 };
+    return { fontSize: 6, cellPadding: 1, minCellHeight: 4 };
+  };
+
+  const autoTableDefault = {
+    margin: { left: marginX, right: marginX, bottom: FOOTER_H + 6 },
+    tableWidth: boxWidth,
+    pageBreak: "auto",
+  };
+
+  // --- Inicio ---
+  const numeroHoja = hoja.hojaNo ?? 1;
+  let yActual = await agregarEncabezado(doc, numeroHoja, true);
+
+  // --- Tabla empleados ---
   const empleados = hoja.empleados ?? [];
-  const empleadosBody = empleados.map(emp => [
+  const empleadosBody = empleados.map((emp) => [
     emp.empleadoId ?? "—",
     emp.nombre ?? "—",
     emp.puesto ?? "—",
-    emp.departamento ?? "—"
+    emp.departamento ?? "—",
   ]);
 
   autoTable(doc, {
+    ...autoTableDefault,
     startY: yActual,
     head: [["Código", "Nombre", "Puesto", "Departamento"]],
     body: empleadosBody.length > 0 ? empleadosBody : [["—", "—", "—", "—"]],
@@ -129,37 +192,39 @@ const generarPDFHoja = async (hoja) => {
       cellPadding: 1,
       minCellHeight: 4,
       lineColor: [0, 0, 0],
-      lineWidth: 0.2
+      lineWidth: 0.2,
     },
     headStyles: {
       fillColor: [30, 58, 138],
       textColor: [255, 255, 255],
-      fontSize: 6
+      fontSize: 6,
     },
-    margin: { left: marginX, right: marginX },
-    tableWidth: boxWidth,
-    pageBreak: "auto"
   });
 
   yActual = doc.lastAutoTable.finalY + 1;
 
+  // --- Motivo ---
   const motivoLabel = "Motivo de actualización:";
   const motivoTexto = hoja.motivo ?? "—";
   const motivoTextoX = marginX + doc.getTextWidth(motivoLabel) + 4;
   const motivoTextoWidth = boxWidth - (motivoTextoX - marginX) - 4;
   const motivoHeight = 8;
 
+  yActual = await ensureSpace(yActual, motivoHeight + 2, numeroHoja);
+
   doc.setFillColor(200, 230, 255);
   doc.setDrawColor(180);
-  doc.rect(marginX, yActual, boxWidth, motivoHeight, 'FD');
+  doc.rect(marginX, yActual, boxWidth, motivoHeight, "FD");
 
   doc.setFontSize(9);
   doc.setTextColor(0, 0, 0);
+  doc.setFont("helvetica", "bold");
   doc.text(motivoLabel, marginX + 2, yActual + 5);
 
   doc.setFillColor(255, 255, 255);
-  doc.rect(motivoTextoX, yActual + 1.5, motivoTextoWidth, motivoHeight - 3, 'FD');
+  doc.rect(motivoTextoX, yActual + 1.5, motivoTextoWidth, motivoHeight - 3, "FD");
 
+  doc.setFont("helvetica", "normal");
   doc.setFontSize(9);
   doc.text(
     doc.splitTextToSize(motivoTexto, motivoTextoWidth - 4),
@@ -169,8 +234,9 @@ const generarPDFHoja = async (hoja) => {
 
   yActual += motivoHeight + 1;
 
+  // --- Tabla equipos (dinámica) ---
   const equipos = hoja.equipos ?? [];
-  const equiposBody = equipos.map(eq => [
+  const equiposBody = equipos.map((eq) => [
     eq.fechaIngreso ? formatFecha(eq.fechaIngreso) : "—",
     eq.codificacion ?? "—",
     eq.tipoEquipo ?? "—",
@@ -180,30 +246,31 @@ const generarPDFHoja = async (hoja) => {
     eq.observaciones ?? "-",
   ]);
 
+  const equipoStyles = getEquipoTableStyles(equiposBody.length);
+
   autoTable(doc, {
+    ...autoTableDefault,
     startY: yActual,
     head: [["Fecha", "Código", "Equipo", "Marca", "Modelo", "Serie", "Observaciones."]],
     body: equiposBody.length > 0 ? equiposBody : [["—", "—", "—", "—", "—", "—", "—"]],
     styles: {
-      fontSize: 6,
-      cellPadding: 1,
-      minCellHeight: 4,
+      ...equipoStyles,
       lineColor: [0, 0, 0],
-      lineWidth: 0.2
+      lineWidth: 0.2,
     },
     headStyles: {
       fillColor: [30, 58, 138],
       textColor: [255, 255, 255],
-      fontSize: 6
+      fontSize: equipoStyles.fontSize,
     },
-    margin: { left: marginX, right: marginX },
-    tableWidth: boxWidth,
-    pageBreak: "auto"
   });
 
   yActual = doc.lastAutoTable.finalY + 3;
 
+  // --- Accesorios ---
   const alturaTituloAccesorios = 6;
+  yActual = await ensureSpace(yActual, alturaTituloAccesorios + 22, numeroHoja);
+
   doc.setFillColor(200, 230, 255);
   doc.rect(marginX, yActual, boxWidth, alturaTituloAccesorios, "F");
 
@@ -228,7 +295,7 @@ const generarPDFHoja = async (hoja) => {
   ];
 
   const accesoriosSeleccionados = hoja.accesorios
-    ? hoja.accesorios.split(",").map(a => a.trim())
+    ? hoja.accesorios.split(",").map((a) => a.trim())
     : [];
 
   const spacingX = 35;
@@ -238,14 +305,17 @@ const generarPDFHoja = async (hoja) => {
     const x = marginX + (i % 5) * spacingX;
     const y = yActual + Math.floor(i / 5) * spacingY;
 
+    doc.setDrawColor(0);
     doc.rect(x, y, 3.5, 3.5);
 
     if (accesoriosSeleccionados.includes(acc)) {
       doc.setFont("helvetica", "bold");
+      doc.setFontSize(9);
       doc.text("X", x + 0.9, y + 2.7);
     }
 
     doc.setFont("helvetica", "normal");
+    doc.setFontSize(8);
     doc.text(acc, x + 5.5, y + 2.7);
 
     if (acc === "Otros") {
@@ -255,27 +325,25 @@ const generarPDFHoja = async (hoja) => {
     }
   });
 
-  yActual += 18
+  yActual += 18;
 
+  // --- Comentarios + Firma responsable (tabla simple) ---
   const col1Width = boxWidth * 0.7;
   const col2Width = boxWidth * 0.3;
   const headerHeight = 6;
   const rowHeight = 12;
 
-  doc.setFillColor(204, 229, 255);
-  doc.rect(marginX, yActual, col1Width, headerHeight, 'F');
-  doc.rect(marginX + col1Width, yActual, col2Width, headerHeight, 'F');
+  yActual = await ensureSpace(yActual, headerHeight + rowHeight + 6, numeroHoja);
 
-  doc.text(
-    'Comentarios relacionados al estado del equipo',
-    marginX + 2,
-    yActual + 4
-  );
-  doc.text(
-    'Firma del responsable',
-    marginX + col1Width + 2,
-    yActual + 4
-  );
+  doc.setFillColor(204, 229, 255);
+  doc.rect(marginX, yActual, col1Width, headerHeight, "F");
+  doc.rect(marginX + col1Width, yActual, col2Width, headerHeight, "F");
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(8);
+  doc.setTextColor(0, 0, 0);
+  doc.text("Comentarios relacionados al estado del equipo", marginX + 2, yActual + 4);
+  doc.text("Firma del responsable", marginX + col1Width + 2, yActual + 4);
 
   yActual += headerHeight;
 
@@ -283,69 +351,85 @@ const generarPDFHoja = async (hoja) => {
   doc.rect(marginX, yActual, col1Width, rowHeight);
   doc.rect(marginX + col1Width, yActual, col2Width, rowHeight);
 
-  doc.setFont('helvetica', 'normal');
+  const comentariosTexto = hoja.comentarios || "Sin comentarios";
+  doc.setFont("helvetica", "normal");
   doc.setFontSize(8);
   doc.setTextColor(0, 0, 0);
 
-  const comentariosTexto = hoja.comentarios || "Sin comentarios";
-  const comentariosLines = doc.splitTextToSize(
-    comentariosTexto,
-    col1Width - 4
-  );
-
+  const comentariosLines = doc.splitTextToSize(comentariosTexto, col1Width - 4);
   doc.text(comentariosLines, marginX + 2, yActual + 4);
 
-  yActual += 15;
+  yActual += rowHeight + 3;
 
-  doc.setFont('helvetica', 'bold');
+  // --- Bloque legal (verifica espacio antes para que no quede partido feo) ---
+  const legalEstimatedHeight = 40; // aprox (texto + separación). Ajustable si tu texto crece.
+  yActual = await ensureSpace(yActual, legalEstimatedHeight, numeroHoja);
+
+  doc.setFont("helvetica", "bold");
   doc.setFontSize(8);
   doc.setTextColor(0, 0, 0);
-  doc.text('Me haré responsable del manejo óptimo de estos recursos, a través de lo siguiente:', marginX, yActual);
+  doc.text(
+    "Me haré responsable del manejo óptimo de estos recursos, a través de lo siguiente:",
+    marginX,
+    yActual
+  );
   yActual += 4;
 
-  const printWrappedText = (texto, x, y, maxWidth) => {
-    const lines = doc.splitTextToSize(texto, maxWidth);
-    doc.text(lines, x, y);
-    return y + lines.length * 3;
-  };
+  yActual = printWrappedText(
+    "A) Conservar íntegro los recursos anteriormente descritos.",
+    marginX,
+    yActual,
+    boxWidth,
+    6,
+    { bold: true, color: [0, 102, 204] }
+  );
+  yActual = printWrappedText(
+    "B) Cualquier circunstancia adversa a mis manejos de los recursos, lo reportaré de manera inmediata a mi jefe inmediato y a Administrador de activos fijos.",
+    marginX,
+    yActual,
+    boxWidth,
+    6,
+    { bold: true, color: [0, 102, 204] }
+  );
+  yActual = printWrappedText(
+    "C) Verificar la integridad de las etiquetas de código de activos, cualquier anomalía se reportará a Administrador de Activos Fijos.",
+    marginX,
+    yActual,
+    boxWidth,
+    6,
+    { bold: true, color: [0, 102, 204] }
+  );
+  yActual = printWrappedText(
+    "D) Me comprometo a devolver los recursos en buenas condiciones, y en el momento que sean devueltos, si por circunstancias el Activo fuese destruido total o parcialmente por negligencia mía, AUTORIZO a la empresa ¨Guatemalan Candies, S.A.¨ realizar el reclamo respectivo del mismo, deduciendo la suma que cubra el valor del o los recursos de mi salario al cual tengo derecho.",
+    marginX,
+    yActual,
+    boxWidth,
+    6,
+    { bold: true, color: [0, 102, 204] }
+  );
 
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(6);
-  doc.setTextColor(0, 102, 204);
-
-  yActual = printWrappedText('A) Conservar íntegro los recursos anteriormente descritos.', marginX, yActual, boxWidth);
-  yActual = printWrappedText('B) Cualquier circunstancia adversa a mis manejos de los recursos, lo reportaré de manera inmediata a mi jefe inmediato y a Administrador de activos fijos.', marginX, yActual, boxWidth);
-  yActual = printWrappedText('C) Verificar la integridad de las etiquetas de código de activos, cualquier anomalía se reportará a Administrador de Activos Fijos.', marginX, yActual, boxWidth);
-  yActual = printWrappedText('D) Me comprometo a devolver los recursos en buenas condiciones, y en el momento que sean devueltos, si por circunstancias el Activo fuese destruido total o parcialmente por negligencia mía, AUTORIZO a la empresa ¨Guatemalan Candies, S.A.¨ realizar el reclamo respectivo del mismo, deduciendo la suma que cubra el valor del o los recursos de mi salario al cual tengo derecho.', marginX, yActual, boxWidth);
-
-  yActual += 20;
+  yActual += 10;
 
   const marginFirma = 30;
 
-  const verificarSaltoPagina = async (alturaNecesaria) => {
-    if (yActual + alturaNecesaria > pageHeight - 40) {
-      agregarFooter(doc, doc.internal.getNumberOfPages());
-      doc.addPage();
-      yActual = await agregarEncabezado(doc, numeroHoja, marginX, true) + 10;
-    }
-  };
-
   const firmas = [
-    ...empleados.map(e => ({
-      nombre: e.nombre,
-      puesto: e.puesto,
-      label: "Responsable:"
-    })),
     {
       nombre: "Kleidy López",
       puesto: "Asistente IT",
-      label: "Realizado por:"
+      label: "Realizado por:",
     },
+
+    ...empleados.map((e) => ({
+      nombre: e.nombre,
+      puesto: e.puesto,
+      label: "Responsable:",
+    })),
+
     {
       nombre: "Carlos Mazariegos",
       puesto: "Gerente de Sistemas",
-      label: "Entrega de equipo:"
-    }
+      label: "Entrega de equipo:",
+    },
   ];
 
   const firmasPorFila = 3;
@@ -353,7 +437,7 @@ const generarPDFHoja = async (hoja) => {
   const totalFilas = Math.ceil(firmas.length / firmasPorFila);
   const alturaTotalFirmas = totalFilas * alturaFirma + 10;
 
-  await verificarSaltoPagina(alturaTotalFirmas);
+  yActual = await ensureSpace(yActual, alturaTotalFirmas, numeroHoja);
 
   const inicioFirmasY = yActual;
 
@@ -367,16 +451,9 @@ const generarPDFHoja = async (hoja) => {
     );
 
     let x;
-
-    if (firmasEnFila === 1) {
-      x = pageWidth / 2;
-    } else if (firmasEnFila === 2) {
-      x = col === 0 ? marginFirma : pageWidth - marginFirma;
-    } else {
-      if (col === 0) x = marginFirma;
-      else if (col === 1) x = pageWidth / 2;
-      else x = pageWidth - marginFirma;
-    }
+    if (firmasEnFila === 1) x = pageWidth / 2;
+    else if (firmasEnFila === 2) x = col === 0 ? marginFirma : pageWidth - marginFirma;
+    else x = col === 0 ? marginFirma : col === 1 ? pageWidth / 2 : pageWidth - marginFirma;
 
     const y = inicioFirmasY + fila * alturaFirma;
 
@@ -393,6 +470,7 @@ const generarPDFHoja = async (hoja) => {
 
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(8);
+<<<<<<< HEAD
 
     doc.text(
       firmas[i].puesto ?? "",
@@ -403,13 +481,17 @@ const generarPDFHoja = async (hoja) => {
         maxWidth: 40
       }
     );
+=======
+    doc.setFont("helvetica", "normal");
+    doc.text(firmas[i].puesto ?? "", x, y + 18, { align: "center", maxWidth: 40 });
+>>>>>>> jesusdepazz
   }
 
   yActual = inicioFirmasY + alturaTotalFirmas;
 
   agregarFooter(doc, doc.internal.getNumberOfPages());
 
-  doc.save('hoja_responsabilidad.pdf');
+  doc.save("hoja_responsabilidad.pdf");
 };
 
 export default generarPDFHoja;
