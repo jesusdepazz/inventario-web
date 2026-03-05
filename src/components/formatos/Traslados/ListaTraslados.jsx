@@ -6,32 +6,9 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 export default function TrasladosLista() {
   const [traslados, setTraslados] = useState([]);
   const [loading, setLoading] = useState(true);
-
-<<<<<<< HEAD
-    useEffect(() => {
-        const fetchTraslados = async () => {
-            try {
-                const res = await TrasladosServices.obtenerTodos();
-
-                const ordenados = res.data.sort((a, b) => {
-                    return Number(a.no) - Number(b.no);
-                });
-
-                setTraslados(ordenados);
-            } catch (err) {
-                console.error("Error cargando traslados:", err);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchTraslados();
-    }, []);
-=======
   const [q, setQ] = useState("");
   const [desde, setDesde] = useState("");
   const [hasta, setHasta] = useState("");
->>>>>>> jesusdepazz
 
   useEffect(() => {
     const fetchTraslados = async () => {
