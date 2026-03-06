@@ -9,6 +9,7 @@ const ListaHojasResponsabilidad = () => {
   const [hojas, setHojas] = useState([]);
   const [busqueda, setBusqueda] = useState("");
   const [mostrarFiltros, setMostrarFiltros] = useState(false);
+  const [rol, setRol] = useState("");
   const [filtros, setFiltros] = useState({
     hojaNo: "",
     codigo: "",
@@ -21,6 +22,11 @@ const ListaHojasResponsabilidad = () => {
   });
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const storedRol = localStorage.getItem("rol") || "";
+    setRol(storedRol);
+  }, []);
 
   useEffect(() => {
     const fetchHojas = async () => {
@@ -59,6 +65,8 @@ const ListaHojasResponsabilidad = () => {
     });
   }, []);
 
+  const esAdmin = rol === "Administrador";
+
   const hojasFiltradas = useMemo(() => {
     const q = normalize(busqueda);
 
@@ -95,7 +103,6 @@ const ListaHojasResponsabilidad = () => {
       const jefe = hoja?.jefeInmediato ?? "";
       const ubicacion = eq0?.ubicacion ?? eq0?.Ubicacion ?? "";
       const estado = hoja?.estado ?? "";
-      const fechaSolvencia = hoja?.fechaSolvencia ?? "";
       const obs = hoja?.observaciones ?? "";
       const tipoHoja = hoja?.tipoHoja ?? "";
 
@@ -108,10 +115,8 @@ const ListaHojasResponsabilidad = () => {
       if (filtros.codigo && !normalize(codigo).includes(normalize(filtros.codigo))) return false;
       if (filtros.responsable && !normalize(responsable).includes(normalize(filtros.responsable))) return false;
       if (filtros.departamento && !normalize(departamento).includes(normalize(filtros.departamento))) return false;
-
       if (filtros.estado && normalize(estado) !== normalize(filtros.estado)) return false;
       if (filtros.tipoHoja && normalize(tipoHoja) !== normalize(filtros.tipoHoja)) return false;
-
       if (!cumpleRango(fechaCreacion)) return false;
 
       return true;
@@ -263,7 +268,9 @@ const ListaHojasResponsabilidad = () => {
                     <th className="px-4 py-3 border-b border-blue-900/40">Observaciones</th>
                     <th className="px-4 py-3 border-b border-blue-900/40">Tipo</th>
                     <th className="px-4 py-3 border-b border-blue-900/40 text-center">Acciones</th>
-                    <th className="px-4 py-3 border-b border-blue-900/40 text-center">Editar</th>
+                    {esAdmin && (
+                      <th className="px-4 py-3 border-b border-blue-900/40 text-center">Editar</th>
+                    )}
                   </tr>
                 </thead>
                 <tbody>
@@ -327,20 +334,22 @@ const ListaHojasResponsabilidad = () => {
                               PDF
                             </button>
                           </td>
-                          <td className="px-4 py-3 text-center">
-                            <button
-                              onClick={() => navigate(`/hojas-responsabilidad/editar/${hoja.id}`)}
-                              className="rounded-xl bg-amber-500 text-white px-4 py-2 text-xs font-semibold hover:bg-amber-600"
-                            >
-                              Editar
-                            </button>
-                          </td>
+                          {esAdmin && (
+                            <td className="px-4 py-3 text-center">
+                              <button
+                                onClick={() => navigate(`/hojas-responsabilidad/editar/${hoja.id}`)}
+                                className="rounded-xl bg-amber-500 text-white px-4 py-2 text-xs font-semibold hover:bg-amber-600"
+                              >
+                                Editar
+                              </button>
+                            </td>
+                          )}
                         </tr>
                       );
                     })
                   ) : (
                     <tr>
-                      <td colSpan={14} className="px-6 py-10 text-center text-slate-500">
+                      <td colSpan={esAdmin ? 14 : 13} className="px-6 py-10 text-center text-slate-500">
                         No se encontraron hojas.
                       </td>
                     </tr>
