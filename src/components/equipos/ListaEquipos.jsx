@@ -209,7 +209,6 @@ const ListaEquipos = () => {
           </div>
         </div>
 
-        {/* Tabla */}
         <div className="px-6 py-5">
           <div className="rounded-xl border border-slate-200 overflow-hidden">
             <div className="max-h-[62vh] overflow-auto">
@@ -286,9 +285,8 @@ const ListaEquipos = () => {
                         </td>
 
                         <td className="px-3 py-2 border text-red-600 font-semibold min-w-[100px]">
-                          {equipo.hojaNo}
+                          {equipo.hojaNo || "Sin asignar"}
                         </td>
-
                         <td className="px-3 py-2 border min-w-[140px]">
                           {equipo.fechaActualizacion
                             ? new Date(equipo.fechaActualizacion).toLocaleDateString("es-ES")
