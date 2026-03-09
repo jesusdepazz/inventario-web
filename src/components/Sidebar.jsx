@@ -306,6 +306,130 @@ export default function Sidebar() {
               </div>
             </div>
           )}
+
+          {modalSolvenciaOpen && (
+            <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+              <div className="absolute inset-0 bg-black/60" onClick={closeSolvenciaModal} />
+              <div className="relative bg-white rounded-2xl shadow-2xl p-6 w-96">
+                <h2 className="text-xl font-bold mb-6 text-gray-800 text-center">Solvencias</h2>
+                <div className="flex flex-col gap-3">
+                  {rol === "Administrador" && (
+                    <button
+                      onClick={() => handleSolvenciaOption("/formatos/hojasSolvencias")}
+                      className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+                    >
+                      Crear
+                    </button>
+                  )}
+                  <button
+                    onClick={() => handleSolvenciaOption("/formatos/listahojasSolvencias")}
+                    className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+                  >
+                    Ver Historial
+                  </button>
+                  <button
+                    onClick={closeSolvenciaModal}
+                    className="w-full bg-gray-400 text-white py-2 px-4 rounded-lg hover:bg-gray-500"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {modalTrasladoOpen && (
+            <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+              <div className="absolute inset-0 bg-black/60" onClick={closeTrasladoModal} />
+              <div className="relative bg-white rounded-2xl shadow-2xl p-6 w-96">
+                <h2 className="text-xl font-bold mb-6 text-gray-800 text-center">Traslados</h2>
+                <div className="flex flex-col gap-3">
+                  {rol === "Administrador" && (
+                    <button
+                      onClick={() => handleTrasladoOption("/formatos/traslados/crear")}
+                      className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+                    >
+                      Crear
+                    </button>
+                  )}
+                  <button
+                    onClick={() => handleTrasladoOption("/formatos/traslados/lista")}
+                    className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+                  >
+                    Ver Historial
+                  </button>
+                  <button
+                    onClick={closeTrasladoModal}
+                    className="w-full bg-gray-400 text-white py-2 px-4 rounded-lg hover:bg-gray-500"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {modalBajasActivoOpen && (
+            <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+              <div className="absolute inset-0 bg-black/60" onClick={closeBajasActivoModal} />
+              <div className="relative bg-white rounded-2xl shadow-2xl p-6 w-96">
+                <h2 className="text-xl font-bold mb-6 text-gray-800 text-center">Bajas de Activos</h2>
+                <div className="flex flex-col gap-3">
+                  {rol === "Administrador" && (
+                    <button
+                      onClick={() => handleBajasActivoOption("/formatos/bajaAtivos")}
+                      className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+                    >
+                      Crear Baja
+                    </button>
+                  )}
+                  <button
+                    onClick={() => handleBajasActivoOption("/formatos/ListabajaAtivos")}
+                    className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+                  >
+                    Ver Historial
+                  </button>
+                  <button
+                    onClick={closeBajasActivoModal}
+                    className="w-full bg-gray-400 text-white py-2 px-4 rounded-lg hover:bg-gray-500"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {modalTrasladoRetornoOpen && (
+            <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+              <div className="absolute inset-0 bg-black/60" onClick={closeTrasladoRetornoModal} />
+              <div className="relative bg-white rounded-2xl shadow-2xl p-6 w-96">
+                <h2 className="text-xl font-bold mb-6 text-gray-800 text-center">Selecciona una opción</h2>
+                <div className="flex flex-col gap-3">
+                  {rol === "Administrador" && (
+                    <button
+                      onClick={() => handleTrasladoRetornoOption("/formatos/trasladosRetorno/crear")}
+                      className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+                    >
+                      Crear Traslado Retorno
+                    </button>
+                  )}
+                  <button
+                    onClick={() => handleTrasladoRetornoOption("/formatos/trasladosRetorno/lista")}
+                    className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+                  >
+                    Ver Historial
+                  </button>
+                  <button
+                    onClick={closeTrasladoRetornoModal}
+                    className="w-full bg-gray-400 text-white py-2 px-4 rounded-lg hover:bg-gray-500"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </>,
         document.body
       )}
