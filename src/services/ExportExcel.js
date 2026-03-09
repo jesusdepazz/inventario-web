@@ -4,7 +4,6 @@ import { saveAs } from "file-saver";
 export function exportarExcel(resultadosFiltrados) {
   const encabezados = [
     "#",
-    "No. de Registro Deprect",
     "Orden de Compra",
     "Factura",
     "Proveedor",
@@ -24,18 +23,13 @@ export function exportarExcel(resultadosFiltrados) {
     "Número asignado",
     "Extensión",
     "Ubicacion",
-    "Revisado de toma fisica",
-    "Fecha de toma",
-    "Estado de Sticker",
-    "Asignado a Hoja de responsabilidad",
     "Comentarios",
     "Observaciones",
   ];
 
   const data = resultadosFiltrados.map((equipo, index) => [
     index + 1,
-    equipo.registroDeprec || "Sin registro",
-    equipo.orderCompra,
+    equipo.ordenCompra,
     equipo.factura,
     equipo.proveedor,
     equipo.fechaIngreso
@@ -65,18 +59,6 @@ export function exportarExcel(resultadosFiltrados) {
     equipo.numeroAsignado,
     equipo.extension,
     equipo.ubicacion,
-    equipo.revisadoTomaFisica,
-    equipo.fechaToma
-      ? new Date(equipo.fechaToma).toLocaleDateString("es-ES")
-      : "Sin fecha",
-    equipo.estadoSticker
-      ? equipo.estadoSticker === "buen"
-        ? "Buen estado"
-        : equipo.estadoSticker === "cambio"
-        ? "Cambio"
-        : "Sin estado"
-      : "Sin estado",
-    equipo.asignadoHojaResponsabilidad,
     equipo.comentarios,
     equipo.observaciones,
   ]);
