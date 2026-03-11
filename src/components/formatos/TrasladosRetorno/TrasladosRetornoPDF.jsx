@@ -2,8 +2,10 @@ import { Page, Text, View, Document, StyleSheet, Image } from "@react-pdf/render
 
 const styles = StyleSheet.create({
     page: {
-        padding: 30,
-        fontSize: 11,
+        paddingTop: 20,
+        paddingBottom: 18,
+        paddingHorizontal: 24,
+        fontSize: 10,
         fontFamily: "Helvetica",
     },
 
@@ -12,56 +14,62 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         width: "100%",
-        marginBottom: 25,
+        marginBottom: 14,
     },
 
     colLeft: {
-        width: "25%",
+        width: "22%",
         alignItems: "flex-start",
+        justifyContent: "center",
     },
 
     colCenter: {
-        width: "50%",
+        width: "56%",
         alignItems: "center",
         textAlign: "center",
+        justifyContent: "center",
     },
 
     colRight: {
-        width: "25%",
+        width: "22%",
         alignItems: "flex-end",
+        justifyContent: "flex-start",
     },
 
     logo: {
-        width: 120,
-        height: 80,
+        width: 92,
+        height: 62,
     },
 
     companyName: {
-        fontSize: 14,
+        fontSize: 13,
         fontWeight: "bold",
         textAlign: "center",
         color: "black",
     },
 
     registro: {
-        fontSize: 14,
+        fontSize: 12,
         fontWeight: "bold",
         textAlign: "center",
         color: "black",
+        marginTop: 1,
     },
 
     paseSalida: {
-        fontSize: 14,
+        fontSize: 12,
         fontWeight: "bold",
         textAlign: "center",
         color: "black",
+        marginTop: 1,
     },
 
     correlativo: {
-        fontSize: 12,
+        fontSize: 10,
         fontWeight: "bold",
         color: "red",
         textAlign: "right",
+        lineHeight: 1.2,
     },
 
     tableContainer: {
@@ -75,27 +83,30 @@ const styles = StyleSheet.create({
     },
 
     tableCellLabel: {
-        width: "40%",
+        width: "35%",
         backgroundColor: "#e6e6e6",
-        padding: 6,
+        padding: 4,
         borderRight: "1px solid #000",
         fontWeight: "bold",
+        fontSize: 9,
     },
 
     tableCellValue: {
-        width: "60%",
-        padding: 6,
+        width: "65%",
+        padding: 4,
+        fontSize: 9,
     },
 
     tableHeaderFull: {
         width: "100%",
         backgroundColor: "black",
-        padding: 6,
+        paddingVertical: 4,
+        paddingHorizontal: 6,
     },
 
     tableHeaderText: {
         color: "white",
-        fontSize: 11,
+        fontSize: 9,
         fontWeight: "bold",
         textAlign: "center",
     },
@@ -116,19 +127,22 @@ const styles = StyleSheet.create({
         width: "22%",
         borderRight: "1px solid #000",
         borderTop: "1px solid #000",
-        padding: 4,
-        minHeight: 20,
+        padding: 3,
+        minHeight: 18,
+        justifyContent: "center",
     },
 
     gridCellWide: {
         width: "34%",
         borderTop: "1px solid #000",
-        padding: 4,
-        minHeight: 20,
+        padding: 3,
+        minHeight: 18,
+        justifyContent: "center",
     },
 
     smallText: {
-        fontSize: 8,
+        fontSize: 7.5,
+        lineHeight: 1.25,
     },
 
     autoCell: {
@@ -138,36 +152,133 @@ const styles = StyleSheet.create({
         borderRight: "1px solid #000",
         borderTop: "1px solid #000",
         padding: 4,
+        fontSize: 8,
     },
+
     fillCell: {
         flex: 1,
         borderTop: "1px solid #000",
         padding: 4,
-    },
-
-    gridCellSplit: {
-        width: "12.5%",
-        borderRight: "1px solid #000",
-        borderTop: "1px solid #000",
-        display: "flex",
-        flexDirection: "column",
-    },
-
-    topHalf: {
-        borderBottom: "1px solid #000",
-        padding: 2,
         fontSize: 8,
+    },
+
+    multiLineCell: {
+        flexDirection: "column",
+        justifyContent: "flex-start",
+        paddingTop: 3,
+        paddingBottom: 3,
+    },
+
+    personLine: {
+        fontSize: 7.3,
+        marginBottom: 1,
+        lineHeight: 1.2,
+    },
+
+    detailsHeaderCell: {
+        backgroundColor: "#003366",
+        color: "white",
+        fontWeight: "bold",
         textAlign: "center",
-        backgroundColor: "#e9e9e9",
+        paddingVertical: 3,
+        fontSize: 8,
+    },
+
+    detailsSubHeaderCell: {
+        textAlign: "center",
+        fontSize: 8,
+        paddingVertical: 3,
+        color: "white",
         fontWeight: "bold",
     },
 
-    bottomHalf: {
-        padding: 2,
-        fontSize: 8,
-        textAlign: "center",
+    observationBox: {
+        width: "100%",
+        borderTop: "1px solid #000",
+        minHeight: 32,
+        padding: 5,
+        justifyContent: "center",
     },
 
+    observationText: {
+        fontSize: 8,
+        textAlign: "left",
+        lineHeight: 1.25,
+    },
+
+    signatureHeader: {
+        backgroundColor: "black",
+        color: "white",
+        textAlign: "center",
+        fontWeight: "bold",
+        fontSize: 9,
+        paddingVertical: 4,
+    },
+
+    signatureColLeft: {
+        width: "50%",
+        borderRight: "1px solid #000",
+    },
+
+    signatureColRight: {
+        width: "50%",
+    },
+
+    signatureBox: {
+        borderBottom: "1px solid #000",
+        minHeight: 30,
+        paddingHorizontal: 6,
+        paddingVertical: 4,
+        justifyContent: "flex-start",
+    },
+
+    signatureBoxMedium: {
+        borderBottom: "1px solid #000",
+        minHeight: 40,
+        paddingHorizontal: 6,
+        paddingVertical: 4,
+        justifyContent: "flex-start",
+    },
+
+    signatureBoxLarge: {
+        borderBottom: "1px solid #000",
+        minHeight: 50,
+        paddingHorizontal: 6,
+        paddingVertical: 4,
+        justifyContent: "flex-start",
+    },
+
+    signatureTitle: {
+        fontSize: 8,
+        fontWeight: "bold",
+        textDecoration: "underline",
+        marginBottom: 2,
+    },
+
+    signatureText: {
+        fontSize: 8,
+        lineHeight: 1.2,
+    },
+
+    signatureDateRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "flex-end",
+        width: "100%",
+    },
+
+    dateLabel: {
+        fontSize: 8,
+        fontWeight: "bold",
+        textDecoration: "underline",
+    },
+
+    dateLine: {
+        width: 55,
+        borderBottom: "1px solid #000",
+        marginLeft: 5,
+        height: 10,
+    },
 });
 
 const formatSpanishDate = (dateString) => {
@@ -228,9 +339,10 @@ const PdfTrasladosRetorno = ({ data = {} }) => (
             </View>
             <View style={styles.tableHeaderFull}>
                 <Text style={styles.tableHeaderText}>
-                    1) DATOS DE LA EMPRESA QUE RETIRA EQUIPO/COMPONENTE:
+                    1) DATOS DE LA EMPRESA/PERSONA QUE RETIRA EQUIPO/COMPONENTE:
                 </Text>
             </View>
+
             <View style={styles.tableGrid}>
                 <View style={styles.gridRow}>
                     <Text style={[styles.gridCell, styles.smallText]}>
@@ -247,6 +359,7 @@ const PdfTrasladosRetorno = ({ data = {} }) => (
                         {data.nombreProveedor || "-"}
                     </Text>
                 </View>
+
                 <View style={styles.gridRow}>
                     <Text style={[styles.gridCell, styles.smallText]}>
                         Telefono de proveedor:
@@ -258,23 +371,60 @@ const PdfTrasladosRetorno = ({ data = {} }) => (
                     <Text style={[styles.gridCell, styles.smallText]}>
                         Nombre de contacto:
                     </Text>
-                    <Text style={[styles.gridCellWide, styles.smallText]}>
-                        {data.nombreContacto || "-"}
-                    </Text>
+
+                    <View
+                        style={[
+                            styles.gridCellWide,
+                            styles.multiLineCell,
+                            { minHeight: data.empleados?.length > 2 ? 34 : 22 },
+                        ]}
+                    >
+                        {data.empleados?.length ? (
+                            data.empleados.map((emp, i) => (
+                                <Text key={i} style={styles.personLine}>
+                                    - {emp.nombre}
+                                </Text>
+                            ))
+                        ) : (
+                            <Text style={styles.smallText}>-</Text>
+                        )}
+                    </View>
                 </View>
 
                 <View style={styles.gridRow}>
                     <Text style={[styles.gridCell, styles.smallText]}>
                         Persona que retira Equipo:
                     </Text>
-                    <Text style={[styles.gridCell, styles.smallText]}>
-                        {data.personaRetira || "-"}
-                    </Text>
+
+                    <View
+                        style={[
+                            styles.gridCell,
+                            styles.multiLineCell,
+                            { minHeight: data.empleados?.length > 2 ? 34 : 22 },
+                        ]}
+                    >
+                        {data.empleados?.length ? (
+                            data.empleados.map((emp, i) => (
+                                <Text key={i} style={styles.personLine}>
+                                    - {emp.nombre}
+                                </Text>
+                            ))
+                        ) : (
+                            <Text style={styles.smallText}>-</Text>
+                        )}
+                    </View>
 
                     <Text style={[styles.gridCell, styles.smallText]}>
                         No. de DPI/Licencia:
                     </Text>
-                    <Text style={[styles.gridCellWide, styles.smallText]}>
+
+                    <Text
+                        style={[
+                            styles.gridCellWide,
+                            styles.smallText,
+                            { justifyContent: "center" },
+                        ]}
+                    >
                         {data.identificacion || "-"}
                     </Text>
                 </View>
@@ -314,7 +464,7 @@ const PdfTrasladosRetorno = ({ data = {} }) => (
                             },
                         ]}
                     >
-                        Cantidad
+                        #
                     </Text>
                     <View style={{ width: "62.5%", borderWidth: 1, borderColor: "#000" }}>
                         <Text
@@ -495,256 +645,83 @@ const PdfTrasladosRetorno = ({ data = {} }) => (
                             lineHeight: 1.4,
                         }}
                     >
-                        {data.equipos && data.equipos.length > 0
-                            ? data.equipos.map((e, index) => (
-                                <Text key={index}>
-                                    {index + 1}. {e.equipo}
-                                    {"\n"}
-                                </Text>
-                            ))
-                            : "-"}
+                        {data.observaciones?.trim() || "-"}
                     </Text>
                 </View>
             </View>
             <View style={styles.tableGrid}>
-                <View style={[styles.gridRow, { borderTop: "1px solid #000" }]}>
-                    <Text style={[styles.gridCell, {
-                        width: "50%",
-                        backgroundColor: "black",
-                        color: "white",
-                        textAlign: "center",
-                        fontWeight: "bold"
-                    }]}>
-                        5) EGRESO
-                    </Text>
+                <View style={styles.tableGrid}>
+                    <View style={styles.gridRow}>
+                        <View style={[styles.signatureColLeft, { borderRight: "1px solid #000" }]}>
+                            <Text style={styles.signatureHeader}>5) EGRESO</Text>
 
-                    <Text style={[styles.gridCell, {
-                        width: "50%",
-                        backgroundColor: "black",
-                        color: "white",
-                        textAlign: "center",
-                        fontWeight: "bold",
-                        borderRight: "none"
-                    }]}>
-                        6) RETORNO TOTAL
-                    </Text>
-                </View>
-                <View style={[styles.gridRow, { borderTop: "1px solid #000" }]}>
-                    <View style={{ width: "50%", borderRight: "1px solid #000" }}>
-                        {[1, 2, 3, 4, 5].map((i) => (
-                            <View
-                                key={i}
-                                style={{
-                                    borderBottom: "1px solid #000",
-                                    minHeight: i === 5 ? 80 : 40,
-                                    padding: 6,
-                                }}
-                            >
-                                {i === 1 && (
-                                    <>
-                                        <Text
-                                            style={{
-                                                fontSize: 9,
-                                                textDecoration: "underline",
-                                                fontWeight: "bold",
-                                            }}
-                                        >
-                                            AUTORIZADO POR:
-                                        </Text>
-                                        <Text style={{ fontSize: 9 }}>° Gerardo Araneda</Text>
-                                        <Text style={{ fontSize: 9 }}>° Vanessa Santiago</Text>
-                                        <Text style={{ fontSize: 9 }}>° Rodrigo Araneda</Text>
-                                        <Text style={{ fontSize: 9 }}>° Julio Cajas</Text>
-                                    </>
-                                )}
-
-                                {i === 2 && (
-                                    <Text
-                                        style={{
-                                            fontSize: 9,
-                                            textDecoration: "underline",
-                                            fontWeight: "bold",
-                                        }}
-                                    >
-                                        SOLICITADO:
-                                    </Text>
-                                )}
-
-                                {i === 3 && (
-                                    <Text
-                                        style={{
-                                            fontSize: 9,
-                                            textDecoration: "underline",
-                                            fontWeight: "bold",
-                                        }}
-                                    >
-                                        PERSONA QUIEN RETIRA:
-                                    </Text>
-                                )}
-
-                                {i === 4 && (
-                                    <Text
-                                        style={{
-                                            fontSize: 9,
-                                            textDecoration: "underline",
-                                            fontWeight: "bold",
-                                        }}
-                                    >
-                                        ENTERADO:
-                                    </Text>
-                                )}
-
-                                {i === 5 && (
-                                    <View style={{ flexDirection: "row", width: "100%" }}>
-                                        <View style={{ width: "65%" }}>
-                                            <Text
-                                                style={{
-                                                    fontSize: 9,
-                                                    fontWeight: "bold",
-                                                    textDecoration: "underline",
-                                                }}
-                                            >
-                                                GUARDIA DE
-                                            </Text>
-                                            <Text
-                                                style={{
-                                                    fontSize: 9,
-                                                    fontWeight: "bold",
-                                                    textDecoration: "underline",
-                                                }}
-                                            >
-                                                SEGURIDAD:
-                                            </Text>
-                                        </View>
-                                        <View
-                                            style={{
-                                                width: "35%",
-                                                flexDirection: "row",
-                                                alignItems: "flex-end",
-                                                justifyContent: "flex-end",
-                                            }}
-                                        >
-                                            <Text
-                                                style={{
-                                                    fontSize: 9,
-                                                    fontWeight: "bold",
-                                                    textDecoration: "underline",
-                                                    marginRight: 4,
-                                                }}
-                                            >
-                                                FECHA:
-                                            </Text>
-                                            <Text
-                                                style={{
-                                                    fontSize: 9,
-                                                    textDecoration: "underline",
-                                                    width: 60,
-                                                }}
-                                            >
-                                                {" "}
-                                            </Text>
-                                        </View>
-                                    </View>
-                                )}
+                            <View style={styles.signatureBoxMedium}>
+                                <Text style={styles.signatureTitle}>AUTORIZADO POR:</Text>
+                                <Text style={styles.signatureText}>° Gerardo Araneda</Text>
+                                <Text style={styles.signatureText}>° Vanessa Santiago</Text>
+                                <Text style={styles.signatureText}>° Rodrigo Araneda</Text>
+                                <Text style={styles.signatureText}>° Julio Cajas</Text>
                             </View>
-                        ))}
-                    </View>
-                    <View style={{ width: "50%" }}>
-                        {[1, 2, 3].map((i) => (
+
+                            <View style={styles.signatureBox}>
+                                <Text style={styles.signatureTitle}>SOLICITADO:</Text>
+                            </View>
+
+                            <View style={styles.signatureBox}>
+                                <Text style={styles.signatureTitle}>PERSONA QUIEN RETIRA:</Text>
+                            </View>
+
+                            <View style={styles.signatureBox}>
+                                <Text style={styles.signatureTitle}>ENTERADO:</Text>
+                            </View>
+
+                            <View style={styles.signatureBoxMedium}>
+                                <View style={styles.signatureDateRow}>
+                                    <Text style={styles.signatureTitle}>GUARDIA DE SEGURIDAD:</Text>
+                                    <View style={{ flexDirection: "row", alignItems: "flex-end" }}>
+                                        <Text style={styles.dateLabel}>FECHA:</Text>
+                                        <View style={styles.dateLine} />
+                                    </View>
+                                </View>
+                            </View>
+                        </View>
+
+                        <View style={styles.signatureColRight}>
+                            <Text style={styles.signatureHeader}>6) RETORNO TOTAL</Text>
+
+                            <View style={styles.signatureBoxMedium}>
+                                <View style={styles.signatureDateRow}>
+                                    <Text style={styles.signatureTitle}>GUARDIA DE SEGURIDAD:</Text>
+                                    <View style={{ flexDirection: "row", alignItems: "flex-end" }}>
+                                        <Text style={styles.dateLabel}>FECHA:</Text>
+                                        <View style={styles.dateLine} />
+                                    </View>
+                                </View>
+                            </View>
+
+                            <View style={styles.signatureBoxLarge}>
+                                <Text style={styles.signatureTitle}>PERSONA QUE RECIBE CONFORME:</Text>
+                            </View>
+
                             <View
-                                key={i}
                                 style={{
                                     borderBottom: "1px solid #000",
-                                    minHeight: i === 1 ? 80 : 65,
                                     padding: 6,
+                                    flexGrow: 1,
                                     justifyContent: "flex-start",
-                                    flexGrow: i === 3 ? 1 : 0,
                                 }}
                             >
-                                {i === 1 && (
-                                    <View style={{ flexDirection: "row", width: "100%" }}>
-                                        <View style={{ width: "65%" }}>
-                                            <Text
-                                                style={{
-                                                    fontSize: 9,
-                                                    fontWeight: "bold",
-                                                    textDecoration: "underline",
-                                                }}
-                                            >
-                                                GUARDIA DE
-                                            </Text>
-                                            <Text
-                                                style={{
-                                                    fontSize: 9,
-                                                    fontWeight: "bold",
-                                                    textDecoration: "underline",
-                                                }}
-                                            >
-                                                SEGURIDAD:
-                                            </Text>
-                                        </View>
-                                        <View
-                                            style={{
-                                                width: "35%",
-                                                flexDirection: "row",
-                                                alignItems: "flex-end",
-                                                justifyContent: "flex-end",
-                                            }}
-                                        >
-                                            <Text
-                                                style={{
-                                                    fontSize: 9,
-                                                    fontWeight: "bold",
-                                                    textDecoration: "underline",
-                                                    marginRight: 4,
-                                                }}
-                                            >
-                                                FECHA:
-                                            </Text>
-                                            <Text
-                                                style={{
-                                                    fontSize: 9,
-                                                    textDecoration: "underline",
-                                                    width: 60,
-                                                }}
-                                            >
-                                                {" "}
-                                            </Text>
-                                        </View>
-                                    </View>
-                                )}
-                                {i === 2 && (
-                                    <Text
-                                        style={{
-                                            fontSize: 9,
-                                            fontWeight: "bold",
-                                            textDecoration: "underline",
-                                        }}
-                                    >
-                                        PERSONA QUE RECIBE CONFORME:
-                                    </Text>
-                                )}
-                                {i === 3 && (
-                                    <View
-                                        style={{
-                                            flex: 1,
-                                            justifyContent: "center",
-                                            alignItems: "flex-start",
-                                        }}
-                                    >
-                                        <Text
-                                            style={{
-                                                fontSize: 9,
-                                                fontWeight: "bold",
-                                                textDecoration: "underline",
-                                            }}
-                                        >
-                                            ENTERADO:
-                                        </Text>
-                                    </View>
-                                )}
+                                <Text
+                                    style={{
+                                        fontSize: 9,
+                                        textDecoration: "underline",
+                                        fontWeight: "bold",
+                                    }}
+                                >
+                                    ENTERADO:
+                                </Text>
                             </View>
-                        ))}
+                        </View>
                     </View>
                 </View>
             </View>
