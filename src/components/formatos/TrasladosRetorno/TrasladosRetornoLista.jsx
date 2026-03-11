@@ -159,12 +159,20 @@ const TrasladosRetornoLista = () => {
                         </td>
 
                         <td className="p-3 border-t border-gray-200 text-gray-700">
-                          <div className="font-semibold text-gray-800">
-                            {t.empleado?.empleadoId || "—"}
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            {t.empleado?.nombre || ""}
-                          </div>
+                          {t.empleados && t.empleados.length > 0 ? (
+                            t.empleados.map((emp, i) => (
+                              <div key={i} className="mb-1">
+                                <div className="font-semibold text-gray-800">
+                                  {emp.empleadoId}
+                                </div>
+                                <div className="text-xs text-gray-500">
+                                  {emp.nombre}
+                                </div>
+                              </div>
+                            ))
+                          ) : (
+                            "—"
+                          )}
                         </td>
 
                         <td className="p-3 border-t border-gray-200">
