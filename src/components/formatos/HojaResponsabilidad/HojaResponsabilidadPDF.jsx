@@ -2,16 +2,13 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
 const generarPDFHoja = async (hoja) => {
-  // --- Documento ---
   const doc = new jsPDF({ unit: "mm", format: "a4" });
 
-  // --- Layout base ---
   const marginX = 5;
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
   const boxWidth = pageWidth - marginX * 2;
 
-  // Footer real (no “-40” mágico)
   const FOOTER_H = 12;
   const BOTTOM_PAD = 6;
   const PAGE_BOTTOM = pageHeight - FOOTER_H - BOTTOM_PAD;
@@ -53,9 +50,18 @@ const generarPDFHoja = async (hoja) => {
     docInstance.text(emision, pageWidth - emisionWidth - 10, footerY);
   };
 
+  const numeroHoja = hoja.hojaNo ?? 1;
+  const versionHoja = Number(hoja.version) || 0;
+
+  const textoCorrelativo =
+    versionHoja > 0
+      ? `V${versionHoja} No. ${String(numeroHoja).padStart(5, "0")}`
+      : `No. ${String(numeroHoja).padStart(5, "0")}`;
+
   const agregarEncabezado = async (
     docInstance,
     numeroHoja,
+    versionHoja,
     mostrarContador = true
   ) => {
     const logoUrl = `${window.location.origin}/logo_guandy.png`;
@@ -102,7 +108,7 @@ const generarPDFHoja = async (hoja) => {
       docInstance.setFontSize(15);
       docInstance.setTextColor(255, 0, 0);
       docInstance.text(
-        `No. ${String(numeroHoja).padStart(5, "0")}`,
+        textoCorrelativo,
         pageWidth - marginX,
         yStart,
         { align: "right" }
@@ -128,16 +134,14 @@ const generarPDFHoja = async (hoja) => {
     docInstance.setFont("helvetica", "bold");
     docInstance.text(titulo, tituloX, yTitulo + 7);
 
-    return yTitulo + lineHeight + 1; // y inicial siguiente sección
+    return yTitulo + lineHeight + 1;
   };
 
-  // ---- Helpers de layout (profesional) ----
-  const ensureSpace = async (yActualRef, neededHeight, numeroHoja) => {
-    // si no cabe, footer + nueva página + encabezado
+  const ensureSpace = async (yActualRef, neededHeight, numeroHoja, versionHoja) => {
     if (yActualRef + neededHeight > PAGE_BOTTOM) {
       agregarFooter(doc, doc.internal.getNumberOfPages());
       doc.addPage();
-      const yHeaderEnd = await agregarEncabezado(doc, numeroHoja, true);
+      const yHeaderEnd = await agregarEncabezado(doc, numeroHoja, versionHoja, true);
       return yHeaderEnd + 10;
     }
     return yActualRef;
@@ -169,11 +173,8 @@ const generarPDFHoja = async (hoja) => {
     pageBreak: "auto",
   };
 
-  // --- Inicio ---
-  const numeroHoja = hoja.hojaNo ?? 1;
   let yActual = await agregarEncabezado(doc, numeroHoja, true);
 
-  // --- Tabla empleados ---
   const empleados = hoja.empleados ?? [];
   const empleadosBody = empleados.map((emp) => [
     emp.empleadoId ?? "—",
@@ -203,14 +204,13 @@ const generarPDFHoja = async (hoja) => {
 
   yActual = doc.lastAutoTable.finalY + 1;
 
-  // --- Motivo ---
   const motivoLabel = "Motivo de actualización:";
   const motivoTexto = hoja.motivo ?? "—";
   const motivoTextoX = marginX + doc.getTextWidth(motivoLabel) + 4;
   const motivoTextoWidth = boxWidth - (motivoTextoX - marginX) - 4;
   const motivoHeight = 8;
 
-  yActual = await ensureSpace(yActual, motivoHeight + 2, numeroHoja);
+  yActual = await ensureSpace(yActual, motivoHeight + 2, numeroHoja, versionHoja);
 
   doc.setFillColor(200, 230, 255);
   doc.setDrawColor(180);
@@ -234,7 +234,6 @@ const generarPDFHoja = async (hoja) => {
 
   yActual += motivoHeight + 1;
 
-  // --- Tabla equipos (dinámica) ---
   const equipos = hoja.equipos ?? [];
   const equiposBody = equipos.map((eq) => [
     eq.fechaIngreso ? formatFecha(eq.fechaIngreso) : "—",
@@ -267,7 +266,6 @@ const generarPDFHoja = async (hoja) => {
 
   yActual = doc.lastAutoTable.finalY + 3;
 
-  // --- Accesorios ---
   const alturaTituloAccesorios = 6;
   yActual = await ensureSpace(yActual, alturaTituloAccesorios + 22, numeroHoja);
 
@@ -327,7 +325,6 @@ const generarPDFHoja = async (hoja) => {
 
   yActual += 18;
 
-  // --- Comentarios + Firma responsable (tabla simple) ---
   const col1Width = boxWidth * 0.7;
   const col2Width = boxWidth * 0.3;
   const headerHeight = 6;
@@ -361,8 +358,7 @@ const generarPDFHoja = async (hoja) => {
 
   yActual += rowHeight + 3;
 
-  // --- Bloque legal (verifica espacio antes para que no quede partido feo) ---
-  const legalEstimatedHeight = 40; // aprox (texto + separación). Ajustable si tu texto crece.
+  const legalEstimatedHeight = 40;
   yActual = await ensureSpace(yActual, legalEstimatedHeight, numeroHoja);
 
   doc.setFont("helvetica", "bold");
