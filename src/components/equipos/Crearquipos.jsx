@@ -6,7 +6,7 @@ import EquiposService from "../../services/EquiposServices";
 
 const CrearEquipo = () => {
   const [form, setForm] = useState({
-    orderCompra: "",
+    ordenCompra: "",
     factura: "",
     proveedor: "",
     fechaIngreso: "",
@@ -120,7 +120,7 @@ const CrearEquipo = () => {
                     type="text"
                     id="orderCompra"
                     name="orderCompra"
-                    value={form.orderCompra}
+                    value={form.ordenCompra}
                     onChange={handleChange}
                     className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
                     placeholder="Orden de compra"
