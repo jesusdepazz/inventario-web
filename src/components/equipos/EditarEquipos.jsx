@@ -144,6 +144,18 @@ const EditarEquipo = () => {
                 <div className="p-5 grid grid-cols-1 md:grid-cols-3 gap-5">
                   <div className="flex flex-col">
                     <label className="text-xs font-semibold text-slate-600">
+                      Orden de Compra
+                    </label>
+                    <input
+                      name="ordenCompra"
+                      value={equipo.ordenCompra || ""}
+                      onChange={handleChange}
+                      className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-100 px-3 py-2 text-sm text-slate-500 cursor-not-allowed"
+                    />
+                  </div>
+
+                  <div className="flex flex-col">
+                    <label className="text-xs font-semibold text-slate-600">
                       Codificación
                     </label>
                     <input
