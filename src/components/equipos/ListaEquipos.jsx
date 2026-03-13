@@ -111,34 +111,34 @@ const ListaEquipos = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-52px)] flex items-start justify-center pt-8 overflow-hidden">
-      <div className="w-full max-w-6xl bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
-        <div className="px-6 py-5 border-b border-slate-100">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+    <div className="h-full flex flex-col">
+      <div className="w-full bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden h-full flex flex-col">
+        <div className="p-6 border-b border-slate-100">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div>
-              <h1 className="text-xl font-bold text-slate-900">Inventario de equipos</h1>
-              <p className="text-sm text-slate-600">
-                Filtrá por múltiples campos y exportá a Excel. (Se mantienen tus colores por columna)
+              <h1 className="text-2xl font-extrabold text-slate-900">Inventario de equipos</h1>
+              <p className="text-sm text-slate-500">
+                Filtrá por múltiples campos y exportá a Excel.
               </p>
             </div>
 
-            <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-2 rounded-full bg-slate-50 border border-slate-200 px-3 py-1 text-xs text-slate-700">
-                Total: <b>{equipos.length}</b>
+            <div className="flex items-center gap-3 flex-wrap">
+              <span className="text-xs font-semibold px-3 py-1 rounded-full border bg-slate-50 text-slate-700">
+                Total: {equipos.length}
               </span>
-              <span className="inline-flex items-center gap-2 rounded-full bg-slate-50 border border-slate-200 px-3 py-1 text-xs text-slate-700">
-                Mostrando: <b>{resultadosFiltrados.length}</b>
+              <span className="text-xs font-semibold px-3 py-1 rounded-full border bg-slate-50 text-slate-700">
+                Mostrando: {resultadosFiltrados.length}
               </span>
               <button
                 onClick={exportar}
-                className="rounded-lg bg-emerald-600 text-white px-4 py-2 text-sm font-semibold hover:bg-emerald-700"
+                className="px-5 py-2.5 rounded-xl bg-emerald-600 text-white font-semibold hover:bg-emerald-700 transition"
               >
                 Exportar Excel
               </button>
             </div>
           </div>
 
-          <div className="mt-4 flex flex-wrap gap-3 items-end">
+          <div className="mt-5 flex flex-wrap gap-3 items-end">
             {filtros.map((filtro, i) => {
               const campoInfo = camposFiltro.find((c) => c.value === filtro.campo);
 
@@ -150,7 +150,7 @@ const ListaEquipos = () => {
                   <select
                     value={filtro.campo}
                     onChange={(e) => cambiarCampoFiltro(i, e.target.value)}
-                    className="rounded-lg border border-slate-300 bg-white px-2 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="rounded-lg border border-slate-300 bg-white px-2 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-600"
                   >
                     {camposFiltro.map(({ label, value }) => (
                       <option key={value} value={value}>
@@ -163,7 +163,7 @@ const ListaEquipos = () => {
                     <select
                       value={filtro.valor}
                       onChange={(e) => cambiarValorFiltro(i, e.target.value)}
-                      className="rounded-lg border border-slate-300 bg-white px-2 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="rounded-lg border border-slate-300 bg-white px-2 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-600"
                     >
                       <option value="">-- Todos --</option>
                       {campoInfo.opciones.map((opt) => (
@@ -178,7 +178,7 @@ const ListaEquipos = () => {
                       placeholder={`Buscar ${campoInfo?.label || ""}`}
                       value={filtro.valor}
                       onChange={(e) => cambiarValorFiltro(i, e.target.value)}
-                      className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-600"
                     />
                   )}
 
@@ -195,154 +195,160 @@ const ListaEquipos = () => {
 
             <button
               onClick={agregarFiltro}
-              className="rounded-lg bg-indigo-600 text-white px-4 py-2 text-sm font-semibold hover:bg-indigo-700"
+              className="rounded-xl bg-blue-600 text-white px-4 py-2.5 text-sm font-semibold hover:bg-blue-700 transition"
             >
               + Añadir filtro
             </button>
 
             <button
               onClick={limpiarFiltros}
-              className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+              className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition"
             >
               Limpiar filtros
             </button>
           </div>
         </div>
 
-        <div className="px-6 py-5">
-          <div className="rounded-xl border border-slate-200 overflow-hidden">
-            <div className="max-h-[62vh] overflow-auto">
-              <table className="w-full text-xs border border-gray-300 border-collapse">
-                <thead className="sticky top-0 z-10">
-                  <tr className="text-center font-bold text-white">
-                    <th colSpan="5" className="px-3 py-2 border bg-blue-700">
-                      DATOS GENERALES
-                    </th>
-                    <th colSpan="3" className="px-3 py-2 border bg-blue-800">
-                      DATOS DE USUARIO
-                    </th>
-                    <th colSpan="8" className="px-3 py-2 border bg-blue-900">
-                      DATOS DEL EQUIPO
-                    </th>
-                    <th colSpan="1" className="px-3 py-2 border bg-blue-600">
-                      UBICACION DEL EQUIPO
-                    </th>
-                    <th colSpan="2" className="px-3 py-2 border bg-blue-800">
-                      INFORMACION DE EQUIPO
-                    </th>
+        <div className="flex-1 min-h-0 p-6">
+          <div className="h-full rounded-2xl border border-slate-200 overflow-auto">
+            <table className="min-w-[2200px] w-full text-xs border border-gray-300 border-collapse">
+              <thead className="sticky top-0 z-10">
+                <tr className="text-center font-bold text-white">
+                  <th colSpan="5" className="px-3 py-2 border bg-blue-700">
+                    DATOS GENERALES
+                  </th>
+                  <th colSpan="3" className="px-3 py-2 border bg-blue-800">
+                    DATOS DE USUARIO
+                  </th>
+                  <th colSpan="8" className="px-3 py-2 border bg-blue-900">
+                    DATOS DEL EQUIPO
+                  </th>
+                  <th colSpan="1" className="px-3 py-2 border bg-blue-600">
+                    UBICACION DEL EQUIPO
+                  </th>
+                  <th colSpan="2" className="px-3 py-2 border bg-blue-800">
+                    INFORMACION DE EQUIPO
+                  </th>
+                </tr>
+
+                <tr className="text-center text-white font-semibold">
+                  <th className="px-3 py-2 border bg-blue-700 min-w-[80px]">#</th>
+                  <th className="px-3 py-2 border bg-blue-700 min-w-[160px]">Orden de Compra</th>
+                  <th className="px-3 py-2 border bg-blue-700 min-w-[160px]">Factura</th>
+                  <th className="px-3 py-2 border bg-blue-700 min-w-[180px]">Proveedor</th>
+                  <th className="px-3 py-2 border bg-blue-700 min-w-[140px]">Fecha Ingreso</th>
+
+                  <th className="px-3 py-2 border bg-blue-800 min-w-[100px]">Hoja No.</th>
+                  <th className="px-3 py-2 border bg-blue-800 min-w-[160px]">Fecha Actualizacion</th>
+                  <th className="px-3 py-2 border bg-blue-800 min-w-[220px]">Asignado a</th>
+
+                  <th className="px-3 py-2 border bg-blue-900 min-w-[180px]">Codificación</th>
+                  <th className="px-3 py-2 border bg-blue-900 min-w-[140px]">Estado</th>
+                  <th className="px-3 py-2 border bg-blue-900 min-w-[140px]">Equipo</th>
+                  <th className="px-3 py-2 border bg-blue-900 min-w-[140px]">Marca</th>
+                  <th className="px-3 py-2 border bg-blue-900 min-w-[140px]">Modelo</th>
+                  <th className="px-3 py-2 border bg-blue-900 min-w-[160px]">Serie</th>
+                  <th className="px-3 py-2 border bg-blue-900 min-w-[180px]">Responsable Anterior</th>
+                  <th className="px-3 py-2 border bg-blue-900 min-w-[120px]">Extensión</th>
+
+                  <th className="px-3 py-2 border bg-blue-600 min-w-[180px]">Ubicación</th>
+
+                  <th className="px-3 py-2 border bg-blue-800 min-w-[220px]">Comentarios</th>
+                  <th className="px-3 py-2 border bg-blue-800 min-w-[220px]">Observaciones</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {loading ? (
+                  <tr>
+                    <td colSpan="19" className="text-center p-6 text-gray-500">
+                      Cargando equipos...
+                    </td>
                   </tr>
+                ) : resultadosFiltrados.length > 0 ? (
+                  resultadosFiltrados.map((equipo, index) => (
+                    <tr
+                      key={equipo.id ?? index}
+                      className="text-center even:bg-gray-50 hover:bg-blue-50"
+                    >
+                      <td className="px-3 py-2 border min-w-[80px]">{index + 1}</td>
 
-                  <tr className="text-center text-white font-semibold">
-                    <th className="px-3 py-2 border bg-blue-700 min-w-[80px]">#</th>
-                    <th className="px-3 py-2 border bg-blue-700 min-w-[160px]">Orden de Compra</th>
-                    <th className="px-3 py-2 border bg-blue-700 min-w-[160px]">Factura</th>
-                    <th className="px-3 py-2 border bg-blue-700 min-w-[180px]">Proveedor</th>
-                    <th className="px-3 py-2 border bg-blue-700 min-w-[140px]">Fecha Ingreso</th>
+                      <td className="px-3 py-2 border min-w-[160px] break-words">
+                        {equipo.ordenCompra || "-"}
+                      </td>
+                      <td className="px-3 py-2 border min-w-[160px] break-words">
+                        {equipo.factura || "-"}
+                      </td>
+                      <td className="px-3 py-2 border min-w-[180px] break-words">
+                        {equipo.proveedor || "-"}
+                      </td>
 
-                    <th className="px-3 py-2 border bg-blue-800 min-w-[100px]">Hoja No.</th>
-                    <th className="px-3 py-2 border bg-blue-800 min-w-[160px]">Fecha Actualizacion</th>
-                    <th className="px-3 py-2 border bg-blue-800 min-w-[220px]">Asignado a</th>
+                      <td className="px-3 py-2 border min-w-[140px]">
+                        {equipo.fechaIngreso
+                          ? new Date(equipo.fechaIngreso).toLocaleDateString("es-ES")
+                          : "Sin fecha"}
+                      </td>
 
-                    <th className="px-3 py-2 border bg-blue-900 min-w-[180px]">Codificación</th>
-                    <th className="px-3 py-2 border bg-blue-900 min-w-[140px]">Estado</th>
-                    <th className="px-3 py-2 border bg-blue-900 min-w-[140px]">Equipo</th>
-                    <th className="px-3 py-2 border bg-blue-900 min-w-[140px]">Marca</th>
-                    <th className="px-3 py-2 border bg-blue-900 min-w-[140px]">Modelo</th>
-                    <th className="px-3 py-2 border bg-blue-900 min-w-[160px]">Serie</th>
-                    <th className="px-3 py-2 border bg-blue-900 min-w-[180px]">Responsable Anterior</th>
-                    <th className="px-3 py-2 border bg-blue-900 min-w-[120px]">Extensión</th>
+                      <td className="px-3 py-2 border text-red-600 font-semibold min-w-[100px]">
+                        {equipo.hojaNo || "Sin asignar"}
+                      </td>
 
-                    <th className="px-3 py-2 border bg-blue-600 min-w-[180px]">Ubicación</th>
+                      <td className="px-3 py-2 border min-w-[140px]">
+                        {equipo.fechaActualizacion
+                          ? new Date(equipo.fechaActualizacion).toLocaleDateString("es-ES")
+                          : "Sin fecha"}
+                      </td>
 
-                    <th className="px-3 py-2 border bg-blue-800 min-w-[220px]">Comentarios</th>
-                    <th className="px-3 py-2 border bg-blue-800 min-w-[220px]">Observaciones</th>
-                  </tr>
-                </thead>
+                      <td className="px-3 py-2 border min-w-[220px] text-left">
+                        {equipo.asignaciones?.length > 0 ? (
+                          equipo.asignaciones.map((a, i) => (
+                            <div key={i} className="mb-1">
+                              <span className="text-blue-700 font-semibold">{a.codigoEmpleado}</span>{" "}
+                              - {a.nombreEmpleado}
+                              <div className="text-gray-500 italic text-[11px]">{a.puesto}</div>
+                            </div>
+                          ))
+                        ) : (
+                          <span className="text-gray-400 italic">Sin asignaciones</span>
+                        )}
+                      </td>
 
-                <tbody>
-                  {loading ? (
-                    <tr>
-                      <td colSpan="19" className="text-center p-6 text-gray-500">
-                        Cargando equipos...
+                      <td className="px-3 py-2 border font-bold text-blue-800 min-w-[180px]">
+                        {equipo.codificacion || "-"}
+                      </td>
+
+                      <td className="px-3 py-2 border min-w-[140px]">{equipo.estado || "-"}</td>
+                      <td className="px-3 py-2 border min-w-[140px]">{equipo.tipoEquipo || "-"}</td>
+                      <td className="px-3 py-2 border min-w-[140px]">{equipo.marca || "-"}</td>
+                      <td className="px-3 py-2 border min-w-[140px]">{equipo.modelo || "-"}</td>
+                      <td className="px-3 py-2 border min-w-[160px]">{equipo.serie || "-"}</td>
+                      <td className="px-3 py-2 border min-w-[180px]">{equipo.responsableAnterior || "-"}</td>
+                      <td className="px-3 py-2 border min-w-[120px]">{equipo.extension || "-"}</td>
+
+                      <td className="px-3 py-2 border min-w-[180px]">{equipo.ubicacion || "-"}</td>
+
+                      <td className="px-3 py-2 border min-w-[220px] break-words text-left">
+                        {equipo.comentarios || "-"}
+                      </td>
+
+                      <td className="px-3 py-2 border min-w-[220px] break-words text-left">
+                        {equipo.observaciones || "-"}
                       </td>
                     </tr>
-                  ) : resultadosFiltrados.length > 0 ? (
-                    resultadosFiltrados.map((equipo, index) => (
-                      <tr
-                        key={equipo.id ?? index}
-                        className="text-center even:bg-gray-50 hover:bg-blue-50"
-                      >
-                        <td className="px-3 py-2 border min-w-[80px]">{index + 1}</td>
-
-                        <td className="px-3 py-2 border min-w-[160px] break-words">{equipo.ordenCompra}</td>
-                        <td className="px-3 py-2 border min-w-[160px] break-words">{equipo.factura}</td>
-                        <td className="px-3 py-2 border min-w-[180px] break-words">{equipo.proveedor}</td>
-
-                        <td className="px-3 py-2 border min-w-[140px]">
-                          {equipo.fechaIngreso
-                            ? new Date(equipo.fechaIngreso).toLocaleDateString("es-ES")
-                            : "Sin fecha"}
-                        </td>
-
-                        <td className="px-3 py-2 border text-red-600 font-semibold min-w-[100px]">
-                          {equipo.hojaNo || "Sin asignar"}
-                        </td>
-                        <td className="px-3 py-2 border min-w-[140px]">
-                          {equipo.fechaActualizacion
-                            ? new Date(equipo.fechaActualizacion).toLocaleDateString("es-ES")
-                            : "Sin fecha"}
-                        </td>
-
-                        <td className="px-3 py-2 border min-w-[220px] text-left">
-                          {equipo.asignaciones?.length > 0 ? (
-                            equipo.asignaciones.map((a, i) => (
-                              <div key={i} className="mb-1">
-                                <span className="text-blue-700 font-semibold">{a.codigoEmpleado}</span>{" "}
-                                - {a.nombreEmpleado}
-                                <div className="text-gray-500 italic text-[11px]">{a.puesto}</div>
-                              </div>
-                            ))
-                          ) : (
-                            <span className="text-gray-400 italic">Sin asignaciones</span>
-                          )}
-                        </td>
-
-                        <td className="px-3 py-2 border font-bold text-blue-800 min-w-[180px]">
-                          {equipo.codificacion}
-                        </td>
-
-                        <td className="px-3 py-2 border min-w-[140px]">{equipo.estado}</td>
-                        <td className="px-3 py-2 border min-w-[140px]">{equipo.tipoEquipo}</td>
-                        <td className="px-3 py-2 border min-w-[140px]">{equipo.marca}</td>
-                        <td className="px-3 py-2 border min-w-[140px]">{equipo.modelo}</td>
-                        <td className="px-3 py-2 border min-w-[180px]">{equipo.serie}</td>
-                        <td className="px-3 py-2 border min-w-[180px]">{equipo.responsableAnterior}</td>
-                        <td className="px-3 py-2 border min-w-[120px]">{equipo.extension}</td>
-
-                        <td className="px-3 py-2 border min-w-[180px]">{equipo.ubicacion}</td>
-
-                        <td className="px-3 py-2 border min-w-[220px] break-words text-left">
-                          {equipo.comentarios}
-                        </td>
-
-                        <td className="px-3 py-2 border min-w-[220px] break-words text-left">
-                          {equipo.observaciones}
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="19" className="text-center p-6 text-gray-500">
-                        No se encontraron equipos.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="19" className="text-center p-6 text-gray-500">
+                      No se encontraron equipos.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
-          <div className="mt-3 text-xs text-white/80">
-            Tip: podés agregar múltiples filtros para afinar resultados (ej: Estado + Ubicación + Marca).
+
+          <div className="mt-3 text-xs text-slate-500">
+            Tip: podés agregar múltiples filtros para afinar resultados.
           </div>
         </div>
       </div>
