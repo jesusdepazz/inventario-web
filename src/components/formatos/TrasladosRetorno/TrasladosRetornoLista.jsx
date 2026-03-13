@@ -11,12 +11,16 @@ const TrasladosRetornoLista = () => {
 
   const cargarTraslados = () => {
     setCargando(true);
+
     TrasladosRetornoService.obtenerTodos()
       .then((res) => {
         const data = res?.data?.$values ?? res?.data ?? [];
         setTraslados(Array.isArray(data) ? data : []);
       })
-      .catch(() => toast.error("Error al obtener traslados"))
+      .catch((error) => {
+        console.error(error);
+        toast.error("Error al obtener traslados");
+      })
       .finally(() => setCargando(false));
   };
 
@@ -29,16 +33,31 @@ const TrasladosRetornoLista = () => {
     if (!q) return traslados;
 
     return traslados.filter((t) => {
-      const no = (t.no ?? "").toLowerCase();
-      const solicitante = (t.empleado?.empleadoId ?? "").toLowerCase();
-      const ubicacion = (t.ubicacionRetorno ?? "").toLowerCase();
-      const motivo = (t.motivoSalida ?? "").toLowerCase();
+      const no = String(t.no ?? "").toLowerCase();
+
+      const empleadosTexto = Array.isArray(t.empleados)
+        ? t.empleados
+            .map((emp) => `${emp.empleadoId ?? ""} ${emp.nombre ?? ""}`)
+            .join(" ")
+            .toLowerCase()
+        : "";
+
+      const ubicacion = String(t.ubicacionRetorno ?? "").toLowerCase();
+      const motivo = String(t.motivoSalida ?? "").toLowerCase();
+
+      const equiposTexto = Array.isArray(t.equipos)
+        ? t.equipos
+            .map((e) => `${e.equipo ?? ""} ${e.descripcionEquipo ?? ""}`)
+            .join(" ")
+            .toLowerCase()
+        : "";
 
       return (
         no.includes(q) ||
-        solicitante.includes(q) ||
+        empleadosTexto.includes(q) ||
         ubicacion.includes(q) ||
-        motivo.includes(q)
+        motivo.includes(q) ||
+        equiposTexto.includes(q)
       );
     });
   }, [traslados, busqueda]);
@@ -63,170 +82,197 @@ const TrasladosRetornoLista = () => {
   };
 
   const formatearFecha = (fecha) => {
-    if (!fecha) return "—";
+    if (!fecha) return "-";
+
     try {
-      return new Date(fecha).toLocaleDateString("es-GT", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      });
+      return new Date(fecha).toLocaleDateString("es-ES");
     } catch {
       return String(fecha);
     }
   };
 
+  if (cargando && traslados.length === 0) {
+    return (
+      <div className="h-full w-full flex items-center justify-center">
+        <p className="text-white/80">Cargando traslados con retorno...</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen px-4 py-8">
-      <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow-md border border-gray-200">
-        <div className="p-6 border-b border-gray-200">
-          <div className="text-center">
-            <p className="font-bold text-lg">Guatemalan Candies, S.A.</p>
-            <p className="font-bold text-lg text-blue-600">
-              Listado de Traslados con retorno - Equipo de cómputo
+    <div className="h-full flex flex-col">
+      <div className="bg-white shadow-md rounded-2xl border border-gray-200 overflow-hidden flex flex-col h-full">
+        <div className="p-6 border-b border-gray-100 flex items-start justify-between gap-4">
+          <div>
+            <h2 className="text-2xl font-extrabold text-gray-900">
+              Traslados con retorno
+            </h2>
+            <p className="text-sm text-gray-500">
+              Listado de traslados con retorno - Equipo de cómputo
             </p>
-            <p className="font-bold text-lg">
+          </div>
+
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-semibold px-3 py-1 rounded-full border bg-gray-50 text-gray-700">
+              Total: {filtrar.length}
+            </span>
+            <span className="text-xs font-semibold px-3 py-1 rounded-full border bg-gray-50 text-gray-700">
               {new Date().toLocaleDateString("es-ES", {
                 weekday: "long",
-                day: "numeric",
+                day: "2-digit",
                 month: "long",
                 year: "numeric",
               })}
-            </p>
-          </div>
-
-          <div className="mt-6 flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
-            <input
-              type="text"
-              placeholder="Buscar por No., Solicitante, Ubicación o Motivo..."
-              value={busqueda}
-              onChange={(e) => setBusqueda(e.target.value)}
-              className="w-full md:w-[520px] border border-gray-300 rounded-lg px-4 py-2
-                         focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-
-            <button
-              type="button"
-              onClick={cargarTraslados}
-              className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 font-semibold transition"
-            >
-              Actualizar
-            </button>
+            </span>
           </div>
         </div>
 
-        <div className="p-6">
-          <div className="overflow-x-auto rounded-xl border border-gray-200">
-            <div className="max-h-[65vh] overflow-y-auto">
-              <table className="min-w-[1400px] w-full text-sm text-left">
-                <thead className="bg-blue-800 text-white sticky top-0 z-10">
-                  <tr>
-                    <th className="p-3 border-r border-blue-700">No.</th>
-                    <th className="p-3 border-r border-blue-700 text-center">Fecha Pase</th>
-                    <th className="p-3 border-r border-blue-700">Solicitante</th>
-                    <th className="p-3 border-r border-blue-700">Equipos</th>
-                    <th className="p-3 border-r border-blue-700">Motivo</th>
-                    <th className="p-3 border-r border-blue-700">Ubicación Retorno</th>
-                    <th className="p-3 border-r border-blue-700 text-center">Fecha Retorno</th>
-                    <th className="p-3 text-center">Acciones</th>
-                  </tr>
-                </thead>
+        <div className="p-6 border-b border-gray-100">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+            <div className="md:col-span-8">
+              <label className="block text-xs font-semibold text-gray-600 mb-2">
+                Buscar
+              </label>
+              <input
+                type="text"
+                placeholder="No., solicitante, equipo, ubicación o motivo..."
+                value={busqueda}
+                onChange={(e) => setBusqueda(e.target.value)}
+                className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-600"
+              />
+            </div>
 
-                <tbody>
-                  {cargando ? (
-                    <tr>
-                      <td colSpan={8} className="text-center py-10 text-gray-500">
-                        Cargando traslados...
-                      </td>
-                    </tr>
-                  ) : filtrar.length === 0 ? (
-                    <tr>
-                      <td colSpan={8} className="text-center py-10 text-gray-500">
-                        No se encontraron registros
-                      </td>
-                    </tr>
-                  ) : (
-                    filtrar.map((t, idx) => (
-                      <tr
-                        key={t.id}
-                        className={`${idx % 2 === 0 ? "bg-gray-50" : "bg-white"} hover:bg-blue-50 transition`}
-                      >
-                        <td className="p-3 border-t border-gray-200 font-semibold text-gray-800">
-                          {t.no}
-                        </td>
+            <div className="md:col-span-4 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setBusqueda("")}
+                className="px-5 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition"
+              >
+                Limpiar
+              </button>
 
-                        <td className="p-3 border-t border-gray-200 text-center text-gray-700">
-                          {formatearFecha(t.fechaPase)}
-                        </td>
-
-                        <td className="p-3 border-t border-gray-200 text-gray-700">
-                          {t.empleados && t.empleados.length > 0 ? (
-                            t.empleados.map((emp, i) => (
-                              <div key={i} className="mb-1">
-                                <div className="font-semibold text-gray-800">
-                                  {emp.empleadoId}
-                                </div>
-                                <div className="text-xs text-gray-500">
-                                  {emp.nombre}
-                                </div>
-                              </div>
-                            ))
-                          ) : (
-                            "—"
-                          )}
-                        </td>
-
-                        <td className="p-3 border-t border-gray-200">
-                          {t.equipos?.length ? (
-                            <div className="flex flex-wrap gap-1">
-                              {t.equipos.map((e, i) => (
-                                <span
-                                  key={i}
-                                  className="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full"
-                                >
-                                  {e.equipo}
-                                </span>
-                              ))}
-                            </div>
-                          ) : (
-                            <span className="text-gray-400">—</span>
-                          )}
-                        </td>
-
-                        <td className="p-3 border-t border-gray-200 text-gray-700 max-w-[380px]">
-                          <div className="line-clamp-2">{t.motivoSalida || "—"}</div>
-                        </td>
-
-                        <td className="p-3 border-t border-gray-200 text-gray-700">
-                          {t.ubicacionRetorno || "—"}
-                        </td>
-
-                        <td className="p-3 border-t border-gray-200 text-center text-gray-700">
-                          {formatearFecha(t.fechaRetorno)}
-                        </td>
-
-                        <td className="p-3 border-t border-gray-200 text-center">
-                          <button
-                            onClick={() => descargarPDF(t.id)}
-                            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-semibold text-xs transition"
-                          >
-                            Descargar PDF
-                          </button>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
+              <button
+                type="button"
+                onClick={cargarTraslados}
+                className="px-5 py-2.5 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
+              >
+                Actualizar
+              </button>
             </div>
           </div>
+        </div>
 
-          <div className="mt-4 text-sm text-gray-600 flex items-center justify-between">
-            <span>
-              Registros: <b>{filtrar.length}</b>
-            </span>
-            <span className="text-gray-400">
-              Tip: puedes buscar por No., solicitante, ubicación o motivo
-            </span>
+        <div className="flex-1 min-h-0 p-6">
+          <div className="h-full overflow-auto rounded-2xl border border-gray-200">
+            <table className="min-w-[1500px] w-full text-sm border-separate border-spacing-0">
+              <thead className="sticky top-0 z-10 bg-blue-900 text-white">
+                <tr className="text-left">
+                  <th className="px-4 py-3 font-bold whitespace-nowrap">#</th>
+                  <th className="px-4 py-3 font-bold whitespace-nowrap">Número</th>
+                  <th className="px-4 py-3 font-bold whitespace-nowrap">Fecha Pase</th>
+                  <th className="px-4 py-3 font-bold whitespace-nowrap">Solicitante</th>
+                  <th className="px-4 py-3 font-bold whitespace-nowrap">Equipos</th>
+                  <th className="px-4 py-3 font-bold whitespace-nowrap">Motivo</th>
+                  <th className="px-4 py-3 font-bold whitespace-nowrap">Ubicación Retorno</th>
+                  <th className="px-4 py-3 font-bold whitespace-nowrap">Fecha Retorno</th>
+                  <th className="px-4 py-3 font-bold whitespace-nowrap">Acciones</th>
+                </tr>
+              </thead>
+
+              <tbody className="bg-white">
+                {cargando ? (
+                  <tr>
+                    <td colSpan={9} className="px-6 py-10 text-center text-gray-500">
+                      Cargando traslados...
+                    </td>
+                  </tr>
+                ) : filtrar.length === 0 ? (
+                  <tr>
+                    <td colSpan={9} className="px-6 py-10 text-center text-gray-500">
+                      No se encontraron registros.
+                    </td>
+                  </tr>
+                ) : (
+                  filtrar.map((t, idx) => (
+                    <tr
+                      key={t.id}
+                      className={idx % 2 === 0 ? "bg-gray-50" : "bg-white"}
+                    >
+                      <td className="px-4 py-4 border-t border-gray-200 align-top text-center font-semibold">
+                        {idx + 1}
+                      </td>
+
+                      <td className="px-4 py-4 border-t border-gray-200 align-top whitespace-nowrap font-bold text-blue-800">
+                        {t.no || "-"}
+                      </td>
+
+                      <td className="px-4 py-4 border-t border-gray-200 align-top whitespace-nowrap">
+                        {formatearFecha(t.fechaPase)}
+                      </td>
+
+                      <td className="px-4 py-4 border-t border-gray-200 align-top min-w-[260px]">
+                        {Array.isArray(t.empleados) && t.empleados.length > 0 ? (
+                          <div className="space-y-3">
+                            {t.empleados.map((emp, i) => (
+                              <div key={i} className="leading-5">
+                                <div className="font-semibold text-gray-900">
+                                  {emp.empleadoId || "-"}
+                                </div>
+                                <div className="text-gray-600">
+                                  {emp.nombre || "-"}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          "-"
+                        )}
+                      </td>
+
+                      <td className="px-4 py-4 border-t border-gray-200 align-top min-w-[320px]">
+                        {Array.isArray(t.equipos) && t.equipos.length > 0 ? (
+                          <div className="max-h-28 overflow-auto pr-2">
+                            <ul className="space-y-2">
+                              {t.equipos.map((eq, i) => (
+                                <li key={i} className="text-gray-800">
+                                  <div className="font-semibold">{eq.equipo || "-"}</div>
+                                  <div className="text-gray-600 text-xs">
+                                    {eq.descripcionEquipo || ""}
+                                  </div>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        ) : (
+                          "-"
+                        )}
+                      </td>
+
+                      <td className="px-4 py-4 border-t border-gray-200 align-top min-w-[220px] break-words">
+                        {t.motivoSalida || "-"}
+                      </td>
+
+                      <td className="px-4 py-4 border-t border-gray-200 align-top min-w-[260px] break-words">
+                        {t.ubicacionRetorno || "-"}
+                      </td>
+
+                      <td className="px-4 py-4 border-t border-gray-200 align-top whitespace-nowrap">
+                        {formatearFecha(t.fechaRetorno)}
+                      </td>
+
+                      <td className="px-4 py-4 border-t border-gray-200 align-top whitespace-nowrap">
+                        <button
+                          onClick={() => descargarPDF(t.id)}
+                          className="px-4 py-2 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
+                        >
+                          Descargar PDF
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

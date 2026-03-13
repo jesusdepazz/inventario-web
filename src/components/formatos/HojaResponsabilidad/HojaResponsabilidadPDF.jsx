@@ -53,10 +53,8 @@ const generarPDFHoja = async (hoja) => {
   const numeroHoja = hoja.hojaNo ?? 1;
   const versionHoja = Number(hoja.version) || 0;
 
-  const textoCorrelativo =
-    versionHoja > 0
-      ? `V${versionHoja} No. ${String(numeroHoja).padStart(5, "0")}`
-      : `No. ${String(numeroHoja).padStart(5, "0")}`;
+  const numeroTexto = `No. ${String(numeroHoja).padStart(5, "0")}`;
+  const versionTexto = versionHoja > 0 ? `V${versionHoja}` : "";
 
   const agregarEncabezado = async (
     docInstance,
@@ -105,14 +103,23 @@ const generarPDFHoja = async (hoja) => {
     docInstance.text("ADMINISTRACION DE ACTIVOS IT", marginX, yStart);
 
     if (mostrarContador) {
-      docInstance.setFontSize(15);
+      const numeroTexto = `No. ${String(numeroHoja).padStart(5, "0")}`;
+      const versionTexto = versionHoja > 0 ? `V${versionHoja}` : "";
+
+      docInstance.setFont("helvetica", "bold");
       docInstance.setTextColor(255, 0, 0);
-      docInstance.text(
-        textoCorrelativo,
-        pageWidth - marginX,
-        yStart,
-        { align: "right" }
-      );
+      docInstance.setFontSize(15);
+      docInstance.text(numeroTexto, pageWidth - marginX, yStart, {
+        align: "right",
+      });
+      if (versionTexto) {
+        docInstance.setTextColor(0, 0, 0);
+        docInstance.setFontSize(8);
+        docInstance.text(versionTexto, pageWidth - marginX, yStart + 5, {
+          align: "right",
+        });
+      }
+
       docInstance.setFontSize(10);
     }
 
@@ -147,7 +154,7 @@ const generarPDFHoja = async (hoja) => {
     return yActualRef;
   };
 
-  const getLineH = (fontSize) => fontSize * 0.45; // mm aprox, suficiente para jsPDF
+  const getLineH = (fontSize) => fontSize * 0.45;
   const printWrappedText = (texto, x, y, maxWidth, fontSize = 6, style = {}) => {
     doc.setFontSize(fontSize);
     if (style.bold) doc.setFont("helvetica", "bold");
@@ -173,7 +180,7 @@ const generarPDFHoja = async (hoja) => {
     pageBreak: "auto",
   };
 
-  let yActual = await agregarEncabezado(doc, numeroHoja, true);
+  let yActual = await agregarEncabezado(doc, numeroHoja, versionHoja, true);
 
   const empleados = hoja.empleados ?? [];
   const empleadosBody = empleados.map((emp) => [
