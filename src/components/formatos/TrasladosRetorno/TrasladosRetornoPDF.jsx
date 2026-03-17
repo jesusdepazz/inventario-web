@@ -686,18 +686,18 @@ const PdfTrasladosRetorno = ({ data = {} }) => (
                         </View>
 
                         <View style={[styles.signatureBox, { minHeight: 48 }]}>
-                            <Text style={styles.signatureTitle}>SOLICITADO:</Text>
+                            <Text style={styles.signatureTitle}>Asistente IT:</Text>
                         </View>
 
                         <View style={[styles.signatureBox, { minHeight: 48 }]}>
                             <Text style={styles.signatureTitle}>PERSONA QUIEN RETIRA:</Text>
                         </View>
 
-                        <View style={[styles.signatureBox, { minHeight: 48 }]}>
+                        <View style={[styles.signatureBox, { minHeight: 60 }]}>
                             <Text style={styles.signatureTitle}>ENTERADO:</Text>
                         </View>
 
-                        <View style={[styles.signatureBoxMedium, { minHeight: 58 }]}>
+                        <View style={[styles.signatureBoxMedium, { minHeight: 100 }]}>
                             <View style={styles.signatureDateRow}>
                                 <Text style={styles.signatureTitle}>GUARDIA DE SEGURIDAD:</Text>
                                 <View style={{ flexDirection: "row", alignItems: "flex-end" }}>
@@ -711,7 +711,7 @@ const PdfTrasladosRetorno = ({ data = {} }) => (
                     <View style={styles.signatureColRight}>
                         <Text style={styles.signatureHeader}>6) RETORNO TOTAL</Text>
 
-                        <View style={[styles.signatureBoxMedium, { minHeight: 58 }]}>
+                        <View style={[styles.signatureBoxMedium, { minHeight: 100 }]}>
                             <View style={styles.signatureDateRow}>
                                 <Text style={styles.signatureTitle}>GUARDIA DE SEGURIDAD:</Text>
                                 <View style={{ flexDirection: "row", alignItems: "flex-end" }}>
@@ -721,15 +721,14 @@ const PdfTrasladosRetorno = ({ data = {} }) => (
                             </View>
                         </View>
 
-                        <View style={[styles.signatureBoxLarge, { minHeight: 82 }]}>
+                        <View style={[styles.signatureBoxLarge, { minHeight: 100 }]}>
                             <Text style={styles.signatureTitle}>PERSONA QUE RECIBE CONFORME:</Text>
                         </View>
 
                         <View
                             style={{
-                                borderBottom: "1px solid #000",
                                 padding: 6,
-                                minHeight: 120,
+                                minHeight: 60,
                                 justifyContent: "flex-start",
                             }}
                         >
