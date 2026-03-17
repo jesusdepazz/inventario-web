@@ -37,9 +37,9 @@ const TrasladosRetornoLista = () => {
 
       const empleadosTexto = Array.isArray(t.empleados)
         ? t.empleados
-            .map((emp) => `${emp.empleadoId ?? ""} ${emp.nombre ?? ""}`)
-            .join(" ")
-            .toLowerCase()
+          .map((emp) => `${emp.empleadoId ?? ""} ${emp.nombre ?? ""}`)
+          .join(" ")
+          .toLowerCase()
         : "";
 
       const ubicacion = String(t.ubicacionRetorno ?? "").toLowerCase();
@@ -47,9 +47,9 @@ const TrasladosRetornoLista = () => {
 
       const equiposTexto = Array.isArray(t.equipos)
         ? t.equipos
-            .map((e) => `${e.equipo ?? ""} ${e.descripcionEquipo ?? ""}`)
-            .join(" ")
-            .toLowerCase()
+          .map((e) => `${e.equipo ?? ""} ${e.descripcionEquipo ?? ""}`)
+          .join(" ")
+          .toLowerCase()
         : "";
 
       return (
@@ -85,7 +85,12 @@ const TrasladosRetornoLista = () => {
     if (!fecha) return "-";
 
     try {
-      return new Date(fecha).toLocaleDateString("es-ES");
+      const soloFecha = String(fecha).split("T")[0];
+      const [anio, mes, dia] = soloFecha.split("-");
+
+      if (!anio || !mes || !dia) return String(fecha);
+
+      return `${dia}/${mes}/${anio}`;
     } catch {
       return String(fecha);
     }
