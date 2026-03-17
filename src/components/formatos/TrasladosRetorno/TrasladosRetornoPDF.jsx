@@ -226,25 +226,25 @@ const styles = StyleSheet.create({
 
     signatureBox: {
         borderBottom: "1px solid #000",
-        minHeight: 30,
+        minHeight: 42,
         paddingHorizontal: 6,
-        paddingVertical: 4,
+        paddingVertical: 6,
         justifyContent: "flex-start",
     },
 
     signatureBoxMedium: {
         borderBottom: "1px solid #000",
-        minHeight: 40,
+        minHeight: 58,
         paddingHorizontal: 6,
-        paddingVertical: 4,
+        paddingVertical: 6,
         justifyContent: "flex-start",
     },
 
     signatureBoxLarge: {
         borderBottom: "1px solid #000",
-        minHeight: 50,
+        minHeight: 78,
         paddingHorizontal: 6,
-        paddingVertical: 4,
+        paddingVertical: 6,
         justifyContent: "flex-start",
     },
 
@@ -673,77 +673,75 @@ const PdfTrasladosRetorno = ({ data = {} }) => (
                 </View>
             </View>
             <View style={styles.tableGrid}>
-                <View style={styles.tableGrid}>
-                    <View style={styles.gridRow}>
-                        <View style={[styles.signatureColLeft, { borderRight: "1px solid #000" }]}>
-                            <Text style={styles.signatureHeader}>5) EGRESO</Text>
+                <View style={styles.gridRow}>
+                    <View style={[styles.signatureColLeft, { borderRight: "1px solid #000" }]}>
+                        <Text style={styles.signatureHeader}>5) EGRESO</Text>
 
-                            <View style={styles.signatureBoxMedium}>
-                                <Text style={styles.signatureTitle}>AUTORIZADO POR:</Text>
-                                <Text style={styles.signatureText}>° Gerardo Araneda</Text>
-                                <Text style={styles.signatureText}>° Vanessa Santiago</Text>
-                                <Text style={styles.signatureText}>° Rodrigo Araneda</Text>
-                                <Text style={styles.signatureText}>° Julio Cajas</Text>
+                        <View style={[styles.signatureBoxMedium, { minHeight: 68 }]}>
+                            <Text style={styles.signatureTitle}>AUTORIZADO POR:</Text>
+                            <Text style={styles.signatureText}>° Gerardo Araneda</Text>
+                            <Text style={styles.signatureText}>° Vanessa Santiago</Text>
+                            <Text style={styles.signatureText}>° Rodrigo Araneda</Text>
+                            <Text style={styles.signatureText}>° Julio Cajas</Text>
+                        </View>
+
+                        <View style={[styles.signatureBox, { minHeight: 48 }]}>
+                            <Text style={styles.signatureTitle}>SOLICITADO:</Text>
+                        </View>
+
+                        <View style={[styles.signatureBox, { minHeight: 48 }]}>
+                            <Text style={styles.signatureTitle}>PERSONA QUIEN RETIRA:</Text>
+                        </View>
+
+                        <View style={[styles.signatureBox, { minHeight: 48 }]}>
+                            <Text style={styles.signatureTitle}>ENTERADO:</Text>
+                        </View>
+
+                        <View style={[styles.signatureBoxMedium, { minHeight: 58 }]}>
+                            <View style={styles.signatureDateRow}>
+                                <Text style={styles.signatureTitle}>GUARDIA DE SEGURIDAD:</Text>
+                                <View style={{ flexDirection: "row", alignItems: "flex-end" }}>
+                                    <Text style={styles.dateLabel}>FECHA:</Text>
+                                    <View style={styles.dateLine} />
+                                </View>
                             </View>
+                        </View>
+                    </View>
 
-                            <View style={styles.signatureBox}>
-                                <Text style={styles.signatureTitle}>SOLICITADO:</Text>
-                            </View>
+                    <View style={styles.signatureColRight}>
+                        <Text style={styles.signatureHeader}>6) RETORNO TOTAL</Text>
 
-                            <View style={styles.signatureBox}>
-                                <Text style={styles.signatureTitle}>PERSONA QUIEN RETIRA:</Text>
-                            </View>
-
-                            <View style={styles.signatureBox}>
-                                <Text style={styles.signatureTitle}>ENTERADO:</Text>
-                            </View>
-
-                            <View style={styles.signatureBoxMedium}>
-                                <View style={styles.signatureDateRow}>
-                                    <Text style={styles.signatureTitle}>GUARDIA DE SEGURIDAD:</Text>
-                                    <View style={{ flexDirection: "row", alignItems: "flex-end" }}>
-                                        <Text style={styles.dateLabel}>FECHA:</Text>
-                                        <View style={styles.dateLine} />
-                                    </View>
+                        <View style={[styles.signatureBoxMedium, { minHeight: 58 }]}>
+                            <View style={styles.signatureDateRow}>
+                                <Text style={styles.signatureTitle}>GUARDIA DE SEGURIDAD:</Text>
+                                <View style={{ flexDirection: "row", alignItems: "flex-end" }}>
+                                    <Text style={styles.dateLabel}>FECHA:</Text>
+                                    <View style={styles.dateLine} />
                                 </View>
                             </View>
                         </View>
 
-                        <View style={styles.signatureColRight}>
-                            <Text style={styles.signatureHeader}>6) RETORNO TOTAL</Text>
+                        <View style={[styles.signatureBoxLarge, { minHeight: 82 }]}>
+                            <Text style={styles.signatureTitle}>PERSONA QUE RECIBE CONFORME:</Text>
+                        </View>
 
-                            <View style={styles.signatureBoxMedium}>
-                                <View style={styles.signatureDateRow}>
-                                    <Text style={styles.signatureTitle}>GUARDIA DE SEGURIDAD:</Text>
-                                    <View style={{ flexDirection: "row", alignItems: "flex-end" }}>
-                                        <Text style={styles.dateLabel}>FECHA:</Text>
-                                        <View style={styles.dateLine} />
-                                    </View>
-                                </View>
-                            </View>
-
-                            <View style={styles.signatureBoxLarge}>
-                                <Text style={styles.signatureTitle}>PERSONA QUE RECIBE CONFORME:</Text>
-                            </View>
-
-                            <View
+                        <View
+                            style={{
+                                borderBottom: "1px solid #000",
+                                padding: 6,
+                                minHeight: 120,
+                                justifyContent: "flex-start",
+                            }}
+                        >
+                            <Text
                                 style={{
-                                    borderBottom: "1px solid #000",
-                                    padding: 6,
-                                    flexGrow: 1,
-                                    justifyContent: "flex-start",
+                                    fontSize: 9,
+                                    textDecoration: "underline",
+                                    fontWeight: "bold",
                                 }}
                             >
-                                <Text
-                                    style={{
-                                        fontSize: 9,
-                                        textDecoration: "underline",
-                                        fontWeight: "bold",
-                                    }}
-                                >
-                                    ENTERADO:
-                                </Text>
-                            </View>
+                                ENTERADO:
+                            </Text>
                         </View>
                     </View>
                 </View>
