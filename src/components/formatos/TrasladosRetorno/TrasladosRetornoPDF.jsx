@@ -281,32 +281,55 @@ const styles = StyleSheet.create({
     },
 });
 
-const formatSpanishDate = (dateString) => {
-    if (!dateString || typeof dateString !== "string") return "";
-
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return "";
-
-    const dias = [
-        "domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado",
-    ];
-
-    const meses = [
-        "enero", "febrero", "marzo", "abril", "mayo", "junio",
-        "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
-    ];
-
-    const diaSemana = dias[date.getDay()];
-    const dia = date.getDate();
-    const mes = meses[date.getMonth()];
-    const año = date.getFullYear();
-
-    return `${capitalizeFirstWord(diaSemana)}, ${dia} de ${mes} del ${año}`;
-};
-
 const capitalizeFirstWord = (text = "") => {
     if (!text) return "";
     return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+};
+
+const formatDateOnly = (dateString) => {
+    if (!dateString) return "-";
+
+    try {
+        const soloFecha = String(dateString).split("T")[0];
+        const [anio, mes, dia] = soloFecha.split("-");
+
+        if (!anio || !mes || !dia) return "-";
+
+        return `${dia}/${mes}/${anio}`;
+    } catch {
+        return "-";
+    }
+};
+
+const formatSpanishDate = (dateString) => {
+    if (!dateString) return "";
+
+    try {
+        const soloFecha = String(dateString).split("T")[0];
+        const [anio, mes, dia] = soloFecha.split("-");
+
+        if (!anio || !mes || !dia) return "";
+
+        const date = new Date(Number(anio), Number(mes) - 1, Number(dia));
+
+        const dias = [
+            "domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado",
+        ];
+
+        const meses = [
+            "enero", "febrero", "marzo", "abril", "mayo", "junio",
+            "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
+        ];
+
+        const diaSemana = dias[date.getDay()];
+        const diaNumero = date.getDate();
+        const mesTexto = meses[date.getMonth()];
+        const año = date.getFullYear();
+
+        return `${capitalizeFirstWord(diaSemana)}, ${diaNumero} de ${mesTexto} del ${año}`;
+    } catch {
+        return "";
+    }
 };
 
 const PdfTrasladosRetorno = ({ data = {} }) => (
@@ -599,9 +622,7 @@ const PdfTrasladosRetorno = ({ data = {} }) => (
                                 },
                             ]}
                         >
-                            {data.fechaRetorno
-                                ? new Date(data.fechaRetorno).toLocaleDateString("es-GT")
-                                : "-"}
+                            {formatDateOnly(data.fechaRetorno)}
                         </Text>
                         <Text
                             wrap={false}
