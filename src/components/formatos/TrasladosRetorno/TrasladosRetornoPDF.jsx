@@ -538,11 +538,13 @@ const PdfTrasladosRetorno = ({ data = {} }) => (
                                 color: "white",
                                 fontWeight: "bold",
                                 textAlign: "center",
-                                paddingVertical: 3,
+                                paddingVertical: 4,
+                                fontSize: 7.5,
+                                lineHeight: 1.15,
                             },
                         ]}
                     >
-                        Fecha de retorno
+                        Fecha de{"\n"}retorno
                     </Text>
                     <Text
                         style={[
