@@ -58,6 +58,9 @@ const EditarEquipo = () => {
 
     try {
       setSaving(true);
+
+      console.log("OBJETO A ENVIAR:", equipo);
+
       await EquiposServices.editar(equipo.id, equipo);
       toast.success("✅ Equipo actualizado correctamente");
       setEquipo(null);

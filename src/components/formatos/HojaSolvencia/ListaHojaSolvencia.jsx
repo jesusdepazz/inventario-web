@@ -24,12 +24,13 @@ export default function ListaHojaSolvencia() {
   }, []);
 
   const parseRow = (h) => {
-    const primerEmpleado = (h.empleados || "").split(",")[0] || "";
-    const partes = primerEmpleado.split(" - ");
-    const codigo = (partes[0] || "").trim();
-    const nombre = (partes[1] || "").trim();
-    const puesto = (partes[2] || "").trim();
-    const depto = (partes[3] || "").trim();
+    const primerEmpleado = (h.empleados || "").split(",")[0]?.trim() || "";
+    const partes = primerEmpleado.split(" - ").map(p => p.trim());
+
+    const codigo = partes[0] || "";
+    const nombre = partes[1] || "";
+    const puesto = partes[2] || "";
+    const depto = partes.slice(3).join(" - ");
 
     const fecha = h.fechaSolvencia ? new Date(h.fechaSolvencia) : null;
     const fechaISO = fecha ? fecha.toISOString().slice(0, 10) : "";
@@ -37,6 +38,7 @@ export default function ListaHojaSolvencia() {
     return {
       solvenciaNo: h.solvenciaNo ?? "",
       hojaNo: h.hojaNo ?? "",
+      jefeInmediato: h.jefeInmediato ?? "",
       observaciones: h.observaciones ?? "",
       fecha,
       fechaISO,
@@ -62,6 +64,7 @@ export default function ListaHojaSolvencia() {
       const blob = [
         r.solvenciaNo,
         r.hojaNo,
+        r.jefeInmediato,
         r.observaciones,
         r.fechaISO,
         r.codigo,
@@ -167,6 +170,7 @@ export default function ListaHojaSolvencia() {
                   <th className="px-4 py-3 font-bold whitespace-nowrap">Puesto</th>
                   <th className="px-4 py-3 font-bold whitespace-nowrap">Departamento</th>
                   <th className="px-4 py-3 font-bold whitespace-nowrap">Hoja No.</th>
+                  <th className="px-4 py-3 font-bold whitespace-nowrap">Jefe Inmediato</th>
                   <th className="px-4 py-3 font-bold whitespace-nowrap">Observaciones</th>
                   <th className="px-4 py-3 font-bold whitespace-nowrap">Acciones</th>
                 </tr>
@@ -207,6 +211,10 @@ export default function ListaHojaSolvencia() {
                         {r.hojaNo || "-"}
                       </td>
 
+                      <td className="px-4 py-4 border-t border-gray-200 align-top whitespace-nowrap">
+                        {r.jefeInmediato || "-"}
+                      </td>
+
                       <td className="px-4 py-4 border-t border-gray-200 align-top min-w-[320px] break-words">
                         {r.observaciones || "-"}
                       </td>
@@ -230,7 +238,7 @@ export default function ListaHojaSolvencia() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={9} className="px-6 py-10 text-center text-gray-500">
+                    <td colSpan={10} className="px-6 py-10 text-center text-gray-500">
                       No hay solvencias para mostrar.
                     </td>
                   </tr>

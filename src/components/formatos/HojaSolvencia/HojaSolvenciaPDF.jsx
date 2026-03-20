@@ -320,6 +320,11 @@ const HojaSolvenciaPDF = ({ data }) => {
                                     );
                                 }
                                 if (row === 1 && col === 2) {
+
+                                    const partes = data.jefeInmediato?.split("-") || [];
+                                    const nombre = partes[0]?.trim() || "";
+                                    const puesto = partes[1]?.trim() || "";
+
                                     return (
                                         <View key={col} style={{ width: "45%", alignItems: "center" }}>
                                             <View style={{ width: "100%", borderBottom: "1px dotted black", height: 20 }} />
@@ -329,11 +334,11 @@ const HojaSolvenciaPDF = ({ data }) => {
                                             </Text>
 
                                             <Text style={{ fontSize: 9, textAlign: "center", color: "blue" }}>
-                                                "no informacion"
+                                                {nombre}
                                             </Text>
 
                                             <Text style={{ fontSize: 9, textAlign: "center" }}>
-                                                "no informacion"
+                                                {puesto}
                                             </Text>
                                         </View>
                                     );
