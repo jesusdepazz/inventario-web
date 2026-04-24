@@ -60,12 +60,13 @@ const HojaResponsabilidadForm = () => {
       const lista = Array.isArray(resEquipos.data)
         ? resEquipos.data
         : Array.isArray(resEquipos.data?.$values)
-        ? resEquipos.data.$values
-        : [];
+          ? resEquipos.data.$values
+          : [];
 
       setEquipos((prev) => {
         const map = new Map(prev.map((x) => [x.codificacion, x]));
-        for (const it of lista) map.set(it.codificacion, it);
+        for (const it of lista)
+          map.set(it.codificacion, { ...it, observaciones: "" });
         return Array.from(map.values());
       });
 
@@ -125,7 +126,7 @@ const HojaResponsabilidadForm = () => {
       setEquipos((prev) => {
         const existe = prev.some((x) => x.codificacion === eq.codificacion);
         if (existe) return prev;
-        return [...prev, eq];
+        return [...prev, { ...eq, observaciones: "" }]; // 👈
       });
 
       setEquipoCodificacion("");
@@ -147,29 +148,30 @@ const HojaResponsabilidadForm = () => {
     const empleadosMapped =
       Array.isArray(empleados) && empleados.length > 0
         ? empleados.map((emp) => ({
-            EmpleadoId: emp.codigoEmpleado,
-            Nombre: emp.nombre,
-            Puesto: emp.puesto,
-            Departamento: emp.departamento,
-          }))
+          EmpleadoId: emp.codigoEmpleado,
+          Nombre: emp.nombre,
+          Puesto: emp.puesto,
+          Departamento: emp.departamento,
+        }))
         : [];
 
     const equiposMapped =
       Array.isArray(equipos) && equipos.length > 0
         ? equipos.map((eq) => ({
-            Codificacion: eq.codificacion,
-            Marca: eq.marca,
-            Modelo: eq.modelo,
-            Serie: eq.serie,
-            TipoEquipo: eq.tipoEquipo,
-            Ubicacion: eq.ubicacion,
-            FechaIngreso: eq.fechaIngreso,
-            Estado: eq.estado,
-            EquipoTipo: eq.equipoTipo,
-            Extension: eq.extension,
-            NumeroAsignado: eq.numeroAsignado,
-            Imei: eq.imei,
-          }))
+          Codificacion: eq.codificacion,
+          Marca: eq.marca,
+          Modelo: eq.modelo,
+          Serie: eq.serie,
+          TipoEquipo: eq.tipoEquipo,
+          Ubicacion: eq.ubicacion,
+          FechaIngreso: eq.fechaIngreso,
+          Estado: eq.estado,
+          EquipoTipo: eq.equipoTipo,
+          Extension: eq.extension,
+          NumeroAsignado: eq.numeroAsignado,
+          Imei: eq.imei,
+          Observaciones: eq.observaciones || "",
+        }))
         : [];
 
     const payload = {
