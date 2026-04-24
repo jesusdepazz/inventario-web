@@ -371,8 +371,8 @@ const HojaSolvenciaPDF = ({ data }) => {
                         {jefeNombre}
                       </Text>
 
-                      <Text style={{ fontSize: 9, textAlign: "center", color: "blue" }}>
-                        {toTitleCase(jefePuesto)}
+                      <Text style={{ fontSize: 9, textAlign: "center" }}>
+                        {jefePuesto}
                       </Text>
                     </View>
                   );

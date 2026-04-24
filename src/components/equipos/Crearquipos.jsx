@@ -113,13 +113,13 @@ const CrearEquipo = () => {
 
               <div className="p-5 grid grid-cols-1 md:grid-cols-3 gap-5">
                 <div className="flex flex-col">
-                  <label htmlFor="orderCompra" className="text-xs font-semibold text-slate-600">
+                  <label htmlFor="ordenCompra" className="text-xs font-semibold text-slate-600">
                     Orden de compra
                   </label>
                   <input
                     type="text"
-                    id="orderCompra"
-                    name="orderCompra"
+                    id="ordenCompra"
+                    name="ordenCompra"
                     value={form.ordenCompra}
                     onChange={handleChange}
                     className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
