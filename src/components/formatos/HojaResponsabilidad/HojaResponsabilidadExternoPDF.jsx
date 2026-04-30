@@ -180,10 +180,10 @@ const generarPDFHojaExterno = async (hoja) => {
       fontSize: 7,
     },
     columnStyles: {
-      0: { cellWidth: "auto" },
-      1: { cellWidth: 35 },
-      2: { cellWidth: 45 },
-      3: { cellWidth: 35 },
+      0: { cellWidth: 38 },
+      1: { cellWidth: "auto" },
+      2: { cellWidth: 50 },
+      3: { cellWidth: 38 },
     },
   });
 
