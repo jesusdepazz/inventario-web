@@ -205,27 +205,27 @@ export default function Sidebar() {
             </div>
           </div>
 
-          <div>
-            <button
-              onClick={() => setExternosOpen(!externosOpen)}
-              className="flex items-center justify-between w-full font-semibold text-lg px-3 py-2 rounded-lg hover:bg-white/10 transition-all duration-300"
-            >
-              <span className="flex items-center gap-3">
-                <FaIdCard /> Externos
-              </span>
-              {externosOpen ? <FaChevronUp /> : <FaChevronDown />}
-            </button>
-            <div className={`ml-6 mt-1 flex flex-col gap-2 overflow-hidden transition-all duration-500 ${externosOpen ? "max-h-32" : "max-h-0"}`}>
-              {rol === "Administrador" && (
+          {rol === "Administrador" && (
+            <div>
+              <button
+                onClick={() => setExternosOpen(!externosOpen)}
+                className="flex items-center justify-between w-full font-semibold text-lg px-3 py-2 rounded-lg hover:bg-white/10 transition-all duration-300"
+              >
+                <span className="flex items-center gap-3">
+                  <FaIdCard /> Externos
+                </span>
+                {externosOpen ? <FaChevronUp /> : <FaChevronDown />}
+              </button>
+              <div className={`ml-6 mt-1 flex flex-col gap-2 overflow-hidden transition-all duration-500 ${externosOpen ? "max-h-32" : "max-h-0"}`}>
                 <Link to="/externos/crear" className="flex items-center gap-2 hover:text-blue-300">
                   <FaPlus /> Registrar
                 </Link>
-              )}
-              <Link to="/externos/lista" className="flex items-center gap-2 hover:text-blue-300">
-                <FaClipboardList /> Lista
-              </Link>
+                <Link to="/externos/lista" className="flex items-center gap-2 hover:text-blue-300">
+                  <FaClipboardList /> Lista
+                </Link>
+              </div>
             </div>
-          </div>
+          )}
 
           <div>
             <button
