@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import HojasService from "../../../services/HojasServices";
 import generarPDFHoja from "./HojaResponsabilidadPDF";
 import generarPDFHojaMovil from "./HojaResponsabilidadMovilPdf";
+import generarPDFHojaExterno from "./HojaResponsabilidadExternoPDF";
 import { useNavigate } from "react-router-dom";
 import { getRol } from "../../../services/auth"
 
@@ -44,8 +45,9 @@ const ListaHojasResponsabilidad = () => {
   }, []);
 
   const handleGenerarPDF = (hoja) => {
-    if (hoja.tipoHoja === "Movil") generarPDFHojaMovil(hoja);
-    else generarPDFHoja(hoja);
+    if (hoja.tipoHoja === "Movil")    generarPDFHojaMovil(hoja);
+    else if (hoja.tipoHoja === "Externo") generarPDFHojaExterno(hoja);
+    else                              generarPDFHoja(hoja);
   };
 
   const normalize = (v) =>
@@ -239,6 +241,7 @@ const ListaHojasResponsabilidad = () => {
                   <option value="">Tipo hoja (Todos)</option>
                   <option value="Computo">Computo</option>
                   <option value="Movil">Movil</option>
+                  <option value="Externo">Externo</option>
                 </select>
 
                 <input

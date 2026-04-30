@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import EmpleadosService from "../../services/EmpleadosServices";
 import EquiposService from "../../services/EquiposServices";
 import AsignacionesService from "../../services/AsignacionesServices";
+import EmpleadosExternosService from "../../services/EmpleadosExternosServices";
 
 export default function CrearAsignacion() {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ export default function CrearAsignacion() {
   });
 
   const [codificacion, setCodificacion] = useState("");
+  const [modoExterno, setModoExterno] = useState(false);
   const [loadingEmpleado, setLoadingEmpleado] = useState(false);
   const [loadingEquipo, setLoadingEquipo] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -33,17 +35,28 @@ export default function CrearAsignacion() {
 
     try {
       setLoadingEmpleado(true);
-      const response = await EmpleadosService.obtenerPorCodigo(codigo);
-      const data = response.data;
 
-      setEmpleadoActual({
-        codigo,
-        nombre: data.nombre,
-        puesto: data.puesto,
-        departamento: data.departamento,
-      });
+      if (modoExterno) {
+        const response = await EmpleadosExternosService.obtenerPorCodigo(codigo);
+        const data = response.data;
+        setEmpleadoActual({
+          codigo: data.codigoEmpleado,
+          nombre: data.nombre,
+          puesto: data.puesto,
+          departamento: "Externo",
+        });
+      } else {
+        const response = await EmpleadosService.obtenerPorCodigo(codigo);
+        const data = response.data;
+        setEmpleadoActual({
+          codigo,
+          nombre: data.nombre,
+          puesto: data.puesto,
+          departamento: data.departamento,
+        });
+      }
     } catch (error) {
-      alert("Empleado no encontrado");
+      alert(modoExterno ? "Empleado externo no encontrado" : "Empleado no encontrado");
     } finally {
       setLoadingEmpleado(false);
     }
@@ -154,15 +167,31 @@ export default function CrearAsignacion() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="space-y-6">
               <div className="rounded-xl border border-slate-200 bg-white">
-                <div className="px-4 py-3 border-b border-slate-100">
-                  <h2 className="text-sm font-semibold text-slate-900">Empleados</h2>
-                  <p className="text-xs text-slate-600">Buscá por código y agregá.</p>
+                <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+                  <div>
+                    <h2 className="text-sm font-semibold text-slate-900">Empleados</h2>
+                    <p className="text-xs text-slate-600">Buscá por código y agregá.</p>
+                  </div>
+                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                    <span className="text-xs font-medium text-slate-600">Externo</span>
+                    <div
+                      onClick={() => {
+                        setModoExterno((v) => !v);
+                        setEmpleadoActual({ codigo: "", nombre: "", puesto: "", departamento: "" });
+                      }}
+                      className={`relative w-10 h-5 rounded-full transition-colors duration-200 ${modoExterno ? "bg-amber-500" : "bg-slate-300"}`}
+                    >
+                      <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${modoExterno ? "translate-x-5" : ""}`} />
+                    </div>
+                  </label>
                 </div>
 
                 <div className="p-4 space-y-3">
                   <div className="grid grid-cols-12 gap-2">
                     <div className="col-span-7">
-                      <label className="text-xs font-medium text-slate-600">Código</label>
+                      <label className="text-xs font-medium text-slate-600">
+                        {modoExterno ? "Código externo" : "Código"}
+                      </label>
                       <input
                         type="text"
                         value={empleadoActual.codigo}
@@ -170,8 +199,8 @@ export default function CrearAsignacion() {
                           setEmpleadoActual({ ...empleadoActual, codigo: e.target.value })
                         }
                         onKeyDown={onEnterEmpleado}
-                        className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
-                        placeholder="Ej: T03108"
+                        className={`mt-1 w-full rounded-lg border bg-white px-3 py-2 text-sm outline-none focus:ring-2 ${modoExterno ? "border-amber-300 focus:ring-amber-500" : "border-slate-300 focus:ring-indigo-500"}`}
+                        placeholder={modoExterno ? "Ej: EXT-001" : "Ej: T03108"}
                       />
                     </div>
 

@@ -3,6 +3,7 @@ import HojasService from "../../../services/HojasServices";
 import EquiposService from "../../../services/EquiposServices";
 import EmpleadosService from "../../../services/EmpleadosServices";
 import AsignacionesService from "../../../services/AsignacionesServices";
+import EmpleadosExternosService from "../../../services/EmpleadosExternosServices";
 
 const HojaResponsabilidadForm = () => {
   const [tipoHoja, setTipoHoja] = useState("");
@@ -23,6 +24,8 @@ const HojaResponsabilidadForm = () => {
   const [empleadoCodigo, setEmpleadoCodigo] = useState("");
   const [equipoCodificacion, setEquipoCodificacion] = useState("");
   const [accesorios, setAccesorios] = useState([]);
+  const [modoExterno, setModoExterno] = useState(false);
+  const [proyecto, setProyecto] = useState("");
 
   const accesoriosDisponibles = useMemo(
     () => [
@@ -44,8 +47,22 @@ const HojaResponsabilidadForm = () => {
     if (!empleadoCodigo?.trim()) return;
 
     try {
-      const res = await EmpleadosService.obtenerPorCodigo(empleadoCodigo.trim());
-      const empleado = res.data;
+      let empleado;
+
+      if (modoExterno) {
+        const res = await EmpleadosExternosService.obtenerPorCodigo(empleadoCodigo.trim());
+        const ext = res.data;
+        empleado = {
+          codigoEmpleado: ext.codigoEmpleado,
+          nombre: ext.nombre,
+          puesto: ext.puesto,
+          departamento: ext.documento,
+        };
+        if (ext.proyecto) setProyecto(ext.proyecto);
+      } else {
+        const res = await EmpleadosService.obtenerPorCodigo(empleadoCodigo.trim());
+        empleado = res.data;
+      }
 
       setEmpleados((prev) => {
         const existe = prev.some((e) => e.codigoEmpleado === empleado.codigoEmpleado);
@@ -56,13 +73,11 @@ const HojaResponsabilidadForm = () => {
       const resEquipos = await AsignacionesService.obtenerEquiposPorEmpleado(
         empleado.codigoEmpleado
       );
-
       const lista = Array.isArray(resEquipos.data)
         ? resEquipos.data
         : Array.isArray(resEquipos.data?.$values)
           ? resEquipos.data.$values
           : [];
-
       setEquipos((prev) => {
         const map = new Map(prev.map((x) => [x.codificacion, x]));
         for (const it of lista)
@@ -73,7 +88,11 @@ const HojaResponsabilidadForm = () => {
       setEmpleadoCodigo("");
     } catch (err) {
       console.error(err);
-      window.alert("Empleado no encontrado o sin equipos asignados");
+      window.alert(
+        modoExterno
+          ? "Empleado externo no encontrado. Verificá el código."
+          : "Empleado no encontrado o sin equipos asignados"
+      );
     }
   };
 
@@ -182,9 +201,8 @@ const HojaResponsabilidadForm = () => {
       Estado: estado,
       Observaciones: observaciones,
       Accesorios: accesoriosString,
-      JefeInmediato: jefeSeleccionado
-        ? `${jefeSeleccionado.nombre} - ${jefeSeleccionado.puesto} - ${jefeSeleccionado.departamento}`
-        : "",
+      JefeInmediato: jefeSeleccionado ? jefeSeleccionado.nombre : "",
+      Proyecto: proyecto || null,
       Empleados: empleadosMapped,
       Equipos: equiposMapped,
       ...(estado === "Inactiva" && {
@@ -239,6 +257,7 @@ const HojaResponsabilidadForm = () => {
                             <option value="">-- Seleccione tipo de hoja --</option>
                             <option value="Computo">Hoja responsabilidad cómputo</option>
                             <option value="Movil">Hoja responsabilidad móvil</option>
+                            <option value="Externo">Préstamo externo</option>
                           </select>
                         </div>
 
@@ -349,24 +368,53 @@ const HojaResponsabilidadForm = () => {
                           ))}
                         </div>
                       </div>
+
+                      {modoExterno && (
+                        <div className="mt-4">
+                          <label className="text-xs font-medium text-slate-600">Proyecto</label>
+                          <input
+                            value={proyecto}
+                            onChange={(e) => setProyecto(e.target.value)}
+                            placeholder="Nombre del proyecto"
+                            className="mt-1 w-full rounded-xl border border-amber-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
 
                   <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                    <div className="px-5 py-4 border-b border-slate-100">
-                      <h3 className="text-base font-semibold text-slate-900">Agregar empleado</h3>
-                      <p className="text-sm text-slate-600">Ingresá el código y agregalo a la hoja.</p>
+                    <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+                      <div>
+                        <h3 className="text-base font-semibold text-slate-900">Agregar empleado</h3>
+                        <p className="text-sm text-slate-600">Ingresá el código y agregalo a la hoja.</p>
+                      </div>
+                      <label className="flex items-center gap-2 cursor-pointer select-none">
+                        <span className="text-xs font-medium text-slate-600">Externo</span>
+                        <div
+                          onClick={() => {
+                            const siguiente = !modoExterno;
+                            setModoExterno(siguiente);
+                            setTipoHoja(siguiente ? "Externo" : "");
+                          }}
+                          className={`relative w-10 h-5 rounded-full transition-colors duration-200 ${modoExterno ? "bg-amber-500" : "bg-slate-300"}`}
+                        >
+                          <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${modoExterno ? "translate-x-5" : ""}`} />
+                        </div>
+                      </label>
                     </div>
 
                     <div className="p-5 space-y-4">
                       <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
                         <div className="sm:col-span-8">
-                          <label className="text-xs font-medium text-slate-600">Código de empleado</label>
+                          <label className="text-xs font-medium text-slate-600">
+                            {modoExterno ? "Código de empleado externo" : "Código de empleado"}
+                          </label>
                           <input
-                            placeholder="Ej: T03108"
+                            placeholder={modoExterno ? "Ej: EXT-001" : "Ej: T03108"}
                             value={empleadoCodigo}
                             onChange={(e) => setEmpleadoCodigo(e.target.value)}
-                            className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                            className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm outline-none focus:ring-2 ${modoExterno ? "border-amber-300 focus:ring-amber-500 focus:border-amber-500" : "border-slate-300 focus:ring-emerald-500 focus:border-emerald-500"}`}
                           />
                         </div>
                         <div className="sm:col-span-4 flex items-end">

@@ -14,6 +14,7 @@ import {
   FaUserCheck,
   FaBoxOpen,
   FaPlus,
+  FaIdCard,
 } from "react-icons/fa";
 
 export default function Sidebar() {
@@ -26,6 +27,7 @@ export default function Sidebar() {
   const [modalSolvenciaOpen, setModalSolvenciaOpen] = useState(false);
   const [modalTrasladoOpen, setModalTrasladoOpen] = useState(false);
   const [suministrosOpen, setSuministrosOpen] = useState(false);
+  const [externosOpen, setExternosOpen] = useState(false);
   const [modalBajasActivoOpen, setModalBajasActivoOpen] = useState(false);
   const [modalTrasladoRetornoOpen, setModalTrasladoRetornoOpen] = useState(false);
   const [rol, setRol] = useState(null);
@@ -199,6 +201,28 @@ export default function Sidebar() {
               )}
               <Link to="/asignaciones/lista" className="flex items-center gap-2 hover:text-blue-300">
                 <FaClipboardList /> Historial
+              </Link>
+            </div>
+          </div>
+
+          <div>
+            <button
+              onClick={() => setExternosOpen(!externosOpen)}
+              className="flex items-center justify-between w-full font-semibold text-lg px-3 py-2 rounded-lg hover:bg-white/10 transition-all duration-300"
+            >
+              <span className="flex items-center gap-3">
+                <FaIdCard /> Externos
+              </span>
+              {externosOpen ? <FaChevronUp /> : <FaChevronDown />}
+            </button>
+            <div className={`ml-6 mt-1 flex flex-col gap-2 overflow-hidden transition-all duration-500 ${externosOpen ? "max-h-32" : "max-h-0"}`}>
+              {rol === "Administrador" && (
+                <Link to="/externos/crear" className="flex items-center gap-2 hover:text-blue-300">
+                  <FaPlus /> Registrar
+                </Link>
+              )}
+              <Link to="/externos/lista" className="flex items-center gap-2 hover:text-blue-300">
+                <FaClipboardList /> Lista
               </Link>
             </div>
           </div>

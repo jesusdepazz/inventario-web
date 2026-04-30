@@ -32,6 +32,9 @@ import EliminarSuministros from "./components/suministros/EliminarMovimientos";
 import CrearTrasladoRetorno from "./components/formatos/TrasladosRetorno/TrasladosRetorno";
 import TrasladosRetornoLista from "./components/formatos/TrasladosRetorno/TrasladosRetornoLista";
 import ProtectedRoute from "./components/ProtectedRout";
+import ListaEmpleadosExternos from "./components/empleadosExternos/ListaEmpleadosExternos";
+import CrearEmpleadoExterno from "./components/empleadosExternos/CrearEmpleadoExterno";
+import EditarEmpleadoExterno from "./components/empleadosExternos/EditarEmpleadoExterno";
 
 function RequireAuth({ children }) {
   const isAuthenticated = useIsAuthenticated();
@@ -97,6 +100,10 @@ function AppRoutes() {
           {/* FORMATOS/TRASLADOSRETORNO */}
           <Route path="/formatos/trasladosRetorno/crear" element={<CrearTrasladoRetorno />} />
           <Route path="/formatos/trasladosRetorno/lista" element={<TrasladosRetornoLista />} />
+          {/* EMPLEADOS EXTERNOS */}
+          <Route path="/externos/lista" element={<ListaEmpleadosExternos />} />
+          <Route path="/externos/crear" element={<CrearEmpleadoExterno />} />
+          <Route path="/externos/editar/:id" element={<EditarEmpleadoExterno />} />
           {/* SUMINISTROS */}
           <Route path="/suministros" element={<Suministros />} />
           <Route path="/suministros/inventario" element={<SuministrosInventario />} />
