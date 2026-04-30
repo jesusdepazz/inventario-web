@@ -156,16 +156,17 @@ const generarPDFHojaExterno = async (hoja) => {
 
   const empleados     = hoja.empleados ?? [];
   const empleadosBody = empleados.map((emp) => [
-    emp.nombre      ?? "—",
-    emp.puesto      ?? "—",
-    emp.departamento ?? "—",   
+    emp.empleadoId   ?? "—",
+    emp.nombre       ?? "—",
+    emp.puesto       ?? "—",
+    emp.departamento ?? "—",
   ]);
 
   autoTable(doc, {
     ...autoTableDefault,
     startY: yActual,
-    head: [["Persona responsable", "Cargo", "DPI"]],
-    body: empleadosBody.length > 0 ? empleadosBody : [["—", "—", "—"]],
+    head: [["Código de empleado", "Persona responsable", "Cargo", "DPI"]],
+    body: empleadosBody.length > 0 ? empleadosBody : [["—", "—", "—", "—"]],
     styles: {
       fontSize: 7,
       cellPadding: 1.5,
@@ -180,8 +181,9 @@ const generarPDFHojaExterno = async (hoja) => {
     },
     columnStyles: {
       0: { cellWidth: "auto" },
-      1: { cellWidth: 50 },
-      2: { cellWidth: 40 },
+      1: { cellWidth: 35 },
+      2: { cellWidth: 45 },
+      3: { cellWidth: 35 },
     },
   });
 
