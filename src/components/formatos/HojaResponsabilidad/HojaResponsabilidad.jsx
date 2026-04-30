@@ -195,6 +195,7 @@ const HojaResponsabilidadForm = () => {
 
     try {
       const res = await HojasService.crearHoja(payload);
+      console.log(payload.Equipos);
       window.alert("Hoja creada con éxito! ID: " + (res?.Id ?? ""));
     } catch (error) {
       if (error?.mensaje) window.alert("Error del servidor: " + error.mensaje);

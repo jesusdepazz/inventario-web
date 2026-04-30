@@ -58,16 +58,20 @@ export default function TrasladosLista() {
   const filtrados = useMemo(() => {
     const qq = q.trim().toLowerCase();
 
-    return traslados.filter((t) => {
-      const f = fechaISO(t.fechaEmision);
+    return [...traslados]
+      .sort((a, b) => {
+        return Number(a.no) - Number(b.no);
+      })
+      .filter((t) => {
+        const f = fechaISO(t.fechaEmision);
 
-      const okDesde = !desde || (f && f >= desde);
-      const okHasta = !hasta || (f && f <= hasta);
+        const okDesde = !desde || (f && f >= desde);
+        const okHasta = !hasta || (f && f <= hasta);
 
-      const okQ = !qq || textoTraslado(t).includes(qq);
+        const okQ = !qq || textoTraslado(t).includes(qq);
 
-      return okDesde && okHasta && okQ;
-    });
+        return okDesde && okHasta && okQ;
+      });
   }, [traslados, q, desde, hasta]);
 
   const limpiar = () => {
