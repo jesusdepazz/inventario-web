@@ -241,9 +241,11 @@ const generarPDFHoja = async (hoja) => {
 
   yActual += motivoHeight + 1;
 
+  const fechaAsignacion = hoja.fechaCreacion ? formatFecha(hoja.fechaCreacion) : "—";
+
   const equipos = hoja.equipos ?? [];
   const equiposBody = equipos.map((eq) => [
-    eq.fechaIngreso ? formatFecha(eq.fechaIngreso) : "—",
+    fechaAsignacion,
     eq.codificacion ?? "—",
     eq.tipoEquipo ?? "—",
     eq.marca ?? "—",
@@ -436,9 +438,9 @@ const generarPDFHoja = async (hoja) => {
   ];
 
   const firmasPorFila = 3;
-  const alturaFirma = 35;
+  const alturaFirma = 25;
   const totalFilas = Math.ceil(firmas.length / firmasPorFila);
-  const alturaTotalFirmas = totalFilas * alturaFirma + 10;
+  const alturaTotalFirmas = totalFilas * alturaFirma + 8;
 
   yActual = await ensureSpace(yActual, alturaTotalFirmas, numeroHoja);
 
@@ -461,20 +463,21 @@ const generarPDFHoja = async (hoja) => {
     const y = inicioFirmasY + fila * alturaFirma;
 
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(10);
+    doc.setFontSize(9);
     doc.setTextColor(0, 0, 0);
     doc.text("(F):________________", x, y, { align: "center" });
 
-    doc.setFontSize(8);
-    doc.text(firmas[i].label, x, y + 6, { align: "center" });
+    doc.setFontSize(7);
+    doc.text(firmas[i].label, x, y + 5, { align: "center" });
 
     doc.setTextColor(0, 102, 204);
-    doc.text(firmas[i].nombre ?? "", x, y + 12, { align: "center" });
+    doc.setFontSize(8);
+    doc.text(firmas[i].nombre ?? "", x, y + 10, { align: "center" });
 
     doc.setTextColor(0, 0, 0);
-    doc.setFontSize(8);
+    doc.setFontSize(7);
     doc.setFont("helvetica", "normal");
-    doc.text(firmas[i].puesto ?? "", x, y + 18, { align: "center", maxWidth: 40 });
+    doc.text(firmas[i].puesto ?? "", x, y + 15, { align: "center", maxWidth: 45 });
   }
 
   yActual = inicioFirmasY + alturaTotalFirmas;

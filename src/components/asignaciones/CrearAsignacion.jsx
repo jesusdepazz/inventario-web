@@ -56,7 +56,10 @@ export default function CrearAsignacion() {
         });
       }
     } catch (error) {
-      alert(modoExterno ? "Empleado externo no encontrado" : "Empleado no encontrado");
+      const msg = error?.response?.data?.mensaje
+        ?? error?.response?.data
+        ?? (modoExterno ? "Empleado externo no encontrado" : "Empleado no encontrado");
+      alert(typeof msg === "string" ? msg : JSON.stringify(msg));
     } finally {
       setLoadingEmpleado(false);
     }
