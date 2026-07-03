@@ -40,6 +40,7 @@ const ListaAsignaciones = () => {
         a.puesto,
         a.departamento,
         a.codificacionEquipo,
+        a.ubicacion,
         fecha,
       ]
         .map(normalizar)
@@ -87,8 +88,8 @@ const ListaAsignaciones = () => {
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Código, nombre, puesto, depto, equipo..."
-                className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                placeholder="Código, nombre, puesto, depto, equipo, ubicación..."
+                className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800"
               />
             </div>
 
@@ -113,6 +114,7 @@ const ListaAsignaciones = () => {
                     <th className="px-4 py-3 font-semibold">Puesto</th>
                     <th className="px-4 py-3 font-semibold">Departamento</th>
                     <th className="px-4 py-3 font-semibold">Equipo</th>
+                    <th className="px-4 py-3 font-semibold">Ubicación</th>
                     <th className="px-4 py-3 font-semibold">Fecha</th>
                   </tr>
                 </thead>
@@ -120,7 +122,7 @@ const ListaAsignaciones = () => {
                 <tbody className="divide-y divide-slate-100">
                   {loading ? (
                     <tr>
-                      <td colSpan={7} className="px-4 py-10 text-center text-slate-500">
+                      <td colSpan={8} className="px-4 py-10 text-center text-slate-500">
                         Cargando...
                       </td>
                     </tr>
@@ -137,6 +139,7 @@ const ListaAsignaciones = () => {
                         <td className="px-4 py-3 text-slate-700">{asig.puesto}</td>
                         <td className="px-4 py-3 text-slate-700">{asig.departamento}</td>
                         <td className="px-4 py-3 text-slate-700">{asig.codificacionEquipo}</td>
+                        <td className="px-4 py-3 text-slate-700">{asig.ubicacion || "-"}</td>
                         <td className="px-4 py-3 text-slate-700">
                           {asig.fechaAsignacion
                             ? new Date(asig.fechaAsignacion).toLocaleDateString()
@@ -146,7 +149,7 @@ const ListaAsignaciones = () => {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={7} className="px-4 py-10 text-center text-slate-500">
+                      <td colSpan={8} className="px-4 py-10 text-center text-slate-500">
                         No hay asignaciones registradas.
                       </td>
                     </tr>

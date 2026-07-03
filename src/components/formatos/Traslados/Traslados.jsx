@@ -379,7 +379,7 @@ export default function CrearTraslado() {
                     name="Equipo"
                     value={form.Equipo}
                     onChange={handleChange}
-                    className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                    className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-900"
                   />
                 </div>
 
@@ -387,7 +387,7 @@ export default function CrearTraslado() {
                   <button
                     type="button"
                     onClick={() => buscarEquipo(form.Equipo)}
-                    className="w-full px-5 py-3 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition"
+                    className="w-full px-5 py-3 rounded-xl bg-blue-900 text-white font-semibold hover:bg-blue-950 transition"
                   >
                     Buscar
                   </button>

@@ -1,9 +1,10 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import EmpleadosService from "../../services/EmpleadosServices";
 import EquiposService from "../../services/EquiposServices";
 import AsignacionesService from "../../services/AsignacionesServices";
 import EmpleadosExternosService from "../../services/EmpleadosExternosServices";
+import UbicacionesService from "../../services/UbicacionesServices";
 
 export default function CrearAsignacion() {
   const navigate = useNavigate();
@@ -23,6 +24,22 @@ export default function CrearAsignacion() {
   const [loadingEmpleado, setLoadingEmpleado] = useState(false);
   const [loadingEquipo, setLoadingEquipo] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [ubicaciones, setUbicaciones] = useState([]);
+  const [ubicacionMasiva, setUbicacionMasiva] = useState("");
+
+  useEffect(() => {
+    const cargarUbicaciones = async () => {
+      try {
+        const { data } = await UbicacionesService.obtenerTodas();
+        const lista = Array.isArray(data) ? data : Array.isArray(data?.$values) ? data.$values : [];
+        setUbicaciones(lista);
+      } catch {
+        // Silencioso: el selector de ubicación queda vacío si falla la carga.
+      }
+    };
+
+    cargarUbicaciones();
+  }, []);
 
   const totalAsignaciones = useMemo(
     () => empleadosAsignados.length * equiposAsignados.length,
@@ -95,7 +112,10 @@ export default function CrearAsignacion() {
       const response = await EquiposService.obtenerPorCodificacion(cod);
       const data = response.data;
 
-      setEquiposAsignados((prev) => [...prev, { codificacion: cod, ...data }]);
+      setEquiposAsignados((prev) => [
+        ...prev,
+        { codificacion: cod, ...data, ubicacion: data?.ubicacion || "" },
+      ]);
       setCodificacion("");
     } catch (error) {
       alert("Equipo no encontrado");
@@ -122,6 +142,7 @@ export default function CrearAsignacion() {
               puesto: emp.puesto,
               departamento: emp.departamento,
               codificacionEquipo: eq.codificacion,
+              ubicacion: eq.ubicacion || null,
             })
           );
         });
@@ -136,6 +157,10 @@ export default function CrearAsignacion() {
     } finally {
       setSaving(false);
     }
+  };
+
+  const aplicarUbicacionATodos = () => {
+    setEquiposAsignados((prev) => prev.map((eq) => ({ ...eq, ubicacion: ubicacionMasiva })));
   };
 
   const onEnterEmpleado = (e) => e.key === "Enter" && buscarEmpleado();
@@ -202,7 +227,7 @@ export default function CrearAsignacion() {
                           setEmpleadoActual({ ...empleadoActual, codigo: e.target.value })
                         }
                         onKeyDown={onEnterEmpleado}
-                        className={`mt-1 w-full rounded-lg border bg-white px-3 py-2 text-sm outline-none focus:ring-2 ${modoExterno ? "border-amber-300 focus:ring-amber-500" : "border-slate-300 focus:ring-indigo-500"}`}
+                        className={`mt-1 w-full rounded-lg border bg-white px-3 py-2 text-sm outline-none focus:ring-2 ${modoExterno ? "border-amber-300 focus:ring-amber-500" : "border-slate-300 focus:ring-blue-800"}`}
                         placeholder={modoExterno ? "Ej: EXT-001" : "Ej: T03108"}
                       />
                     </div>
@@ -212,7 +237,7 @@ export default function CrearAsignacion() {
                         type="button"
                         onClick={buscarEmpleado}
                         disabled={loadingEmpleado}
-                        className="w-full rounded-lg bg-indigo-600 text-white px-3 py-2 text-sm font-semibold hover:bg-indigo-700 disabled:opacity-60"
+                        className="w-full rounded-lg bg-blue-900 text-white px-3 py-2 text-sm font-semibold hover:bg-blue-950 disabled:opacity-60"
                       >
                         {loadingEmpleado ? "..." : "Buscar"}
                       </button>
@@ -253,7 +278,7 @@ export default function CrearAsignacion() {
                         value={codificacion}
                         onChange={(e) => setCodificacion(e.target.value)}
                         onKeyDown={onEnterEquipo}
-                        className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                        className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800"
                         placeholder="Ej: EQ-IT-000123"
                       />
                     </div>
@@ -262,7 +287,7 @@ export default function CrearAsignacion() {
                         type="button"
                         onClick={buscarEquipo}
                         disabled={loadingEquipo}
-                        className="w-full rounded-lg bg-indigo-600 text-white px-3 py-2 text-sm font-semibold hover:bg-indigo-700 disabled:opacity-60"
+                        className="w-full rounded-lg bg-blue-900 text-white px-3 py-2 text-sm font-semibold hover:bg-blue-950 disabled:opacity-60"
                       >
                         {loadingEquipo ? "..." : "Agregar"}
                       </button>
@@ -345,19 +370,48 @@ export default function CrearAsignacion() {
                   </button>
                 </div>
 
+                <div className="px-4 py-3 border-b border-slate-100 bg-slate-50 flex items-end gap-2">
+                  <div className="flex-1">
+                    <label className="text-xs font-medium text-slate-600">
+                      Ubicación para todos los equipos
+                    </label>
+                    <select
+                      value={ubicacionMasiva}
+                      onChange={(e) => setUbicacionMasiva(e.target.value)}
+                      className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-xs outline-none focus:ring-2 focus:ring-blue-800"
+                    >
+                      <option value="">Sin ubicación</option>
+                      {ubicaciones.map((u) => (
+                        <option key={u.id ?? u.nombre} value={u.nombre}>
+                          {u.nombre}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={aplicarUbicacionATodos}
+                    disabled={equiposAsignados.length === 0}
+                    className="rounded-lg bg-blue-900 text-white px-3 py-1.5 text-xs font-semibold hover:bg-blue-950 disabled:opacity-40"
+                  >
+                    Aplicar a todos
+                  </button>
+                </div>
+
                 <div className="max-h-44 overflow-auto">
                   <table className="min-w-full text-xs">
                     <thead className="sticky top-0 bg-slate-100 border-b border-slate-200">
                       <tr className="text-left text-slate-700">
                         <th className="px-3 py-2 font-semibold">Codificación</th>
                         <th className="px-3 py-2 font-semibold">Modelo</th>
+                        <th className="px-3 py-2 font-semibold">Ubicación</th>
                         <th className="px-3 py-2 font-semibold w-16">Acción</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
                       {equiposAsignados.length === 0 ? (
                         <tr>
-                          <td colSpan={3} className="px-3 py-6 text-slate-500 text-center">
+                          <td colSpan={4} className="px-3 py-6 text-slate-500 text-center">
                             Vacío
                           </td>
                         </tr>
@@ -366,6 +420,7 @@ export default function CrearAsignacion() {
                           <tr key={`${eq.codificacion}-${idx}`} className="hover:bg-slate-50">
                             <td className="px-3 py-2 font-semibold text-slate-900">{eq.codificacion}</td>
                             <td className="px-3 py-2 text-slate-700">{eq.modelo || "-"}</td>
+                            <td className="px-3 py-2 text-slate-700">{eq.ubicacion || "-"}</td>
                             <td className="px-3 py-2">
                               <button
                                 type="button"
@@ -401,7 +456,7 @@ export default function CrearAsignacion() {
                       type="button"
                       onClick={guardarAsignacion}
                       disabled={saving || totalAsignaciones === 0}
-                      className="rounded-lg bg-indigo-600 text-white px-4 py-2 text-sm font-semibold hover:bg-indigo-700 disabled:opacity-60"
+                      className="rounded-lg bg-blue-900 text-white px-4 py-2 text-sm font-semibold hover:bg-blue-950 disabled:opacity-60"
                     >
                       {saving ? "Guardando..." : "Crear"}
                     </button>

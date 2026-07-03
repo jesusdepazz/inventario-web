@@ -57,7 +57,7 @@ export default function EditarEmpleadoExterno() {
   return (
     <div className="flex justify-center px-4 py-10">
       <div className="bg-white p-6 rounded-xl shadow-md w-full max-w-2xl">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6 border-b border-indigo-300 pb-2">
+        <h1 className="text-2xl font-bold text-gray-800 mb-6 border-b border-blue-300 pb-2">
           Editar Empleado Externo
         </h1>
 

@@ -141,7 +141,7 @@ const EliminarEquipos = () => {
                 placeholder="Ej: EQ-IT-000123"
                 value={filtros.codificacion}
                 onChange={handleFiltroChange}
-                className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800"
               />
             </div>
 
@@ -167,7 +167,7 @@ const EliminarEquipos = () => {
                       placeholder={`Filtrar por ${campo}`}
                       value={filtros[campo]}
                       onChange={handleFiltroChange}
-                      className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800"
                     />
                   </div>
                 ))}
@@ -179,7 +179,7 @@ const EliminarEquipos = () => {
                     name="fechaExacta"
                     value={filtros.fechaExacta}
                     onChange={handleFiltroChange}
-                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800"
                   />
                 </div>
               </div>

@@ -103,7 +103,7 @@ export default function EliminarAsignacion() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Código, nombre, equipo, depto, puesto..."
-                className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800"
               />
             </div>
             <div className="flex gap-2 justify-end">

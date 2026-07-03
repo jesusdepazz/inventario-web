@@ -21,12 +21,16 @@ export default function Movimientos() {
   const [sugerencias, setSugerencias] = useState([]);
   const [openSug, setOpenSug] = useState(false);
 
+  const [suministroQuery, setSuministroQuery] = useState("");
+  const [openSugSuministro, setOpenSugSuministro] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [mensaje, setMensaje] = useState("");
   const [mensajeTipo, setMensajeTipo] = useState("ok");
 
   const debounceRef = useRef(null);
   const blurRef = useRef(null);
+  const blurSuministroRef = useRef(null);
 
   useEffect(() => {
     const cargarDatos = async () => {
@@ -53,6 +57,14 @@ export default function Movimientos() {
     if (!id) return null;
     return suministros.find((s) => s.id === id) || null;
   }, [formData.suministroId, suministros]);
+
+  const sugerenciasSuministros = useMemo(() => {
+    const q = suministroQuery.trim().toLowerCase();
+    if (!q) return [];
+    return suministros
+      .filter((s) => s.nombreProducto?.toLowerCase().includes(q))
+      .slice(0, 8);
+  }, [suministroQuery, suministros]);
 
   const limpiarMensaje = () => {
     setMensaje("");
@@ -108,6 +120,20 @@ export default function Movimientos() {
     }));
     setSugerencias([]);
     setOpenSug(false);
+  };
+
+  const handleSuministroQueryChange = (e) => {
+    const value = e.target.value;
+    setSuministroQuery(value);
+    setFormData((prev) => ({ ...prev, suministroId: "" }));
+    setOpenSugSuministro(value.trim().length > 0);
+    if (mensaje) limpiarMensaje();
+  };
+
+  const seleccionarSuministro = (s) => {
+    setFormData((prev) => ({ ...prev, suministroId: s.id }));
+    setSuministroQuery(s.nombreProducto || "");
+    setOpenSugSuministro(false);
   };
 
   const handleTipoMovimiento = (val) => {
@@ -176,6 +202,8 @@ export default function Movimientos() {
       });
       setSugerencias([]);
       setOpenSug(false);
+      setSuministroQuery("");
+      setOpenSugSuministro(false);
 
       try {
         const suministrosRes = await SuministrosService.obtenerTodos();
@@ -279,25 +307,55 @@ export default function Movimientos() {
                   </div>
                 </div>
 
-                <div className="md:col-span-8">
+                <div className="md:col-span-8 relative">
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Suministro
                   </label>
 
-                  <select
-                    name="suministroId"
-                    value={formData.suministroId}
-                    onChange={handleChange}
-                    required
+                  <input
+                    type="text"
+                    value={suministroQuery}
+                    onChange={handleSuministroQueryChange}
+                    onFocus={() => {
+                      if (sugerenciasSuministros.length > 0) setOpenSugSuministro(true);
+                    }}
+                    onBlur={() => {
+                      blurSuministroRef.current = setTimeout(() => setOpenSugSuministro(false), 150);
+                    }}
+                    autoComplete="off"
+                    placeholder="Escribí el nombre del suministro..."
                     className="w-full rounded-xl border border-gray-300 bg-white p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  >
-                    <option value="">Seleccione un suministro</option>
-                    {suministros.map((s) => (
-                      <option key={s.id} value={s.id}>
-                        {s.nombreProducto} (Actual: {s.cantidadActual})
-                      </option>
-                    ))}
-                  </select>
+                  />
+
+                  {openSugSuministro && sugerenciasSuministros.length > 0 && (
+                    <ul
+                      className="absolute left-0 right-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-lg max-h-56 overflow-auto z-20"
+                      onMouseDown={() => {
+                        if (blurSuministroRef.current) clearTimeout(blurSuministroRef.current);
+                      }}
+                    >
+                      {sugerenciasSuministros.map((s) => (
+                        <li
+                          key={s.id}
+                          className="px-3 py-2 hover:bg-gray-50 cursor-pointer flex items-center justify-between gap-3"
+                          onClick={() => seleccionarSuministro(s)}
+                        >
+                          <span className="font-semibold text-gray-900">{s.nombreProducto}</span>
+                          <span className="text-xs text-gray-500 whitespace-nowrap">
+                            Actual: {s.cantidadActual}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+
+                  {openSugSuministro &&
+                    suministroQuery.trim().length > 0 &&
+                    sugerenciasSuministros.length === 0 && (
+                      <p className="mt-1 text-xs text-gray-500">
+                        No se encontraron suministros con ese nombre.
+                      </p>
+                    )}
 
                   {suministroSeleccionado && (
                     <div className="mt-3 rounded-xl border border-gray-200 bg-gray-50 p-3 flex items-start gap-3">

@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import {
@@ -15,10 +15,37 @@ import {
   FaBoxOpen,
   FaPlus,
   FaIdCard,
+  FaTimes,
 } from "react-icons/fa";
 
-export default function Sidebar() {
+const navLinkClass = (active) =>
+  `flex items-center gap-3 font-semibold text-[15px] px-3 py-2.5 rounded-xl transition-all duration-200 ${
+    active
+      ? "bg-white text-blue-900 shadow-md"
+      : "text-blue-50/90 hover:bg-white/10 hover:text-white"
+  }`;
+
+const categoryButtonClass =
+  "flex items-center justify-between w-full font-semibold text-[15px] px-3 py-2.5 rounded-xl text-blue-50/90 hover:bg-white/10 hover:text-white transition-all duration-200";
+
+const subLinkClass = (active) =>
+  `flex items-center gap-2 text-sm py-1 transition-colors ${
+    active
+      ? "text-white font-semibold"
+      : "text-blue-100/70 hover:text-white"
+  }`;
+
+const modalPanelClass =
+  "relative bg-white rounded-2xl shadow-2xl p-6 w-96 border border-slate-100";
+const modalTitleClass = "text-xl font-bold mb-6 text-slate-900 text-center";
+const modalPrimaryBtnClass =
+  "w-full bg-blue-900 text-white py-2 px-4 rounded-lg hover:bg-blue-950 transition-colors";
+const modalCancelBtnClass =
+  "w-full bg-slate-200 text-slate-700 py-2 px-4 rounded-lg hover:bg-slate-300 transition-colors";
+
+export default function Sidebar({ open = false, onClose = () => {} }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const [equiposOpen, setEquiposOpen] = useState(false);
   const [asignacionesOpen, setAsignacionesOpen] = useState(false);
   const [mantenimientosOpen, setMantenimientosOpen] = useState(false);
@@ -32,10 +59,17 @@ export default function Sidebar() {
   const [modalTrasladoRetornoOpen, setModalTrasladoRetornoOpen] = useState(false);
   const [rol, setRol] = useState(null);
 
+  const isActive = (path) => location.pathname === path;
+
   useEffect(() => {
     const storedRol = localStorage.getItem("rol");
     setRol(storedRol);
   }, []);
+
+  useEffect(() => {
+    onClose();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
 
   useEffect(() => {
     const open =
@@ -100,47 +134,63 @@ export default function Sidebar() {
   const closeTrasladoRetornoModal = () => setModalTrasladoRetornoOpen(false);
 
   return (
-    <div className="bg-gradient-to-b from-blue-900 via-blue-800 to-blue-700 text-white w-80 h-screen fixed flex flex-col shadow-2xl">
-      <div className="p-6 pb-4 shrink-0">
+    <>
+      {open && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={onClose}
+        />
+      )}
+
+      <div
+        className={`bg-gradient-to-b from-blue-950 via-blue-900 to-blue-900 text-white w-80 h-screen fixed flex flex-col shadow-xl z-50 transition-transform duration-300 lg:translate-x-0 ${
+          open ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+      <div className="px-6 pt-9 pb-5 shrink-0 relative">
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Cerrar menú"
+          className="absolute top-4 right-4 lg:hidden p-2 rounded-lg text-white/80 hover:bg-white/10 hover:text-white"
+        >
+          <FaTimes />
+        </button>
         <div className="flex flex-col items-center">
-          <img src="/logo_guandy.png" alt="Logo Guandy" className="h-16 mb-3" />
-          <h2 className="text-xl font-extrabold tracking-wider">INVENTARIO</h2>
-          <hr className="border-blue-400 w-3/4 mt-4" />
+          <img src="/logo_guandy.png" alt="Logo Guandy" className="h-16 mb-3 drop-shadow-lg" />
+          <h2 className="text-xl font-extrabold tracking-wider text-white">
+            INVENTARIO
+          </h2>
+          <hr className="border-blue-400/30 w-3/4 mt-4" />
         </div>
       </div>
 
       <div className="flex-1 overflow-y-auto px-6 pb-4 min-h-0">
-        <nav className="flex flex-col gap-3">
-          <Link
-            to="/inicio"
-            className="flex items-center gap-3 font-semibold text-lg px-3 py-2 rounded-lg hover:bg-white/10 hover:translate-x-2 transition-all duration-300"
-          >
+        <nav className="flex flex-col gap-2">
+          <Link to="/inicio" className={navLinkClass(isActive("/inicio"))}>
             <FaHome /> Inicio
           </Link>
 
           <div>
-            <button
-              onClick={() => setEquiposOpen(!equiposOpen)}
-              className="flex items-center justify-between w-full font-semibold text-lg px-3 py-2 rounded-lg hover:bg-white/10 transition-all duration-300"
-            >
+            <button onClick={() => setEquiposOpen(!equiposOpen)} className={categoryButtonClass}>
               <span className="flex items-center gap-3">
                 <FaLaptop /> Equipos
               </span>
-              {equiposOpen ? <FaChevronUp /> : <FaChevronDown />}
+              {equiposOpen ? <FaChevronUp className="text-xs" /> : <FaChevronDown className="text-xs" />}
             </button>
             <div className={`ml-6 mt-1 flex flex-col gap-2 overflow-hidden transition-all duration-500 ${equiposOpen ? "max-h-40" : "max-h-0"}`}>
-              <Link to="/equipos/inventario" className="flex items-center gap-2 hover:text-blue-300">
+              <Link to="/equipos/inventario" className={subLinkClass(isActive("/equipos/inventario"))}>
                 <FaClipboardList /> Inventario
               </Link>
               {rol === "Administrador" && (
                 <>
-                  <Link to="/equipos/crear" className="flex items-center gap-2 hover:text-blue-300">
+                  <Link to="/equipos/crear" className={subLinkClass(isActive("/equipos/crear"))}>
                     <FaUpload /> Ingresar
                   </Link>
-                  <Link to="/equipos/editar" className="flex items-center gap-2 hover:text-blue-300">
+                  <Link to="/equipos/editar" className={subLinkClass(isActive("/equipos/editar"))}>
                     <FaEdit /> Editar
                   </Link>
-                  <Link to="/equipos/eliminar" className="flex items-center gap-2 hover:text-blue-300">
+                  <Link to="/equipos/eliminar" className={subLinkClass(isActive("/equipos/eliminar"))}>
                     <FaTrash /> Eliminar
                   </Link>
                 </>
@@ -149,28 +199,25 @@ export default function Sidebar() {
           </div>
 
           <div>
-            <button
-              onClick={() => setSuministrosOpen(!suministrosOpen)}
-              className="flex items-center justify-between w-full font-semibold text-lg px-3 py-2 rounded-lg hover:bg-white/10 transition-all duration-300"
-            >
+            <button onClick={() => setSuministrosOpen(!suministrosOpen)} className={categoryButtonClass}>
               <span className="flex items-center gap-3">
                 <FaBoxOpen /> Suministros
               </span>
-              {suministrosOpen ? <FaChevronUp /> : <FaChevronDown />}
+              {suministrosOpen ? <FaChevronUp className="text-xs" /> : <FaChevronDown className="text-xs" />}
             </button>
             <div className={`ml-6 mt-1 flex flex-col gap-2 overflow-hidden transition-all duration-500 ${suministrosOpen ? "max-h-48" : "max-h-0"}`}>
               {rol === "Administrador" && (
                 <>
-                  <Link to="/suministros" className="flex items-center gap-2 hover:text-blue-300">
+                  <Link to="/suministros" className={subLinkClass(isActive("/suministros"))}>
                     <FaPlus /> Crear Suministro
                   </Link>
-                  <Link to="/suministros/inventario" className="flex items-center gap-2 hover:text-blue-300">
+                  <Link to="/suministros/inventario" className={subLinkClass(isActive("/suministros/inventario"))}>
                     <FaClipboardList /> Inventario de suministros
                   </Link>
-                  <Link to="/suministros/movimientos" className="flex items-center gap-2 hover:text-blue-300">
+                  <Link to="/suministros/movimientos" className={subLinkClass(isActive("/suministros/movimientos"))}>
                     <FaUpload /> Movimientos de suministros
                   </Link>
-                  <Link to="/suministros/eliminarMovimientos" className="flex items-center gap-2 hover:text-blue-300">
+                  <Link to="/suministros/eliminarMovimientos" className={subLinkClass(isActive("/suministros/eliminarMovimientos"))}>
                     <FaTrash /> Eliminar Movimientos
                   </Link>
                 </>
@@ -179,27 +226,24 @@ export default function Sidebar() {
           </div>
 
           <div>
-            <button
-              onClick={() => setAsignacionesOpen(!asignacionesOpen)}
-              className="flex items-center justify-between w-full font-semibold text-lg px-3 py-2 rounded-lg hover:bg-white/10 transition-all duration-300"
-            >
+            <button onClick={() => setAsignacionesOpen(!asignacionesOpen)} className={categoryButtonClass}>
               <span className="flex items-center gap-3">
                 <FaUserCheck /> Asignaciones
               </span>
-              {asignacionesOpen ? <FaChevronUp /> : <FaChevronDown />}
+              {asignacionesOpen ? <FaChevronUp className="text-xs" /> : <FaChevronDown className="text-xs" />}
             </button>
             <div className={`ml-6 mt-1 flex flex-col gap-2 overflow-hidden transition-all duration-500 ${asignacionesOpen ? "max-h-32" : "max-h-0"}`}>
               {rol === "Administrador" && (
                 <>
-                  <Link to="/asignaciones/crear" className="flex items-center gap-2 hover:text-blue-300">
+                  <Link to="/asignaciones/crear" className={subLinkClass(isActive("/asignaciones/crear"))}>
                     <FaUpload /> Asignar
                   </Link>
-                  <Link to="/asignaciones/eliminar" className="flex items-center gap-2 hover:text-blue-300">
+                  <Link to="/asignaciones/eliminar" className={subLinkClass(isActive("/asignaciones/eliminar"))}>
                     <FaTrash /> Desasignar
                   </Link>
                 </>
               )}
-              <Link to="/asignaciones/lista" className="flex items-center gap-2 hover:text-blue-300">
+              <Link to="/asignaciones/lista" className={subLinkClass(isActive("/asignaciones/lista"))}>
                 <FaClipboardList /> Historial
               </Link>
             </div>
@@ -207,20 +251,17 @@ export default function Sidebar() {
 
           {rol === "Administrador" && (
             <div>
-              <button
-                onClick={() => setExternosOpen(!externosOpen)}
-                className="flex items-center justify-between w-full font-semibold text-lg px-3 py-2 rounded-lg hover:bg-white/10 transition-all duration-300"
-              >
+              <button onClick={() => setExternosOpen(!externosOpen)} className={categoryButtonClass}>
                 <span className="flex items-center gap-3">
                   <FaIdCard /> Externos
                 </span>
-                {externosOpen ? <FaChevronUp /> : <FaChevronDown />}
+                {externosOpen ? <FaChevronUp className="text-xs" /> : <FaChevronDown className="text-xs" />}
               </button>
               <div className={`ml-6 mt-1 flex flex-col gap-2 overflow-hidden transition-all duration-500 ${externosOpen ? "max-h-32" : "max-h-0"}`}>
-                <Link to="/externos/crear" className="flex items-center gap-2 hover:text-blue-300">
+                <Link to="/externos/crear" className={subLinkClass(isActive("/externos/crear"))}>
                   <FaPlus /> Registrar
                 </Link>
-                <Link to="/externos/lista" className="flex items-center gap-2 hover:text-blue-300">
+                <Link to="/externos/lista" className={subLinkClass(isActive("/externos/lista"))}>
                   <FaClipboardList /> Lista
                 </Link>
               </div>
@@ -228,59 +269,50 @@ export default function Sidebar() {
           )}
 
           <div>
-            <button
-              onClick={() => setMantenimientosOpen(!mantenimientosOpen)}
-              className="flex items-center justify-between w-full font-semibold text-lg px-3 py-2 rounded-lg hover:bg-white/10 transition-all duration-300"
-            >
+            <button onClick={() => setMantenimientosOpen(!mantenimientosOpen)} className={categoryButtonClass}>
               <span className="flex items-center gap-3">
                 <FaClipboardList /> Solicitudes
               </span>
-              {mantenimientosOpen ? <FaChevronUp /> : <FaChevronDown />}
+              {mantenimientosOpen ? <FaChevronUp className="text-xs" /> : <FaChevronDown className="text-xs" />}
             </button>
             <div className={`ml-6 mt-1 flex flex-col gap-2 overflow-hidden transition-all duration-500 ${mantenimientosOpen ? "max-h-32" : "max-h-0"}`}>
               {rol === "Administrador" && (
                 <>
-                  <Link to="/solicitudes/crear" className="flex items-center gap-2 hover:text-blue-300">
+                  <Link to="/solicitudes/crear" className={subLinkClass(isActive("/solicitudes/crear"))}>
                     <FaUpload /> Crear
                   </Link>
-                  <Link to="/solicitudes/eliminar" className="flex items-center gap-2 hover:text-blue-300">
+                  <Link to="/solicitudes/eliminar" className={subLinkClass(isActive("/solicitudes/eliminar"))}>
                     <FaTrash /> Eliminar
                   </Link>
                 </>
               )}
-              <Link to="/solicitudes/lista" className="flex items-center gap-2 hover:text-blue-300">
+              <Link to="/solicitudes/lista" className={subLinkClass(isActive("/solicitudes/lista"))}>
                 <FaClipboardList /> Historial
               </Link>
             </div>
           </div>
 
           <div>
-            <button
-              onClick={() => setFormatosOpen(!formatosOpen)}
-              className="flex items-center justify-between w-full font-semibold text-lg px-3 py-2 rounded-lg hover:bg-white/10 transition-all duration-300"
-            >
+            <button onClick={() => setFormatosOpen(!formatosOpen)} className={categoryButtonClass}>
               <span className="flex items-center gap-3">
                 <FaClipboardList /> Formatos
               </span>
-              {formatosOpen ? <FaChevronUp /> : <FaChevronDown />}
+              {formatosOpen ? <FaChevronUp className="text-xs" /> : <FaChevronDown className="text-xs" />}
             </button>
             <div className={`ml-6 mt-1 flex flex-col gap-2 overflow-hidden transition-all duration-500 ${formatosOpen ? "max-h-64" : "max-h-0"}`}>
-              <button onClick={openHojaModal} className="flex items-center gap-2 hover:text-blue-300 text-left">
+              <button onClick={openHojaModal} className={`${subLinkClass(false)} text-left`}>
                 <FaUpload /> Hoja de responsabilidad
               </button>
-              <button onClick={openSolvenciaModal} className="flex items-center gap-2 hover:text-blue-300 text-left">
+              <button onClick={openSolvenciaModal} className={`${subLinkClass(false)} text-left`}>
                 <FaUpload /> Solvencias
               </button>
-              <button
-                onClick={() => setModalTrasladoRetornoOpen(true)}
-                className="flex items-center gap-2 hover:text-blue-300 text-left"
-              >
+              <button onClick={() => setModalTrasladoRetornoOpen(true)} className={`${subLinkClass(false)} text-left`}>
                 <FaUpload /> Pase de salida con retorno
               </button>
-              <button onClick={openBajasActivoModal} className="flex items-center gap-2 hover:text-blue-300 text-left">
+              <button onClick={openBajasActivoModal} className={`${subLinkClass(false)} text-left`}>
                 <FaUpload /> Bajas
               </button>
-              <button onClick={openTrasladoModal} className="flex items-center gap-2 hover:text-blue-300 text-left">
+              <button onClick={openTrasladoModal} className={`${subLinkClass(false)} text-left`}>
                 <FaUpload /> Traslados
               </button>
             </div>
@@ -289,10 +321,10 @@ export default function Sidebar() {
       </div>
 
       <div className="p-6 pt-4 shrink-0">
-        <hr className="border-blue-400 my-4" />
+        <hr className="border-blue-400/30 mb-4" />
         <button
           onClick={handleLogout}
-          className="flex items-center gap-3 font-bold text-lg px-3 py-2 rounded-lg bg-red-600 hover:bg-red-700 transition-colors w-full justify-center"
+          className="flex items-center gap-3 font-bold text-lg px-3 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white transition-colors w-full justify-center"
         >
           <FaSignOutAlt /> Cerrar sesión
         </button>
@@ -303,27 +335,18 @@ export default function Sidebar() {
           {modalHojaOpen && (
             <div className="fixed inset-0 z-[9999] flex items-center justify-center">
               <div className="absolute inset-0 bg-black/60" onClick={closeHojaModal} />
-              <div className="relative bg-white rounded-2xl shadow-2xl p-6 w-96">
-                <h2 className="text-xl font-bold mb-6 text-gray-800 text-center">Selecciona una opción</h2>
+              <div className={modalPanelClass}>
+                <h2 className={modalTitleClass}>Selecciona una opción</h2>
                 <div className="flex flex-col gap-3">
                   {rol === "Administrador" && (
-                    <button
-                      onClick={() => handleHojaOption("/formatos/hojaderesponsabilidad")}
-                      className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
-                    >
+                    <button onClick={() => handleHojaOption("/formatos/hojaderesponsabilidad")} className={modalPrimaryBtnClass}>
                       Crear
                     </button>
                   )}
-                  <button
-                    onClick={() => handleHojaOption("/formatos/listahojasresponsabilidad")}
-                    className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
-                  >
+                  <button onClick={() => handleHojaOption("/formatos/listahojasresponsabilidad")} className={modalPrimaryBtnClass}>
                     Ver Historial
                   </button>
-                  <button
-                    onClick={closeHojaModal}
-                    className="w-full bg-gray-400 text-white py-2 px-4 rounded-lg hover:bg-gray-500"
-                  >
+                  <button onClick={closeHojaModal} className={modalCancelBtnClass}>
                     Cancelar
                   </button>
                 </div>
@@ -334,27 +357,18 @@ export default function Sidebar() {
           {modalSolvenciaOpen && (
             <div className="fixed inset-0 z-[9999] flex items-center justify-center">
               <div className="absolute inset-0 bg-black/60" onClick={closeSolvenciaModal} />
-              <div className="relative bg-white rounded-2xl shadow-2xl p-6 w-96">
-                <h2 className="text-xl font-bold mb-6 text-gray-800 text-center">Solvencias</h2>
+              <div className={modalPanelClass}>
+                <h2 className={modalTitleClass}>Solvencias</h2>
                 <div className="flex flex-col gap-3">
                   {rol === "Administrador" && (
-                    <button
-                      onClick={() => handleSolvenciaOption("/formatos/hojasSolvencias")}
-                      className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
-                    >
+                    <button onClick={() => handleSolvenciaOption("/formatos/hojasSolvencias")} className={modalPrimaryBtnClass}>
                       Crear
                     </button>
                   )}
-                  <button
-                    onClick={() => handleSolvenciaOption("/formatos/listahojasSolvencias")}
-                    className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
-                  >
+                  <button onClick={() => handleSolvenciaOption("/formatos/listahojasSolvencias")} className={modalPrimaryBtnClass}>
                     Ver Historial
                   </button>
-                  <button
-                    onClick={closeSolvenciaModal}
-                    className="w-full bg-gray-400 text-white py-2 px-4 rounded-lg hover:bg-gray-500"
-                  >
+                  <button onClick={closeSolvenciaModal} className={modalCancelBtnClass}>
                     Cancelar
                   </button>
                 </div>
@@ -365,27 +379,18 @@ export default function Sidebar() {
           {modalTrasladoOpen && (
             <div className="fixed inset-0 z-[9999] flex items-center justify-center">
               <div className="absolute inset-0 bg-black/60" onClick={closeTrasladoModal} />
-              <div className="relative bg-white rounded-2xl shadow-2xl p-6 w-96">
-                <h2 className="text-xl font-bold mb-6 text-gray-800 text-center">Traslados</h2>
+              <div className={modalPanelClass}>
+                <h2 className={modalTitleClass}>Traslados</h2>
                 <div className="flex flex-col gap-3">
                   {rol === "Administrador" && (
-                    <button
-                      onClick={() => handleTrasladoOption("/formatos/traslados/crear")}
-                      className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
-                    >
+                    <button onClick={() => handleTrasladoOption("/formatos/traslados/crear")} className={modalPrimaryBtnClass}>
                       Crear
                     </button>
                   )}
-                  <button
-                    onClick={() => handleTrasladoOption("/formatos/traslados/lista")}
-                    className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
-                  >
+                  <button onClick={() => handleTrasladoOption("/formatos/traslados/lista")} className={modalPrimaryBtnClass}>
                     Ver Historial
                   </button>
-                  <button
-                    onClick={closeTrasladoModal}
-                    className="w-full bg-gray-400 text-white py-2 px-4 rounded-lg hover:bg-gray-500"
-                  >
+                  <button onClick={closeTrasladoModal} className={modalCancelBtnClass}>
                     Cancelar
                   </button>
                 </div>
@@ -396,27 +401,18 @@ export default function Sidebar() {
           {modalBajasActivoOpen && (
             <div className="fixed inset-0 z-[9999] flex items-center justify-center">
               <div className="absolute inset-0 bg-black/60" onClick={closeBajasActivoModal} />
-              <div className="relative bg-white rounded-2xl shadow-2xl p-6 w-96">
-                <h2 className="text-xl font-bold mb-6 text-gray-800 text-center">Bajas de Activos</h2>
+              <div className={modalPanelClass}>
+                <h2 className={modalTitleClass}>Bajas de Activos</h2>
                 <div className="flex flex-col gap-3">
                   {rol === "Administrador" && (
-                    <button
-                      onClick={() => handleBajasActivoOption("/formatos/bajaAtivos")}
-                      className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
-                    >
+                    <button onClick={() => handleBajasActivoOption("/formatos/bajaAtivos")} className={modalPrimaryBtnClass}>
                       Crear Baja
                     </button>
                   )}
-                  <button
-                    onClick={() => handleBajasActivoOption("/formatos/ListabajaAtivos")}
-                    className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
-                  >
+                  <button onClick={() => handleBajasActivoOption("/formatos/ListabajaAtivos")} className={modalPrimaryBtnClass}>
                     Ver Historial
                   </button>
-                  <button
-                    onClick={closeBajasActivoModal}
-                    className="w-full bg-gray-400 text-white py-2 px-4 rounded-lg hover:bg-gray-500"
-                  >
+                  <button onClick={closeBajasActivoModal} className={modalCancelBtnClass}>
                     Cancelar
                   </button>
                 </div>
@@ -427,27 +423,18 @@ export default function Sidebar() {
           {modalTrasladoRetornoOpen && (
             <div className="fixed inset-0 z-[9999] flex items-center justify-center">
               <div className="absolute inset-0 bg-black/60" onClick={closeTrasladoRetornoModal} />
-              <div className="relative bg-white rounded-2xl shadow-2xl p-6 w-96">
-                <h2 className="text-xl font-bold mb-6 text-gray-800 text-center">Selecciona una opción</h2>
+              <div className={modalPanelClass}>
+                <h2 className={modalTitleClass}>Selecciona una opción</h2>
                 <div className="flex flex-col gap-3">
                   {rol === "Administrador" && (
-                    <button
-                      onClick={() => handleTrasladoRetornoOption("/formatos/trasladosRetorno/crear")}
-                      className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
-                    >
+                    <button onClick={() => handleTrasladoRetornoOption("/formatos/trasladosRetorno/crear")} className={modalPrimaryBtnClass}>
                       Crear Traslado Retorno
                     </button>
                   )}
-                  <button
-                    onClick={() => handleTrasladoRetornoOption("/formatos/trasladosRetorno/lista")}
-                    className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
-                  >
+                  <button onClick={() => handleTrasladoRetornoOption("/formatos/trasladosRetorno/lista")} className={modalPrimaryBtnClass}>
                     Ver Historial
                   </button>
-                  <button
-                    onClick={closeTrasladoRetornoModal}
-                    className="w-full bg-gray-400 text-white py-2 px-4 rounded-lg hover:bg-gray-500"
-                  >
+                  <button onClick={closeTrasladoRetornoModal} className={modalCancelBtnClass}>
                     Cancelar
                   </button>
                 </div>
@@ -457,6 +444,7 @@ export default function Sidebar() {
         </>,
         document.body
       )}
-    </div>
+      </div>
+    </>
   );
 }

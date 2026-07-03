@@ -103,7 +103,7 @@ const EditarEquipo = () => {
                     value={codificacion}
                     onChange={(e) => setCodificacion(e.target.value)}
                     onKeyDown={onEnterBuscar}
-                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800"
                   />
                 </div>
 
@@ -111,7 +111,7 @@ const EditarEquipo = () => {
                   <button
                     onClick={buscarEquipo}
                     disabled={loadingBuscar}
-                    className="w-full rounded-xl bg-indigo-600 text-white px-4 py-2 text-sm font-semibold hover:bg-indigo-700 disabled:opacity-60"
+                    className="w-full rounded-xl bg-blue-900 text-white px-4 py-2 text-sm font-semibold hover:bg-blue-950 disabled:opacity-60"
                   >
                     {loadingBuscar ? "Buscando..." : "Buscar"}
                   </button>
@@ -132,7 +132,7 @@ const EditarEquipo = () => {
                   </p>
                 </div>
 
-                <span className="inline-flex items-center rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100 px-3 py-1 text-xs font-semibold">
+                <span className="inline-flex items-center rounded-full bg-blue-50 text-blue-950 border border-blue-100 px-3 py-1 text-xs font-semibold">
                   {equipo.codificacion}
                 </span>
               </div>
@@ -165,7 +165,19 @@ const EditarEquipo = () => {
                       name="ordenCompra"
                       value={equipo.ordenCompra || ""}
                       onChange={handleChange}
-                      className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800"
+                    />
+                  </div>
+
+                  <div className="flex flex-col">
+                    <label className="text-xs font-semibold text-slate-600">
+                      Factura
+                    </label>
+                    <input
+                      name="factura"
+                      value={equipo.factura || ""}
+                      onChange={handleChange}
+                      className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800"
                     />
                   </div>
 
@@ -177,7 +189,7 @@ const EditarEquipo = () => {
                       name="marca"
                       value={equipo.marca || ""}
                       onChange={handleChange}
-                      className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800"
                     />
                   </div>
 
@@ -189,7 +201,7 @@ const EditarEquipo = () => {
                       name="modelo"
                       value={equipo.modelo || ""}
                       onChange={handleChange}
-                      className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800"
                     />
                   </div>
 
@@ -201,7 +213,7 @@ const EditarEquipo = () => {
                       name="serie"
                       value={equipo.serie || ""}
                       onChange={handleChange}
-                      className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800"
                     />
                   </div>
 
@@ -213,7 +225,7 @@ const EditarEquipo = () => {
                       name="ubicacion"
                       value={equipo.ubicacion || ""}
                       onChange={handleChange}
-                      className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800"
                     >
                       <option value="">Seleccione ubicación</option>
                       {ubicaciones.map((u) => (
@@ -232,7 +244,7 @@ const EditarEquipo = () => {
                       name="estado"
                       value={equipo.estado || ""}
                       onChange={handleChange}
-                      className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800"
                     >
                       <option value="">-- Seleccione estado --</option>
                       <option value="Buen estado">Buen estado</option>

@@ -53,7 +53,7 @@ const EliminarSolicitud = () => {
     <div className="p-6 max-w-7xl mx-auto">
       <div className="overflow-x-auto bg-white shadow-md rounded-xl p-4">
         <table className="w-full text-sm text-left border border-gray-200">
-          <thead className="bg-indigo-100">
+          <thead className="bg-blue-100">
             <tr>
               <th className="px-4 py-2 border">Código</th>
               <th className="px-4 py-2 border">Nombre</th>

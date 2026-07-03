@@ -125,7 +125,7 @@ const CrearSolicitud = () => {
             <div className="bg-white p-6 rounded-xl shadow-md w-full max-w-6xl">
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <section>
-                        <h3 className="text-xl font-semibold mb-4 border-b border-indigo-300 pb-2">Empleado</h3>
+                        <h3 className="text-xl font-semibold mb-4 border-b border-blue-300 pb-2">Empleado</h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div>
                                 <label htmlFor="codigo" className="mb-1 font-medium text-gray-700">Código de empleado</label>
@@ -140,7 +140,7 @@ const CrearSolicitud = () => {
                                     <button
                                         type="button"
                                         onClick={buscarEmpleado}
-                                        className="bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-700 text-sm"
+                                        className="bg-blue-900 text-white px-3 py-1 rounded hover:bg-blue-950 text-sm"
                                     >
                                         Buscar
                                     </button>
@@ -162,7 +162,7 @@ const CrearSolicitud = () => {
                     </section>
 
                     <section>
-                        <h3 className="text-xl font-semibold mb-4 border-b border-indigo-300 pb-2">Detalles del equipo</h3>
+                        <h3 className="text-xl font-semibold mb-4 border-b border-blue-300 pb-2">Detalles del equipo</h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div>
                                 <label className="mb-1 font-medium text-gray-700">Ubicación</label>
@@ -218,7 +218,7 @@ const CrearSolicitud = () => {
                         </div>
                     </section>
                     <section>
-                        <h3 className="text-xl font-semibold mb-4 border-b border-indigo-300 pb-2">Detalles de solicitud</h3>
+                        <h3 className="text-xl font-semibold mb-4 border-b border-blue-300 pb-2">Detalles de solicitud</h3>
                         <div className="mb-4">
                             <label className="mb-1 block font-medium text-gray-700">Tipo de solicitud</label>
                             <select

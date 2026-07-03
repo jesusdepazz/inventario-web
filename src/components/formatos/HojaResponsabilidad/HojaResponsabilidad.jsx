@@ -252,7 +252,7 @@ const HojaResponsabilidadForm = () => {
                           <select
                             value={tipoHoja}
                             onChange={(e) => setTipoHoja(e.target.value)}
-                            className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800 focus:border-blue-800"
                           >
                             <option value="">-- Seleccione tipo de hoja --</option>
                             <option value="Computo">Hoja responsabilidad cómputo</option>
@@ -266,7 +266,7 @@ const HojaResponsabilidadForm = () => {
                           <input
                             value={hojaNo}
                             onChange={(e) => setHojaNo(e.target.value)}
-                            className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800 focus:border-blue-800"
                           />
                         </div>
 
@@ -275,7 +275,7 @@ const HojaResponsabilidadForm = () => {
                           <input
                             value={motivo}
                             onChange={(e) => setMotivo(e.target.value)}
-                            className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800 focus:border-blue-800"
                           />
                         </div>
 
@@ -284,7 +284,7 @@ const HojaResponsabilidadForm = () => {
                           <select
                             value={estado}
                             onChange={(e) => SetEstado(e.target.value)}
-                            className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800 focus:border-blue-800"
                           >
                             <option value="">-- Selecciona estado --</option>
                             <option value="Activa">Activa</option>
@@ -299,7 +299,7 @@ const HojaResponsabilidadForm = () => {
                               <input
                                 value={solvenciaNo}
                                 onChange={(e) => SetSolvenciaNo(e.target.value)}
-                                className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800 focus:border-blue-800"
                               />
                             </div>
 
@@ -309,7 +309,7 @@ const HojaResponsabilidadForm = () => {
                                 type="date"
                                 value={fechaSolvencia}
                                 onChange={(e) => SetFechaSolvencia(e.target.value)}
-                                className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800 focus:border-blue-800"
                               />
                             </div>
                           </>
@@ -320,7 +320,7 @@ const HojaResponsabilidadForm = () => {
                           <input
                             value={observaciones}
                             onChange={(e) => SetObservaciones(e.target.value)}
-                            className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800 focus:border-blue-800"
                           />
                         </div>
 
@@ -330,7 +330,7 @@ const HojaResponsabilidadForm = () => {
                             value={comentarios}
                             onChange={(e) => setComentarios(e.target.value)}
                             rows={3}
-                            className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800 focus:border-blue-800"
                           />
                         </div>
                       </div>
@@ -488,7 +488,7 @@ const HojaResponsabilidadForm = () => {
                             setIsTypingJefe(val.trim().length > 0);
                             if (val.trim().length < 2) setJefeSuggestions([]);
                           }}
-                          className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                          className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800 focus:border-blue-800"
                         />
 
                         {isTypingJefe && jefeSuggestions.length > 0 && (
@@ -553,14 +553,14 @@ const HojaResponsabilidadForm = () => {
                             placeholder="Ej: EQ-IT-000123"
                             value={equipoCodificacion}
                             onChange={(e) => setEquipoCodificacion(e.target.value)}
-                            className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800 focus:border-blue-800"
                           />
                         </div>
                         <div className="sm:col-span-4 flex items-end">
                           <button
                             type="button"
                             onClick={agregarEquipo}
-                            className="w-full rounded-xl bg-indigo-600 text-white px-4 py-2 text-sm font-semibold hover:bg-indigo-700"
+                            className="w-full rounded-xl bg-blue-900 text-white px-4 py-2 text-sm font-semibold hover:bg-blue-950"
                           >
                             Agregar
                           </button>

@@ -122,7 +122,7 @@ const CrearEquipo = () => {
                     name="ordenCompra"
                     value={form.ordenCompra}
                     onChange={handleChange}
-                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800"
                     placeholder="Orden de compra"
                   />
                 </div>
@@ -137,7 +137,7 @@ const CrearEquipo = () => {
                     name="factura"
                     value={form.factura}
                     onChange={handleChange}
-                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800"
                     placeholder="Número de factura"
                   />
                 </div>
@@ -152,7 +152,7 @@ const CrearEquipo = () => {
                     name="proveedor"
                     value={form.proveedor}
                     onChange={handleChange}
-                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800"
                     placeholder="Proveedor"
                   />
                 </div>
@@ -168,7 +168,7 @@ const CrearEquipo = () => {
                     value={form.fechaIngreso}
                     onChange={handleChange}
                     required
-                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800"
                   />
                 </div>
               </div>
@@ -189,7 +189,7 @@ const CrearEquipo = () => {
                     name="hojaNo"
                     value={form.hojaNo}
                     onChange={handleChange}
-                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800"
                     placeholder="Hoja No."
                   />
                 </div>
@@ -205,7 +205,7 @@ const CrearEquipo = () => {
                     value={form.fechaActualizacion}
                     onChange={handleChange}
                     required
-                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800"
                   />
                 </div>
               </div>
@@ -227,7 +227,7 @@ const CrearEquipo = () => {
                     value={form.codificacion}
                     onChange={handleChange}
                     required
-                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800"
                     placeholder="Codificación"
                   />
                 </div>
@@ -242,7 +242,7 @@ const CrearEquipo = () => {
                     name="tipoEquipo"
                     value={form.tipoEquipo}
                     onChange={handleChange}
-                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800"
                     placeholder="Equipo"
                   />
                 </div>
@@ -258,7 +258,7 @@ const CrearEquipo = () => {
                     value={form.marca}
                     onChange={handleChange}
                     required
-                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800"
                     placeholder="Marca"
                   />
                 </div>
@@ -274,7 +274,7 @@ const CrearEquipo = () => {
                     value={form.modelo}
                     onChange={handleChange}
                     required
-                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800"
                     placeholder="Modelo"
                   />
                 </div>
@@ -289,7 +289,7 @@ const CrearEquipo = () => {
                     name="serie"
                     value={form.serie}
                     onChange={handleChange}
-                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800"
                     placeholder="Serie"
                   />
                 </div>
@@ -306,7 +306,7 @@ const CrearEquipo = () => {
                         name="imei"
                         value={form.imei}
                         onChange={handleChange}
-                        className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                        className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800"
                         placeholder="IMEI"
                       />
                     </div>
@@ -321,7 +321,7 @@ const CrearEquipo = () => {
                         name="numeroAsignado"
                         value={form.numeroAsignado}
                         onChange={handleChange}
-                        className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                        className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800"
                         placeholder="Número asignado"
                       />
                     </div>
@@ -336,7 +336,7 @@ const CrearEquipo = () => {
                         name="extension"
                         value={form.extension}
                         onChange={handleChange}
-                        className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                        className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800"
                         placeholder="Extensión"
                       />
                     </div>
@@ -353,7 +353,7 @@ const CrearEquipo = () => {
                     value={form.estado}
                     onChange={handleChange}
                     required
-                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800"
                   >
                     <option value="">-- Seleccione estado --</option>
                     <option value="Buen estado">Buen estado</option>
@@ -372,7 +372,7 @@ const CrearEquipo = () => {
                     value={form.equipoTipo}
                     onChange={handleChange}
                     required
-                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800"
                   >
                     <option value="">-- Seleccione tipo --</option>
                     <option value="Equipo móvil">Equipo móvil</option>
@@ -391,7 +391,7 @@ const CrearEquipo = () => {
                     name="responsableAnterior"
                     value={form.responsableAnterior}
                     onChange={handleChange}
-                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800"
                     placeholder="Responsable Anterior"
                   />
                 </div>
@@ -407,7 +407,7 @@ const CrearEquipo = () => {
                     value={form.ubicacion}
                     onChange={handleChange}
                     required
-                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800"
                     placeholder="Ubicación"
                   />
                   <datalist id="ubicaciones-list">
@@ -427,7 +427,7 @@ const CrearEquipo = () => {
                     name="comentarios"
                     value={form.comentarios}
                     onChange={handleChange}
-                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800"
                     placeholder="Comentarios"
                   />
                 </div>
@@ -442,7 +442,7 @@ const CrearEquipo = () => {
                     name="observaciones"
                     value={form.observaciones}
                     onChange={handleChange}
-                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800"
                     placeholder="Observaciones"
                   />
                 </div>
@@ -460,7 +460,7 @@ const CrearEquipo = () => {
               <button
                 type="submit"
                 disabled={saving}
-                className="rounded-xl bg-indigo-600 text-white px-6 py-3 text-sm font-semibold hover:bg-indigo-700 disabled:opacity-60"
+                className="rounded-xl bg-blue-900 text-white px-6 py-3 text-sm font-semibold hover:bg-blue-950 disabled:opacity-60"
               >
                 {saving ? "Guardando..." : "Crear Equipo"}
               </button>
