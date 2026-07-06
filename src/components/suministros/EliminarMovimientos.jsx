@@ -15,6 +15,7 @@ export default function EliminarSuministros() {
   const [q, setQ] = useState("");
   const [desde, setDesde] = useState("");
   const [hasta, setHasta] = useState("");
+  const [vista, setVista] = useState("todos");
 
   const fechaHoy = useMemo(() => {
     return new Date().toLocaleDateString("es-ES", {
@@ -246,22 +247,63 @@ export default function EliminarSuministros() {
             </div>
 
             <div className="mt-4 flex flex-col sm:flex-row gap-3 justify-between items-center">
-              <div className="text-sm text-gray-600">
-                Entradas: <b>{entradasFiltradas.length}</b> · Salidas:{" "}
-                <b>{salidasFiltradas.length}</b>
+              <div className="inline-flex rounded-xl border border-gray-200 overflow-hidden">
+                <button
+                  type="button"
+                  onClick={() => setVista("todos")}
+                  className={`px-4 py-2 font-semibold transition ${
+                    vista === "todos"
+                      ? "bg-blue-900 text-white"
+                      : "bg-white text-gray-700 hover:bg-gray-50"
+                  }`}
+                >
+                  Todos
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setVista("entrada")}
+                  className={`px-4 py-2 font-semibold transition flex items-center gap-2 border-l border-gray-200 ${
+                    vista === "entrada"
+                      ? "bg-blue-900 text-white"
+                      : "bg-white text-gray-700 hover:bg-gray-50"
+                  }`}
+                >
+                  <FaArrowDown />
+                  Entradas
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setVista("salida")}
+                  className={`px-4 py-2 font-semibold transition flex items-center gap-2 border-l border-gray-200 ${
+                    vista === "salida"
+                      ? "bg-blue-900 text-white"
+                      : "bg-white text-gray-700 hover:bg-gray-50"
+                  }`}
+                >
+                  <FaArrowUp />
+                  Salidas
+                </button>
               </div>
 
-              <button
-                type="button"
-                onClick={refrescarTodo}
-                className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 font-semibold transition"
-              >
-                Refrescar
-              </button>
+              <div className="flex items-center gap-3">
+                <div className="text-sm text-gray-600">
+                  Entradas: <b>{entradasFiltradas.length}</b> · Salidas:{" "}
+                  <b>{salidasFiltradas.length}</b>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={refrescarTodo}
+                  className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 font-semibold transition"
+                >
+                  Refrescar
+                </button>
+              </div>
             </div>
           </div>
 
           <div className="flex-1 min-h-0 p-6 flex flex-col gap-6 overflow-hidden">
+            {vista !== "salida" && (
             <div className="flex-1 min-h-0 flex flex-col bg-gray-50 border border-gray-200 rounded-2xl overflow-hidden">
               <div className="px-4 py-3 flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-2">
@@ -324,7 +366,9 @@ export default function EliminarSuministros() {
                 </table>
               </div>
             </div>
+            )}
 
+            {vista !== "entrada" && (
             <div className="flex-1 min-h-0 flex flex-col bg-gray-50 border border-gray-200 rounded-2xl overflow-hidden">
               <div className="px-4 py-3 flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-2">
@@ -387,6 +431,7 @@ export default function EliminarSuministros() {
                 </table>
               </div>
             </div>
+            )}
           </div>
         </div>
       </div>
