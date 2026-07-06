@@ -7,7 +7,8 @@ import { FaFileExcel, FaArrowDown, FaArrowUp, FaBoxesStacked } from "react-icons
 export default function SuministrosInventario() {
   const [suministros, setSuministros] = useState([]);
   const [movimientos, setMovimientos] = useState([]);
-  const [tipoMovimientos, setTipoMovimientos] = useState("entrada");
+  const [tab, setTab] = useState("inventario");
+  const tipoMovimientos = tab === "salida" ? "salida" : "entrada";
 
   const [loadingSuministros, setLoadingSuministros] = useState(true);
   const [loadingMovimientos, setLoadingMovimientos] = useState(true);
@@ -43,13 +44,19 @@ export default function SuministrosInventario() {
   }, []);
 
   useEffect(() => {
+    if (tab === "inventario") {
+      setLoadingMovimientos(false);
+      setErrorMovimientos("");
+      return;
+    }
+
     const cargarMovimientos = async () => {
       setLoadingMovimientos(true);
       setErrorMovimientos("");
 
       try {
         let response;
-        if (tipoMovimientos === "entrada") {
+        if (tab === "entrada") {
           response = await EntradaSuministroService.obtenerTodas();
         } else {
           response = await SalidaSuministroService.obtenerTodos();
@@ -79,7 +86,7 @@ export default function SuministrosInventario() {
     };
 
     if (!loadingSuministros) cargarMovimientos();
-  }, [tipoMovimientos, loadingSuministros, suministros]);
+  }, [tab, loadingSuministros, suministros]);
 
   const exportarExcel = async () => {
     try {
@@ -153,10 +160,10 @@ export default function SuministrosInventario() {
   }, [movimientos, q, desde, hasta, tipoMovimientos]);
 
   return (
-    <div className="h-full w-full overflow-y-auto">
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        <div className="bg-white shadow-md rounded-2xl border border-gray-200 overflow-hidden">
-          <div className="p-6 border-b border-gray-200">
+    <div className="h-full w-full flex flex-col overflow-hidden">
+      <div className="max-w-7xl w-full mx-auto px-4 py-6 flex-1 min-h-0 flex flex-col">
+        <div className="bg-white shadow-md rounded-2xl border border-gray-200 flex-1 min-h-0 flex flex-col overflow-hidden">
+          <div className="p-6 border-b border-gray-200 shrink-0">
             <div className="text-center">
               <p className="font-bold text-lg">Guatemalan Candies, S.A.</p>
               <p className="font-bold text-lg text-blue-600 flex items-center justify-center gap-2">
@@ -217,10 +224,21 @@ export default function SuministrosInventario() {
             <div className="mt-4 flex flex-col sm:flex-row gap-3 justify-between items-center">
               <div className="inline-flex rounded-xl border border-gray-200 overflow-hidden">
                 <button
-                  onClick={() => setTipoMovimientos("entrada")}
+                  onClick={() => setTab("inventario")}
                   className={`px-4 py-2 font-semibold transition flex items-center gap-2 ${
-                    tipoMovimientos === "entrada"
-                      ? "bg-blue-600 text-white"
+                    tab === "inventario"
+                      ? "bg-blue-900 text-white"
+                      : "bg-white text-gray-700 hover:bg-gray-50"
+                  }`}
+                >
+                  <FaBoxesStacked />
+                  Inventario
+                </button>
+                <button
+                  onClick={() => setTab("entrada")}
+                  className={`px-4 py-2 font-semibold transition flex items-center gap-2 border-l border-gray-200 ${
+                    tab === "entrada"
+                      ? "bg-blue-900 text-white"
                       : "bg-white text-gray-700 hover:bg-gray-50"
                   }`}
                 >
@@ -228,10 +246,10 @@ export default function SuministrosInventario() {
                   Entradas
                 </button>
                 <button
-                  onClick={() => setTipoMovimientos("salida")}
-                  className={`px-4 py-2 font-semibold transition flex items-center gap-2 ${
-                    tipoMovimientos === "salida"
-                      ? "bg-blue-600 text-white"
+                  onClick={() => setTab("salida")}
+                  className={`px-4 py-2 font-semibold transition flex items-center gap-2 border-l border-gray-200 ${
+                    tab === "salida"
+                      ? "bg-blue-900 text-white"
                       : "bg-white text-gray-700 hover:bg-gray-50"
                   }`}
                 >
@@ -250,159 +268,165 @@ export default function SuministrosInventario() {
             </div>
           </div>
 
-          <div className="p-6 space-y-8">
-            {loadingSuministros && (
-              <div className="text-gray-600">Cargando suministros...</div>
-            )}
-            {errorSuministros && (
-              <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-700 font-semibold">
-                {errorSuministros}
-              </div>
-            )}
-
-            {!loadingSuministros && !errorSuministros && (
-              <div className="bg-gray-50 border border-gray-200 rounded-2xl overflow-hidden">
-                <div className="px-4 py-3 flex items-center justify-between">
-                  <div>
-                    <p className="font-bold text-gray-800">Totales por producto</p>
-                    <p className="text-sm text-gray-500">
-                      {suministrosFiltrados.length} registros
-                    </p>
+          <div className="flex-1 min-h-0 p-6 overflow-hidden">
+            {tab === "inventario" ? (
+              <>
+                {loadingSuministros && (
+                  <div className="text-gray-600">Cargando suministros...</div>
+                )}
+                {errorSuministros && (
+                  <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-700 font-semibold">
+                    {errorSuministros}
                   </div>
-                </div>
+                )}
 
-                <div className="overflow-x-auto">
-                  <table className="min-w-[900px] w-full text-sm">
-                    <thead className="bg-blue-800 text-white">
-                      <tr>
-                        <th className="p-3 text-left">ID</th>
-                        <th className="p-3 text-left">Producto</th>
-                        <th className="p-3 text-left">Entradas</th>
-                        <th className="p-3 text-left">Salidas</th>
-                        <th className="p-3 text-left">Existencia</th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white">
-                      {suministrosFiltrados.length === 0 ? (
-                        <tr>
-                          <td colSpan={5} className="p-6 text-center text-gray-500">
-                            No hay suministros para mostrar.
-                          </td>
-                        </tr>
-                      ) : (
-                        suministrosFiltrados.map((s, idx) => (
-                          <tr
-                            key={s.id}
-                            className={`border-t border-gray-100 hover:bg-blue-50 transition ${
-                              idx % 2 === 0 ? "bg-white" : "bg-gray-50/40"
-                            }`}
-                          >
-                            <td className="p-3 font-medium text-gray-800">{s.id}</td>
-                            <td className="p-3 text-gray-800">{s.nombreProducto}</td>
-                            <td className="p-3 font-bold text-green-700">
-                              {s.totalEntradas}
-                            </td>
-                            <td className="p-3 font-bold text-red-700">
-                              {s.totalSalidas}
-                            </td>
-                            <td className="p-3 font-bold text-blue-700">
-                              {s.existenciaActual}
-                            </td>
+                {!loadingSuministros && !errorSuministros && (
+                  <div className="h-full flex flex-col bg-gray-50 border border-gray-200 rounded-2xl overflow-hidden">
+                    <div className="px-4 py-3 flex items-center justify-between shrink-0">
+                      <div>
+                        <p className="font-bold text-gray-800">Totales por producto</p>
+                        <p className="text-sm text-gray-500">
+                          {suministrosFiltrados.length} registros
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex-1 min-h-0 overflow-auto">
+                      <table className="min-w-[900px] w-full text-sm">
+                        <thead className="bg-blue-800 text-white sticky top-0 z-10">
+                          <tr>
+                            <th className="p-3 text-left">ID</th>
+                            <th className="p-3 text-left">Producto</th>
+                            <th className="p-3 text-left">Entradas</th>
+                            <th className="p-3 text-left">Salidas</th>
+                            <th className="p-3 text-left">Existencia</th>
                           </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-
-            {loadingMovimientos && (
-              <div className="text-gray-600">Cargando movimientos...</div>
-            )}
-            {errorMovimientos && (
-              <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-700 font-semibold">
-                {errorMovimientos}
-              </div>
-            )}
-
-            {!loadingMovimientos && !errorMovimientos && (
-              <div className="bg-gray-50 border border-gray-200 rounded-2xl overflow-hidden">
-                <div className="px-4 py-3 flex items-center justify-between">
-                  <div>
-                    <p className="font-bold text-gray-800">
-                      Movimientos ({tipoMovimientos === "entrada" ? "Entradas" : "Salidas"})
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      {movimientosFiltrados.length} registros
-                    </p>
+                        </thead>
+                        <tbody className="bg-white">
+                          {suministrosFiltrados.length === 0 ? (
+                            <tr>
+                              <td colSpan={5} className="p-6 text-center text-gray-500">
+                                No hay suministros para mostrar.
+                              </td>
+                            </tr>
+                          ) : (
+                            suministrosFiltrados.map((s, idx) => (
+                              <tr
+                                key={s.id}
+                                className={`border-t border-gray-100 hover:bg-blue-50 transition ${
+                                  idx % 2 === 0 ? "bg-white" : "bg-gray-50/40"
+                                }`}
+                              >
+                                <td className="p-3 font-medium text-gray-800">{s.id}</td>
+                                <td className="p-3 text-gray-800">{s.nombreProducto}</td>
+                                <td className="p-3 font-bold text-green-700">
+                                  {s.totalEntradas}
+                                </td>
+                                <td className="p-3 font-bold text-red-700">
+                                  {s.totalSalidas}
+                                </td>
+                                <td className="p-3 font-bold text-blue-700">
+                                  {s.existenciaActual}
+                                </td>
+                              </tr>
+                            ))
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
-                </div>
+                )}
+              </>
+            ) : (
+              <>
+                {loadingMovimientos && (
+                  <div className="text-gray-600">Cargando movimientos...</div>
+                )}
+                {errorMovimientos && (
+                  <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-700 font-semibold">
+                    {errorMovimientos}
+                  </div>
+                )}
 
-                <div className="overflow-x-auto">
-                  <table className="min-w-[1100px] w-full text-sm">
-                    <thead className="bg-blue-800 text-white">
-                      <tr>
-                        <th className="p-3 text-left">ID</th>
-                        <th className="p-3 text-left">Producto</th>
-                        <th className="p-3 text-left">Cantidad</th>
-                        {tipoMovimientos === "salida" && (
-                          <>
-                            <th className="p-3 text-left">Responsable</th>
-                            <th className="p-3 text-left">Departamento</th>
-                          </>
-                        )}
-                        <th className="p-3 text-left">Fecha</th>
-                      </tr>
-                    </thead>
+                {!loadingMovimientos && !errorMovimientos && (
+                  <div className="h-full flex flex-col bg-gray-50 border border-gray-200 rounded-2xl overflow-hidden">
+                    <div className="px-4 py-3 flex items-center justify-between shrink-0">
+                      <div>
+                        <p className="font-bold text-gray-800">
+                          Movimientos ({tipoMovimientos === "entrada" ? "Entradas" : "Salidas"})
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          {movimientosFiltrados.length} registros
+                        </p>
+                      </div>
+                    </div>
 
-                    <tbody className="bg-white">
-                      {movimientosFiltrados.length === 0 ? (
-                        <tr>
-                          <td
-                            colSpan={tipoMovimientos === "salida" ? 6 : 4}
-                            className="p-6 text-center text-gray-500"
-                          >
-                            No hay movimientos para mostrar.
-                          </td>
-                        </tr>
-                      ) : (
-                        movimientosFiltrados.map((m, idx) => (
-                          <tr
-                            key={m.id}
-                            className={`border-t border-gray-100 hover:bg-blue-50 transition ${
-                              idx % 2 === 0 ? "bg-white" : "bg-gray-50/40"
-                            }`}
-                          >
-                            <td className="p-3 font-medium text-gray-800">{m.id}</td>
-                            <td className="p-3 text-gray-800">{m.nombreProducto}</td>
-                            <td className="p-3 font-bold text-blue-700">
-                              {m.cantidadProducto}
-                            </td>
-
+                    <div className="flex-1 min-h-0 overflow-auto">
+                      <table className="min-w-[1100px] w-full text-sm">
+                        <thead className="bg-blue-800 text-white sticky top-0 z-10">
+                          <tr>
+                            <th className="p-3 text-left">ID</th>
+                            <th className="p-3 text-left">Producto</th>
+                            <th className="p-3 text-left">Cantidad</th>
                             {tipoMovimientos === "salida" && (
                               <>
-                                <td className="p-3 text-gray-800">{m.personaResponsable}</td>
-                                <td className="p-3 text-gray-800">{m.departamentoResponsable}</td>
+                                <th className="p-3 text-left">Responsable</th>
+                                <th className="p-3 text-left">Departamento</th>
                               </>
                             )}
-
-                            <td className="p-3 text-gray-800">
-                              {m.fecha
-                                ? new Date(m.fecha).toLocaleDateString("es-GT")
-                                : "-"}
-                            </td>
+                            <th className="p-3 text-left">Fecha</th>
                           </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
-                </div>
+                        </thead>
 
-                <div className="px-4 py-3 text-xs text-gray-500">
-                  Tip: podés filtrar por rango de fechas y buscar por cualquier campo.
-                </div>
-              </div>
+                        <tbody className="bg-white">
+                          {movimientosFiltrados.length === 0 ? (
+                            <tr>
+                              <td
+                                colSpan={tipoMovimientos === "salida" ? 6 : 4}
+                                className="p-6 text-center text-gray-500"
+                              >
+                                No hay movimientos para mostrar.
+                              </td>
+                            </tr>
+                          ) : (
+                            movimientosFiltrados.map((m, idx) => (
+                              <tr
+                                key={m.id}
+                                className={`border-t border-gray-100 hover:bg-blue-50 transition ${
+                                  idx % 2 === 0 ? "bg-white" : "bg-gray-50/40"
+                                }`}
+                              >
+                                <td className="p-3 font-medium text-gray-800">{m.id}</td>
+                                <td className="p-3 text-gray-800">{m.nombreProducto}</td>
+                                <td className="p-3 font-bold text-blue-700">
+                                  {m.cantidadProducto}
+                                </td>
+
+                                {tipoMovimientos === "salida" && (
+                                  <>
+                                    <td className="p-3 text-gray-800">{m.personaResponsable}</td>
+                                    <td className="p-3 text-gray-800">{m.departamentoResponsable}</td>
+                                  </>
+                                )}
+
+                                <td className="p-3 text-gray-800">
+                                  {m.fecha
+                                    ? new Date(m.fecha).toLocaleDateString("es-GT")
+                                    : "-"}
+                                </td>
+                              </tr>
+                            ))
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    <div className="px-4 py-3 text-xs text-gray-500 shrink-0">
+                      Tip: podés filtrar por rango de fechas y buscar por cualquier campo.
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>

@@ -184,10 +184,10 @@ export default function EliminarSuministros() {
   }
 
   return (
-    <div className="h-full w-full overflow-y-auto">
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        <div className="bg-white border border-gray-200 shadow-md rounded-2xl overflow-hidden">
-          <div className="p-6 border-b border-gray-200">
+    <div className="h-full w-full flex flex-col overflow-hidden">
+      <div className="max-w-7xl w-full mx-auto px-4 py-6 flex-1 min-h-0 flex flex-col">
+        <div className="bg-white border border-gray-200 shadow-md rounded-2xl flex-1 min-h-0 flex flex-col overflow-hidden">
+          <div className="p-6 border-b border-gray-200 shrink-0">
             <div className="text-center">
               <p className="font-bold text-lg">Guatemalan Candies, S.A.</p>
               <p className="font-bold text-lg text-blue-600">
@@ -261,9 +261,9 @@ export default function EliminarSuministros() {
             </div>
           </div>
 
-          <div className="p-6 space-y-8">
-            <div className="bg-gray-50 border border-gray-200 rounded-2xl overflow-hidden">
-              <div className="px-4 py-3 flex items-center justify-between">
+          <div className="flex-1 min-h-0 p-6 flex flex-col gap-6 overflow-hidden">
+            <div className="flex-1 min-h-0 flex flex-col bg-gray-50 border border-gray-200 rounded-2xl overflow-hidden">
+              <div className="px-4 py-3 flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-2">
                   <FaArrowDown className="text-green-700" />
                   <p className="font-bold text-gray-800">Entradas de suministros</p>
@@ -273,9 +273,9 @@ export default function EliminarSuministros() {
                 </span>
               </div>
 
-              <div className="overflow-x-auto">
+              <div className="flex-1 min-h-0 overflow-auto">
                 <table className="min-w-[900px] w-full text-sm">
-                  <thead className="bg-blue-800 text-white">
+                  <thead className="bg-blue-800 text-white sticky top-0 z-10">
                     <tr>
                       <th className="p-3 text-left">ID</th>
                       <th className="p-3 text-left">Fecha</th>
@@ -325,8 +325,8 @@ export default function EliminarSuministros() {
               </div>
             </div>
 
-            <div className="bg-gray-50 border border-gray-200 rounded-2xl overflow-hidden">
-              <div className="px-4 py-3 flex items-center justify-between">
+            <div className="flex-1 min-h-0 flex flex-col bg-gray-50 border border-gray-200 rounded-2xl overflow-hidden">
+              <div className="px-4 py-3 flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-2">
                   <FaArrowUp className="text-blue-700" />
                   <p className="font-bold text-gray-800">Salidas de suministros</p>
@@ -336,9 +336,9 @@ export default function EliminarSuministros() {
                 </span>
               </div>
 
-              <div className="overflow-x-auto">
+              <div className="flex-1 min-h-0 overflow-auto">
                 <table className="min-w-[900px] w-full text-sm">
-                  <thead className="bg-blue-800 text-white">
+                  <thead className="bg-blue-800 text-white sticky top-0 z-10">
                     <tr>
                       <th className="p-3 text-left">ID</th>
                       <th className="p-3 text-left">Fecha</th>
