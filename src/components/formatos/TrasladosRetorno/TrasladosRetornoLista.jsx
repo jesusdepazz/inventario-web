@@ -229,6 +229,18 @@ const TrasladosRetornoLista = () => {
                               </div>
                             ))}
                           </div>
+                        ) : t.nombreProveedor || t.personaRetira ? (
+                          <div className="leading-5">
+                            <div className="font-semibold text-gray-900">
+                              {t.nombreProveedor || "-"}
+                            </div>
+                            <div className="text-gray-600">
+                              {t.personaRetira || ""}
+                            </div>
+                            <span className="inline-block mt-1 text-[10px] font-semibold text-blue-800 bg-blue-50 border border-blue-100 px-1.5 py-0.5 rounded-full">
+                              Proveedor
+                            </span>
+                          </div>
                         ) : (
                           "-"
                         )}
