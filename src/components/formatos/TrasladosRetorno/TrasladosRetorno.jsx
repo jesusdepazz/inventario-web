@@ -12,6 +12,7 @@ const CrearTrasladoRetorno = () => {
     motivoSalida: "",
     ubicacionRetorno: "",
     fechaRetorno: "",
+    tipoRetiro: "proveedor",
     codigoProveedor: "",
     telefonoProveedor: "",
     personaRetira: "",
@@ -138,13 +139,38 @@ const CrearTrasladoRetorno = () => {
     }));
   };
 
+  const handleTipoRetiro = (tipo) => {
+    setFormData((prev) => ({
+      ...prev,
+      tipoRetiro: tipo,
+      ...(tipo === "proveedor"
+        ? { empleados: [] }
+        : {
+            codigoProveedor: "",
+            telefonoProveedor: "",
+            personaRetira: "",
+            nombreProveedor: "",
+            nombreContacto: "",
+            identificacion: ""
+          })
+    }));
+  };
+
+  const esProveedor = formData.tipoRetiro !== "empleado";
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
     if (!formData.no.trim()) return toast.error("Debe ingresar el No.");
     if (!formData.fechaPase) return toast.error("Debe ingresar la fecha del pase");
-    if (formData.empleados.length === 0) return toast.error("Debe agregar al menos un empleado");
     if (formData.equipos.length === 0) return toast.error("Debe agregar al menos un equipo");
+
+    if (esProveedor) {
+      if (!formData.nombreProveedor.trim()) return toast.error("Debe ingresar el nombre del proveedor");
+    } else {
+      if (formData.empleados.length === 0) return toast.error("Debe agregar al menos un empleado");
+    }
+
     if (!formData.motivoSalida.trim()) return toast.error("Debe ingresar el motivo de salida");
     if (!formData.ubicacionRetorno) return toast.error("Debe seleccionar ubicación de retorno");
 
@@ -175,6 +201,43 @@ const CrearTrasladoRetorno = () => {
 
         <div className="p-6 max-h-[78vh] overflow-auto">
           <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                Tipo de traslado
+              </h3>
+
+              <div className="inline-flex rounded-xl border border-gray-200 overflow-hidden">
+                <button
+                  type="button"
+                  onClick={() => handleTipoRetiro("proveedor")}
+                  className={`px-5 py-2 font-semibold transition ${
+                    esProveedor
+                      ? "bg-blue-900 text-white"
+                      : "bg-white text-gray-700 hover:bg-gray-50"
+                  }`}
+                >
+                  Proveedor externo
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleTipoRetiro("empleado")}
+                  className={`px-5 py-2 font-semibold transition border-l border-gray-200 ${
+                    !esProveedor
+                      ? "bg-blue-900 text-white"
+                      : "bg-white text-gray-700 hover:bg-gray-50"
+                  }`}
+                >
+                  Empleados (ubicación)
+                </button>
+              </div>
+
+              <p className="text-xs text-gray-500 mt-2">
+                {esProveedor
+                  ? "El equipo sale con un proveedor externo que lo retirará y retornará."
+                  : "El equipo sale bajo la responsabilidad de uno o más empleados de la ubicación de retorno."}
+              </p>
+            </div>
+
             <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
               <h3 className="text-lg font-semibold text-gray-800 mb-4">
                 Datos Generales
@@ -219,6 +282,7 @@ const CrearTrasladoRetorno = () => {
               </div>
             </div>
 
+            {esProveedor && (
             <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
               <h3 className="text-lg font-semibold text-gray-800 mb-4">
                 Datos del Proveedor / Contacto
@@ -298,7 +362,9 @@ const CrearTrasladoRetorno = () => {
                 </div>
               </div>
             </div>
+            )}
 
+            {!esProveedor && (
             <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
               <h3 className="text-lg font-semibold text-gray-800 mb-4">
                 Empleados
@@ -363,6 +429,7 @@ const CrearTrasladoRetorno = () => {
                 </div>
               )}
             </div>
+            )}
 
             <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
               <h3 className="text-lg font-semibold text-gray-800 mb-4">

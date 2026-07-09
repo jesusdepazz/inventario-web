@@ -332,7 +332,12 @@ const formatSpanishDate = (dateString) => {
     }
 };
 
-const PdfTrasladosRetorno = ({ data = {} }) => (
+const PdfTrasladosRetorno = ({ data = {} }) => {
+    const esEmpleado = data?.tipoRetiro
+        ? data.tipoRetiro === "empleado"
+        : Array.isArray(data?.empleados) && data.empleados.length > 0;
+
+    return (
     <Document>
         <Page size="A4" style={styles.page}>
             <View style={styles.headerContainer}>
@@ -362,96 +367,116 @@ const PdfTrasladosRetorno = ({ data = {} }) => (
             </View>
             <View style={styles.tableHeaderFull}>
                 <Text style={styles.tableHeaderText}>
-                    1) DATOS DE LA EMPRESA/PERSONA QUE RETIRA EQUIPO/COMPONENTE:
+                    {esEmpleado
+                        ? "1) DATOS DEL EMPLEADO QUE RETIRA EQUIPO/COMPONENTE:"
+                        : "1) DATOS DE LA EMPRESA/PERSONA QUE RETIRA EQUIPO/COMPONENTE:"}
                 </Text>
             </View>
 
-            <View style={styles.tableGrid}>
-                <View style={styles.gridRow}>
-                    <Text style={[styles.gridCell, styles.smallText]}>
-                        Codigo de proveedor:
-                    </Text>
-                    <Text style={[styles.gridCell, styles.smallText]}>
-                        {data.codigoProveedor || "-"}
-                    </Text>
-
-                    <Text style={[styles.gridCell, styles.smallText]}>
-                        Nombre de Proveedor:
-                    </Text>
-                    <Text style={[styles.gridCellWide, styles.smallText]}>
-                        {data.nombreProveedor || "-"}
-                    </Text>
-                </View>
-
-                <View style={styles.gridRow}>
-                    <Text style={[styles.gridCell, styles.smallText]}>
-                        Telefono de proveedor:
-                    </Text>
-                    <Text style={[styles.gridCell, styles.smallText]}>
-                        {data.telefonoProveedor || "-"}
-                    </Text>
-
-                    <Text style={[styles.gridCell, styles.smallText]}>
-                        Nombre de contacto:
-                    </Text>
-
-                    <View
-                        style={[
-                            styles.gridCellWide,
-                            styles.multiLineCell,
-                            { minHeight: data.empleados?.length > 2 ? 34 : 22 },
-                        ]}
-                    >
-                        {data.empleados?.length ? (
-                            data.empleados.map((emp, i) => (
-                                <Text key={i} style={styles.personLine}>
-                                    - {emp.nombre}
-                                </Text>
-                            ))
-                        ) : (
-                            <Text style={styles.smallText}>-</Text>
-                        )}
-                    </View>
-                </View>
-
-                <View style={styles.gridRow}>
-                    <Text style={[styles.gridCell, styles.smallText]}>
-                        Persona que retira Equipo:
-                    </Text>
-
-                    <View
-                        style={[
-                            styles.gridCell,
-                            styles.multiLineCell,
-                            { minHeight: data.empleados?.length > 2 ? 34 : 22 },
-                        ]}
-                    >
-                        {data.empleados?.length ? (
-                            data.empleados.map((emp, i) => (
-                                <Text key={i} style={styles.personLine}>
-                                    - {emp.nombre}
-                                </Text>
-                            ))
-                        ) : (
-                            <Text style={styles.smallText}>-</Text>
-                        )}
+            {esEmpleado ? (
+                <View style={styles.tableGrid}>
+                    <View style={styles.gridRow}>
+                        <Text
+                            style={[
+                                styles.gridCell,
+                                styles.smallText,
+                                { width: "33.33%", backgroundColor: "#003366", color: "white", fontWeight: "bold", textAlign: "center" },
+                            ]}
+                        >
+                            Codigo de empleado
+                        </Text>
+                        <Text
+                            style={[
+                                styles.gridCell,
+                                styles.smallText,
+                                { width: "33.33%", backgroundColor: "#003366", color: "white", fontWeight: "bold", textAlign: "center" },
+                            ]}
+                        >
+                            Nombre de empleado que retira
+                        </Text>
+                        <Text
+                            style={[
+                                styles.gridCellWide,
+                                styles.smallText,
+                                { width: "33.34%", backgroundColor: "#003366", color: "white", fontWeight: "bold", textAlign: "center" },
+                            ]}
+                        >
+                            Departamento de empleado
+                        </Text>
                     </View>
 
-                    <Text style={[styles.gridCell, styles.smallText]}>
-                        No. de DPI/Licencia:
-                    </Text>
-
-                    <Text
-                        style={[
-                            styles.gridCellWide,
-                            styles.smallText,
-                            { justifyContent: "center" },
-                        ]}
-                    >
-                        {data.identificacion || "-"}
-                    </Text>
+                    {(data.empleados?.length ? data.empleados : [{}]).map((emp, i) => (
+                        <View style={styles.gridRow} key={i}>
+                            <Text style={[styles.gridCell, styles.smallText, { width: "33.33%", textAlign: "center" }]}>
+                                {emp.empleadoId || "-"}
+                            </Text>
+                            <Text style={[styles.gridCell, styles.smallText, { width: "33.33%", textAlign: "center" }]}>
+                                {emp.nombre || "-"}
+                            </Text>
+                            <Text style={[styles.gridCellWide, styles.smallText, { width: "33.34%", textAlign: "center" }]}>
+                                {emp.departamento || "-"}
+                            </Text>
+                        </View>
+                    ))}
                 </View>
-            </View>
+            ) : (
+                <View style={styles.tableGrid}>
+                    <View style={styles.gridRow}>
+                        <Text style={[styles.gridCell, styles.smallText]}>
+                            Codigo de proveedor:
+                        </Text>
+                        <Text style={[styles.gridCell, styles.smallText]}>
+                            {data.codigoProveedor || "-"}
+                        </Text>
+
+                        <Text style={[styles.gridCell, styles.smallText]}>
+                            Nombre de Proveedor:
+                        </Text>
+                        <Text style={[styles.gridCellWide, styles.smallText]}>
+                            {data.nombreProveedor || "-"}
+                        </Text>
+                    </View>
+
+                    <View style={styles.gridRow}>
+                        <Text style={[styles.gridCell, styles.smallText]}>
+                            Telefono de proveedor:
+                        </Text>
+                        <Text style={[styles.gridCell, styles.smallText]}>
+                            {data.telefonoProveedor || "-"}
+                        </Text>
+
+                        <Text style={[styles.gridCell, styles.smallText]}>
+                            Nombre de contacto:
+                        </Text>
+                        <Text style={[styles.gridCellWide, styles.smallText]}>
+                            {data.nombreContacto || "-"}
+                        </Text>
+                    </View>
+
+                    <View style={styles.gridRow}>
+                        <Text style={[styles.gridCell, styles.smallText]}>
+                            Persona que retira Equipo:
+                        </Text>
+                        <Text style={[styles.gridCell, styles.smallText]}>
+                            {data.personaRetira || "-"}
+                        </Text>
+
+                        <Text style={[styles.gridCell, styles.smallText]}>
+                            No. de DPI/Licencia:
+                        </Text>
+
+                        <Text
+                            style={[
+                                styles.gridCellWide,
+                                styles.smallText,
+                                { justifyContent: "center" },
+                            ]}
+                        >
+                            {data.identificacion || "-"}
+                        </Text>
+                    </View>
+                </View>
+            )}
             <View style={styles.tableHeaderFull}>
                 <Text style={styles.tableHeaderText}>
                     2) DETALLES DEL TRABAJO
@@ -747,6 +772,7 @@ const PdfTrasladosRetorno = ({ data = {} }) => (
             </View>
         </Page>
     </Document>
-);
+    );
+};
 
 export default PdfTrasladosRetorno;
