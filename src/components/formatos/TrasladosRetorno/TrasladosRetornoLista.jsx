@@ -8,6 +8,13 @@ const TrasladosRetornoLista = () => {
   const [traslados, setTraslados] = useState([]);
   const [busqueda, setBusqueda] = useState("");
   const [cargando, setCargando] = useState(false);
+  const [rol, setRol] = useState("");
+
+  const esAdmin = rol === "Administrador";
+
+  useEffect(() => {
+    setRol(localStorage.getItem("rol") || "");
+  }, []);
 
   const cargarTraslados = () => {
     setCargando(true);
@@ -61,6 +68,21 @@ const TrasladosRetornoLista = () => {
       );
     });
   }, [traslados, busqueda]);
+
+  const anularTraslado = async (id) => {
+    const ok = window.confirm("¿Anular este pase de salida con retorno?");
+    if (!ok) return;
+
+    try {
+      await TrasladosRetornoService.anular(id);
+      toast.success("Traslado anulado correctamente");
+      cargarTraslados();
+    } catch (error) {
+      console.error(error);
+      const msg = error?.response?.data ?? "Error al anular el traslado";
+      toast.error(typeof msg === "string" ? msg : "Error al anular el traslado");
+    }
+  };
 
   const descargarPDF = async (id) => {
     try {
@@ -180,6 +202,9 @@ const TrasladosRetornoLista = () => {
                   <th className="px-4 py-3 font-bold whitespace-nowrap">Motivo</th>
                   <th className="px-4 py-3 font-bold whitespace-nowrap">Ubicación Retorno</th>
                   <th className="px-4 py-3 font-bold whitespace-nowrap">Fecha Retorno</th>
+                  {esAdmin && (
+                    <th className="px-4 py-3 font-bold whitespace-nowrap">Estado</th>
+                  )}
                   <th className="px-4 py-3 font-bold whitespace-nowrap">Acciones</th>
                 </tr>
               </thead>
@@ -187,13 +212,13 @@ const TrasladosRetornoLista = () => {
               <tbody className="bg-white">
                 {cargando ? (
                   <tr>
-                    <td colSpan={9} className="px-6 py-10 text-center text-gray-500">
+                    <td colSpan={esAdmin ? 10 : 9} className="px-6 py-10 text-center text-gray-500">
                       Cargando traslados...
                     </td>
                   </tr>
                 ) : filtrar.length === 0 ? (
                   <tr>
-                    <td colSpan={9} className="px-6 py-10 text-center text-gray-500">
+                    <td colSpan={esAdmin ? 10 : 9} className="px-6 py-10 text-center text-gray-500">
                       No se encontraron registros.
                     </td>
                   </tr>
@@ -277,13 +302,38 @@ const TrasladosRetornoLista = () => {
                         {formatearFecha(t.fechaRetorno)}
                       </td>
 
+                      {esAdmin && (
+                        <td className="px-4 py-4 border-t border-gray-200 align-top whitespace-nowrap">
+                          <span
+                            className={`inline-block text-xs font-semibold px-2.5 py-1 rounded-full ${
+                              t.estado === "Anulado"
+                                ? "bg-red-50 text-red-700 border border-red-200"
+                                : "bg-green-50 text-green-700 border border-green-200"
+                            }`}
+                          >
+                            {t.estado || "Vigente"}
+                          </span>
+                        </td>
+                      )}
+
                       <td className="px-4 py-4 border-t border-gray-200 align-top whitespace-nowrap">
-                        <button
-                          onClick={() => descargarPDF(t.id)}
-                          className="px-4 py-2 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
-                        >
-                          Descargar PDF
-                        </button>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => descargarPDF(t.id)}
+                            className="px-4 py-2 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
+                          >
+                            Descargar PDF
+                          </button>
+
+                          {esAdmin && t.estado !== "Anulado" && (
+                            <button
+                              onClick={() => anularTraslado(t.id)}
+                              className="px-4 py-2 rounded-xl bg-red-600 text-white font-semibold hover:bg-red-700 transition"
+                            >
+                              Anular
+                            </button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))

@@ -9,6 +9,8 @@ const TrasladosRetornoService = {
     apiClient.get(`/trasladoRetornos/detalle/${id}`),
 
   eliminar: (id) => apiClient.delete(`/trasladoRetornos/${id}`),
+
+  anular: (id) => apiClient.patch(`/trasladoRetornos/${id}/anular`),
 };
 
 export default TrasladosRetornoService;
