@@ -80,8 +80,17 @@ const ListaHojasResponsabilidad = () => {
     if (!ok) return;
 
     try {
-      await HojasService.eliminarVersion(verVersiones.id, versionId);
-      setVersiones((prev) => prev.filter((v) => v.id !== versionId));
+      const resultado = await HojasService.eliminarVersion(verVersiones.id, versionId);
+      const nuevaVersion = resultado?.version ?? verVersiones.version;
+
+      setVerVersiones((prev) => (prev ? { ...prev, version: nuevaVersion } : prev));
+      setHojas((prev) =>
+        prev.map((h) => (h.id === verVersiones.id ? { ...h, version: nuevaVersion } : h))
+      );
+
+      const data = await HojasService.obtenerVersiones(verVersiones.id);
+      const lista = Array.isArray(data) ? data : Array.isArray(data?.$values) ? data.$values : [];
+      setVersiones(lista);
     } catch (error) {
       console.error(error);
       window.alert("Error al eliminar la versión");
