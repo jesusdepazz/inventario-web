@@ -16,6 +16,7 @@ import {
   FaPlus,
   FaIdCard,
   FaTimes,
+  FaMapMarkerAlt,
 } from "react-icons/fa";
 
 const navLinkClass = (active) =>
@@ -232,7 +233,7 @@ export default function Sidebar({ open = false, onClose = () => {} }) {
               </span>
               {asignacionesOpen ? <FaChevronUp className="text-xs" /> : <FaChevronDown className="text-xs" />}
             </button>
-            <div className={`ml-6 mt-1 flex flex-col gap-2 overflow-hidden transition-all duration-500 ${asignacionesOpen ? "max-h-32" : "max-h-0"}`}>
+            <div className={`ml-6 mt-1 flex flex-col gap-2 overflow-hidden transition-all duration-500 ${asignacionesOpen ? "max-h-52" : "max-h-0"}`}>
               {rol === "Administrador" && (
                 <>
                   <Link to="/asignaciones/crear" className={subLinkClass(isActive("/asignaciones/crear"))}>
@@ -240,6 +241,12 @@ export default function Sidebar({ open = false, onClose = () => {} }) {
                   </Link>
                   <Link to="/asignaciones/eliminar" className={subLinkClass(isActive("/asignaciones/eliminar"))}>
                     <FaTrash /> Desasignar
+                  </Link>
+                  <Link to="/asignaciones/comunal/crear" className={subLinkClass(isActive("/asignaciones/comunal/crear"))}>
+                    <FaMapMarkerAlt /> Asignación comunal
+                  </Link>
+                  <Link to="/asignaciones/comunal/lista" className={subLinkClass(isActive("/asignaciones/comunal/lista"))}>
+                    <FaClipboardList /> Historial comunal
                   </Link>
                 </>
               )}

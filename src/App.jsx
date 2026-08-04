@@ -12,6 +12,8 @@ import EliminarEquipos from "./components/equipos/EliminarEquipos";
 import CrearAsignacion from "./components/asignaciones/CrearAsignacion";
 import ListaAsignaciones from "./components/asignaciones/ListaAsignacion";
 import EliminarAsignacion from "./components/asignaciones/EliminarAsignacion";
+import CrearAsignacionComunal from "./components/asignaciones/CrearAsignacionComunal";
+import ListaAsignacionComunal from "./components/asignaciones/ListaAsignacionComunal";
 import CrearSolicitud from "./components/solicitudes/CrearSolicitud";
 import ListaSolicitud from "./components/solicitudes/ListaSolicitud";
 import EliminarSolicitud from "./components/solicitudes/EliminarSolicitud";
@@ -79,6 +81,8 @@ function AppRoutes() {
           <Route path="/asignaciones/crear" element={<CrearAsignacion />} />
           <Route path="asignaciones/lista" element={<ListaAsignaciones />} />
           <Route path="asignaciones/eliminar" element={<EliminarAsignacion />} />
+          <Route path="/asignaciones/comunal/crear" element={<CrearAsignacionComunal />} />
+          <Route path="/asignaciones/comunal/lista" element={<ListaAsignacionComunal />} />
           {/* SOLICITUDES */}
           <Route path="/solicitudes/crear" element={<CrearSolicitud />} />
           <Route path="/solicitudes/lista" element={<ListaSolicitud />} />

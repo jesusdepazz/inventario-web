@@ -11,6 +11,9 @@ const ListaHojasResponsabilidad = () => {
   const [busqueda, setBusqueda] = useState("");
   const [mostrarFiltros, setMostrarFiltros] = useState(false);
   const [rol, setRol] = useState("");
+  const [verVersiones, setVerVersiones] = useState(null);
+  const [versiones, setVersiones] = useState([]);
+  const [loadingVersiones, setLoadingVersiones] = useState(false);
   const [filtros, setFiltros] = useState({
     hojaNo: "",
     codigo: "",
@@ -48,6 +51,41 @@ const ListaHojasResponsabilidad = () => {
     if (hoja.tipoHoja === "Movil")    generarPDFHojaMovil(hoja);
     else if (hoja.tipoHoja === "Externo") generarPDFHojaExterno(hoja);
     else                              generarPDFHoja(hoja);
+  };
+
+  const abrirVersiones = async (hoja) => {
+    setVerVersiones(hoja);
+    setVersiones([]);
+    setLoadingVersiones(true);
+
+    try {
+      const data = await HojasService.obtenerVersiones(hoja.id);
+      const lista = Array.isArray(data) ? data : Array.isArray(data?.$values) ? data.$values : [];
+      setVersiones(lista);
+    } catch (error) {
+      console.error(error);
+      window.alert("Error al cargar el historial de versiones");
+    } finally {
+      setLoadingVersiones(false);
+    }
+  };
+
+  const cerrarVersiones = () => {
+    setVerVersiones(null);
+    setVersiones([]);
+  };
+
+  const eliminarVersion = async (versionId) => {
+    const ok = window.confirm("¿Eliminar esta versión del historial? Esta acción no se puede deshacer.");
+    if (!ok) return;
+
+    try {
+      await HojasService.eliminarVersion(verVersiones.id, versionId);
+      setVersiones((prev) => prev.filter((v) => v.id !== versionId));
+    } catch (error) {
+      console.error(error);
+      window.alert("Error al eliminar la versión");
+    }
   };
 
   const normalize = (v) =>
@@ -142,6 +180,7 @@ const ListaHojasResponsabilidad = () => {
   };
 
   return (
+    <>
     <div className="h-full flex flex-col">
       <div className="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden h-full flex flex-col">
         <div className="p-6 border-b border-slate-100">
@@ -382,12 +421,20 @@ const ListaHojasResponsabilidad = () => {
 
                         {esAdmin && (
                           <td className="px-4 py-4 border-t border-slate-200 align-top text-center whitespace-nowrap">
-                            <button
-                              onClick={() => navigate(`/hojas-responsabilidad/editar/${hoja.id}`)}
-                              className="rounded-xl bg-amber-500 text-white px-4 py-2 text-xs font-semibold hover:bg-amber-600 transition"
-                            >
-                              Editar
-                            </button>
+                            <div className="flex items-center justify-center gap-2">
+                              <button
+                                onClick={() => navigate(`/hojas-responsabilidad/editar/${hoja.id}`)}
+                                className="rounded-xl bg-amber-500 text-white px-4 py-2 text-xs font-semibold hover:bg-amber-600 transition"
+                              >
+                                Editar
+                              </button>
+                              <button
+                                onClick={() => abrirVersiones(hoja)}
+                                className="rounded-xl bg-slate-600 text-white px-4 py-2 text-xs font-semibold hover:bg-slate-700 transition"
+                              >
+                                Versiones
+                              </button>
+                            </div>
                           </td>
                         )}
                       </tr>
@@ -415,6 +462,87 @@ const ListaHojasResponsabilidad = () => {
         </div>
       </div>
     </div>
+
+    {verVersiones && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div className="absolute inset-0 bg-black/60" onClick={cerrarVersiones} />
+        <div className="relative bg-white rounded-2xl shadow-2xl p-6 w-full max-w-2xl max-h-[80vh] flex flex-col">
+          <h2 className="text-lg font-bold text-slate-900 mb-1">Historial de versiones</h2>
+          <p className="text-sm text-slate-600 mb-4">
+            Hoja No: <b>{verVersiones.hojaNo}</b> · Versión actual:{" "}
+            <b>{verVersiones.version ?? 0}</b>
+          </p>
+
+          <div className="flex-1 min-h-0 overflow-auto rounded-lg border border-slate-200">
+            <table className="min-w-full text-xs">
+              <thead className="sticky top-0 bg-slate-100 border-b border-slate-200">
+                <tr className="text-left text-slate-700">
+                  <th className="px-3 py-2 font-semibold">Versión</th>
+                  <th className="px-3 py-2 font-semibold">Motivo</th>
+                  <th className="px-3 py-2 font-semibold">Estado</th>
+                  <th className="px-3 py-2 font-semibold">Guardado</th>
+                  <th className="px-3 py-2 font-semibold">Acción</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {loadingVersiones ? (
+                  <tr>
+                    <td colSpan={5} className="px-3 py-6 text-center text-slate-500">
+                      Cargando...
+                    </td>
+                  </tr>
+                ) : versiones.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="px-3 py-6 text-center text-slate-500">
+                      Todavía no hay versiones anteriores registradas.
+                    </td>
+                  </tr>
+                ) : (
+                  versiones.map((v) => {
+                    let datos = {};
+                    try {
+                      datos = JSON.parse(v.datosJson || "{}");
+                    } catch {
+                      datos = {};
+                    }
+                    return (
+                      <tr key={v.id} className="hover:bg-slate-50">
+                        <td className="px-3 py-2 font-semibold text-slate-900">{v.numeroVersion}</td>
+                        <td className="px-3 py-2 text-slate-700">{datos.motivo || "-"}</td>
+                        <td className="px-3 py-2 text-slate-700">{datos.estado || "-"}</td>
+                        <td className="px-3 py-2 text-slate-700">
+                          {v.fechaGuardado ? new Date(v.fechaGuardado).toLocaleString() : "-"}
+                        </td>
+                        <td className="px-3 py-2">
+                          <button
+                            type="button"
+                            onClick={() => eliminarVersion(v.id)}
+                            className="text-red-600 font-semibold hover:underline"
+                          >
+                            Eliminar
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="mt-4 flex justify-end">
+            <button
+              type="button"
+              onClick={cerrarVersiones}
+              className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   );
 };
 

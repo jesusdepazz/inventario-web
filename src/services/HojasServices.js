@@ -39,6 +39,26 @@ const HojasService = {
       throw error.response?.data || error;
     }
   },
+
+  obtenerVersiones: async (id) => {
+    try {
+      const response = await ApiClient.get(`/HojasResponsabilidad/${id}/versiones`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
+  eliminarVersion: async (id, versionId) => {
+    try {
+      const response = await ApiClient.delete(
+        `/HojasResponsabilidad/${id}/versiones/${versionId}`
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
 };
 
 export default HojasService;
