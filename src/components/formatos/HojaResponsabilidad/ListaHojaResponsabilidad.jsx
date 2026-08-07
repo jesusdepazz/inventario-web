@@ -6,6 +6,26 @@ import generarPDFHojaExterno from "./HojaResponsabilidadExternoPDF";
 import { useNavigate } from "react-router-dom";
 import { getRol } from "../../../services/auth"
 
+const lowerFirst = (key) => key.charAt(0).toLowerCase() + key.slice(1);
+
+const normalizeKeysDeep = (value) => {
+  if (Array.isArray(value)) return value.map(normalizeKeysDeep);
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value).map(([k, v]) => [lowerFirst(k), normalizeKeysDeep(v)])
+    );
+  }
+  return value;
+};
+
+const parseSnapshot = (datosJson) => {
+  try {
+    return normalizeKeysDeep(JSON.parse(datosJson || "{}"));
+  } catch {
+    return {};
+  }
+};
+
 const ListaHojasResponsabilidad = () => {
   const [hojas, setHojas] = useState([]);
   const [busqueda, setBusqueda] = useState("");
@@ -51,6 +71,11 @@ const ListaHojasResponsabilidad = () => {
     if (hoja.tipoHoja === "Movil")    generarPDFHojaMovil(hoja);
     else if (hoja.tipoHoja === "Externo") generarPDFHojaExterno(hoja);
     else                              generarPDFHoja(hoja);
+  };
+
+  const imprimirVersion = (v) => {
+    const datos = parseSnapshot(v.datosJson);
+    handleGenerarPDF({ ...datos, version: v.numeroVersion });
   };
 
   const abrirVersiones = async (hoja) => {
@@ -508,12 +533,7 @@ const ListaHojasResponsabilidad = () => {
                   </tr>
                 ) : (
                   versiones.map((v) => {
-                    let datos = {};
-                    try {
-                      datos = JSON.parse(v.datosJson || "{}");
-                    } catch {
-                      datos = {};
-                    }
+                    const datos = parseSnapshot(v.datosJson);
                     return (
                       <tr key={v.id} className="hover:bg-slate-50">
                         <td className="px-3 py-2 font-semibold text-slate-900">{v.numeroVersion}</td>
@@ -523,13 +543,22 @@ const ListaHojasResponsabilidad = () => {
                           {v.fechaGuardado ? new Date(v.fechaGuardado).toLocaleString() : "-"}
                         </td>
                         <td className="px-3 py-2">
-                          <button
-                            type="button"
-                            onClick={() => eliminarVersion(v.id)}
-                            className="text-red-600 font-semibold hover:underline"
-                          >
-                            Eliminar
-                          </button>
+                          <div className="flex items-center gap-3">
+                            <button
+                              type="button"
+                              onClick={() => imprimirVersion(v)}
+                              className="text-blue-700 font-semibold hover:underline"
+                            >
+                              PDF
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => eliminarVersion(v.id)}
+                              className="text-red-600 font-semibold hover:underline"
+                            >
+                              Eliminar
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     );

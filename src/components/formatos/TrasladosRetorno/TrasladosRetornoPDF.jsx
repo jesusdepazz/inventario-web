@@ -747,7 +747,9 @@ const PdfTrasladosRetorno = ({ data = {} }) => {
                         </View>
 
                         <View style={[styles.signatureBoxLarge, { minHeight: 100 }]}>
-                            <Text style={styles.signatureTitle}>PERSONA QUE RECIBE CONFORME:</Text>
+                            <Text style={styles.signatureTitle}>
+                                {esEmpleado ? "PERSONA QUE RETORNA EQUIPO:" : "PERSONA QUE RECIBE CONFORME:"}
+                            </Text>
                         </View>
 
                         <View

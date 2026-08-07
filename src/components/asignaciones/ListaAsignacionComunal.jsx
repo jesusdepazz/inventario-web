@@ -6,6 +6,26 @@ import EquiposService from "../../services/EquiposServices";
 import generarPDFAsignacionComunal from "./AsignacionComunalPDF";
 import { FaFilePdf, FaEdit, FaHistory } from "react-icons/fa";
 
+const lowerFirst = (key) => key.charAt(0).toLowerCase() + key.slice(1);
+
+const normalizeKeysDeep = (value) => {
+  if (Array.isArray(value)) return value.map(normalizeKeysDeep);
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value).map(([k, v]) => [lowerFirst(k), normalizeKeysDeep(v)])
+    );
+  }
+  return value;
+};
+
+const parseSnapshot = (datosJson) => {
+  try {
+    return normalizeKeysDeep(JSON.parse(datosJson || "{}"));
+  } catch {
+    return {};
+  }
+};
+
 const ListaAsignacionComunal = () => {
   const [rol, setRol] = useState("");
   const esAdmin = rol === "Administrador";
@@ -623,12 +643,7 @@ const ListaAsignacionComunal = () => {
                   </tr>
                 ) : (
                   versiones.map((v) => {
-                    let datos = {};
-                    try {
-                      datos = JSON.parse(v.datosJson || "{}");
-                    } catch {
-                      datos = {};
-                    }
+                    const datos = parseSnapshot(v.datosJson);
                     return (
                       <tr key={v.id} className="hover:bg-slate-50">
                         <td className="px-3 py-2 font-semibold text-slate-900">{v.numeroVersion}</td>
