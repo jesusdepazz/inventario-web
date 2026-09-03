@@ -10,6 +10,7 @@ const HojaResponsabilidadEditar = () => {
   const navigate = useNavigate();
 
   const [hojaNo, setHojaNo] = useState("");
+  const [tipoHoja, setTipoHoja] = useState("");
   const [motivo, setMotivo] = useState("");
   const [comentarios, setComentarios] = useState("");
   const [estado, SetEstado] = useState("");
@@ -48,6 +49,7 @@ const HojaResponsabilidadEditar = () => {
         const h = await HojasService.obtenerHoja(id);
 
         setHojaNo(h.hojaNo || "");
+        setTipoHoja(h.tipoHoja || "");
         setMotivo(h.motivo || "");
         setComentarios(h.comentarios || "");
         SetEstado(h.estado || "");
@@ -244,6 +246,7 @@ const HojaResponsabilidadEditar = () => {
 
     const payload = {
       HojaNo: hojaNo,
+      TipoHoja: tipoHoja,
       Motivo: motivo,
       Comentarios: comentarios,
       Estado: estado,
@@ -327,6 +330,20 @@ const HojaResponsabilidadEditar = () => {
                             readOnly
                             className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 cursor-not-allowed"
                           />
+                        </div>
+
+                        <div>
+                          <label className="text-xs font-medium text-slate-600">Tipo de hoja</label>
+                          <select
+                            value={tipoHoja}
+                            onChange={(e) => setTipoHoja(e.target.value)}
+                            className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800 focus:border-blue-800"
+                          >
+                            <option value="">-- Seleccione tipo de hoja --</option>
+                            <option value="Computo">Hoja responsabilidad cómputo</option>
+                            <option value="Movil">Hoja responsabilidad móvil</option>
+                            <option value="Externo">Préstamo externo</option>
+                          </select>
                         </div>
 
                         <div>

@@ -6,6 +6,7 @@ import EquiposService from "../../../services/EquiposServices";
 export default function BajaActivosForm() {
   const hoy = useMemo(() => new Date().toISOString().split("T")[0], []);
   const [form, setForm] = useState({
+    numeroBaja: "",
     fechaBaja: hoy,
     codificacionEquipo: "",
     motivoBaja: [],
@@ -26,7 +27,13 @@ export default function BajaActivosForm() {
         const data = Array.isArray(res.data) ? res.data : res.data?.$values ?? [];
         const filtradas = data.filter((u) => {
           const n = String(u?.nombre || "").toLowerCase();
-          return n === "robado" || n === "donación" || n === "donacion";
+          return (
+            n === "robado" ||
+            n === "donación" ||
+            n === "donacion" ||
+            n === "devolución" ||
+            n === "devolucion"
+          );
         });
         setUbicaciones(filtradas);
       } catch {
@@ -79,6 +86,7 @@ export default function BajaActivosForm() {
   const limpiar = () => {
     setMensaje({ type: "", text: "" });
     setForm({
+      numeroBaja: "",
       fechaBaja: hoy,
       codificacionEquipo: "",
       motivoBaja: [],
@@ -167,6 +175,20 @@ export default function BajaActivosForm() {
             <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
               <div className="md:col-span-4">
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  No. de Baja
+                </label>
+                <input
+                  type="text"
+                  name="numeroBaja"
+                  value={form.numeroBaja}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  placeholder="Ej: 001"
+                />
+              </div>
+
+              <div className="md:col-span-4">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Fecha de Baja <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -231,7 +253,7 @@ export default function BajaActivosForm() {
                   ))}
                 </select>
                 <p className="mt-2 text-xs text-gray-500">
-                  Solo se muestran ubicaciones destino (Robado / Donación).
+                  Solo se muestran ubicaciones destino (Robado / Donación / Devolución).
                 </p>
               </div>
 

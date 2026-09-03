@@ -38,7 +38,7 @@ export const generarBajaPDF = async (bajaId) => {
     };
 
 
-    const numeroPDF = 'No. 001';
+    const numeroPDF = `No. ${baja.numeroBaja || '___'}`;
 
     doc.addImage('/logo_guandy.png', 'PNG', marginX, headerY, logoWidth, logoHeight);
 
@@ -48,7 +48,7 @@ export const generarBajaPDF = async (bajaId) => {
     doc.text('Guatemala Candies, S.A.', centerX, headerY + 5, { align: 'center' });
     doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
-    doc.text('Administración de Activos Fijos', centerX, headerY + 11, { align: 'center' });
+    doc.text('Administración IT', centerX, headerY + 11, { align: 'center' });
     doc.text('Baja de Equipo de Cómputo', centerX, headerY + 17, { align: 'center' });
 
     doc.setFont('helvetica', 'bold');
@@ -58,8 +58,6 @@ export const generarBajaPDF = async (bajaId) => {
     doc.text(numeroPDF, numeroX, headerY + 5);
 
     doc.setTextColor(0, 0, 0);
-
-    doc.text(numeroPDF, numeroX, headerY + 5);
 
     const lineaY = headerY + logoHeight + 2;
     doc.setDrawColor(0);
@@ -75,7 +73,20 @@ export const generarBajaPDF = async (bajaId) => {
       otro: "Otro",
     };
 
-    const motivos = Object.values(motivosNombres);
+    const normalizarMotivo = (s) =>
+      (s || "")
+        .toString()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .trim();
+
+    const motivosSeleccionados = String(baja.motivoBaja || "")
+      .split(",")
+      .map((m) => normalizarMotivo(m))
+      .filter(Boolean);
+
+    const motivos = Object.entries(motivosNombres);
     const colCount = 5;
     const availableWidth = pageWidth - marginX * 2;
     const cellWidth = availableWidth / colCount;
@@ -114,7 +125,7 @@ export const generarBajaPDF = async (bajaId) => {
     y += cellHeight;
 
     let x = marginX;
-    motivos.forEach((motivoVisible, index) => {
+    motivos.forEach(([motivoKey, motivoVisible], index) => {
       doc.setDrawColor(0);
       doc.rect(x, y, cellWidth, cellHeight);
 
@@ -122,6 +133,13 @@ export const generarBajaPDF = async (bajaId) => {
       const checkboxY = y + cellHeight / 2 - checkboxSize / 2;
 
       doc.rect(checkboxX, checkboxY, checkboxSize, checkboxSize);
+
+      if (motivosSeleccionados.includes(motivoKey)) {
+        doc.setFont("helvetica", "bold");
+        doc.text("X", checkboxX + 0.6, checkboxY + checkboxSize - 0.6);
+      }
+
+      doc.setFont("helvetica", "normal");
       doc.text(motivoVisible, checkboxX + checkboxSize + 3, checkboxY + checkboxSize - 0.5);
 
       x += cellWidth;
@@ -141,6 +159,14 @@ export const generarBajaPDF = async (bajaId) => {
     doc.setFont('helvetica', 'bold');
     doc.text('Justificación\nde la baja\nde activos', marginX + 2, y + 5, { maxWidth: labelWidth - 4, lineHeightFactor: 1.2 });
     doc.rect(marginX + labelWidth, y, textAreaWidth, justificacionCellHeight);
+
+    if (baja.detallesBaja) {
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      const detallesLines = doc.splitTextToSize(baja.detallesBaja, textAreaWidth - 4);
+      doc.text(detallesLines, marginX + labelWidth + 2, y + 5, { lineHeightFactor: 1.2 });
+    }
+
     y += justificacionCellHeight;
 
     const ubicacionActualNombre = ubicaciones.find(u => u.id === baja.ubicacionActual)?.nombre || baja.ubicacionActual;
@@ -297,7 +323,7 @@ export const generarBajaPDF = async (bajaId) => {
         ],
         [
           {
-            content: '\n\n\nAmparo Castellanos',
+            content: '',
             styles: {
               minCellHeight: 26,
               valign: 'bottom',
@@ -314,7 +340,7 @@ export const generarBajaPDF = async (bajaId) => {
             }
           },
           {
-            content: '\n\n\nErick Pacajoj',
+            content: '',
             styles: {
               minCellHeight: 26,
               valign: 'bottom',
@@ -352,7 +378,7 @@ export const generarBajaPDF = async (bajaId) => {
         ],
         [
           {
-            content: '\n\n\nKleidy López',
+            content: '',
             styles: {
               minCellHeight: 26,
               valign: 'bottom',
@@ -362,7 +388,7 @@ export const generarBajaPDF = async (bajaId) => {
             }
           },
           {
-            content: '\n\n\nGabriela Martinez / Vanessa Aguilar',
+            content: '',
             styles: {
               minCellHeight: 26,
               valign: 'bottom',
