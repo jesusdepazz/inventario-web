@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import UbicacionesService from "../../services/UbicacionesServices";
 import EquiposService from "../../services/EquiposServices";
-import { CATEGORIAS_ACTIVOS, obtenerCategoria } from "./catalogoActivos";
+import { obtenerCategoria } from "./catalogoActivos";
 
 const CrearEquipo = () => {
   const [form, setForm] = useState({
@@ -169,13 +169,6 @@ const CrearEquipo = () => {
                 <h2 className="text-sm font-bold text-slate-900 tracking-wide">CLASIFICACIÓN DEL ACTIVO</h2>
               </div>
               <div className="p-5 grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div className="flex flex-col">
-                  <label htmlFor="categoria" className="text-xs font-semibold text-slate-600">Categoría <span className="text-red-600">*</span></label>
-                  <select id="categoria" name="categoria" value={form.categoria} onChange={(e) => setForm((prev) => ({ ...prev, categoria: e.target.value, familia: "" }))} required className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800">
-                    <option value="">-- Seleccione categoría --</option>
-                    {CATEGORIAS_ACTIVOS.map((categoria) => <option key={categoria.value} value={categoria.value}>{categoria.label}</option>)}
-                  </select>
-                </div>
                 <div className="flex flex-col">
                   <label htmlFor="familia" className="text-xs font-semibold text-slate-600">Familia <span className="text-red-600">*</span></label>
                   <select id="familia" name="familia" value={form.familia} onChange={handleChange} required disabled={!categoriaSeleccionada} className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-800 disabled:bg-slate-100">
